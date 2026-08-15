@@ -205,7 +205,7 @@
     z-index: 30;
   }
 
-  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
 
   .menu-toggle {
     display: none;
@@ -221,13 +221,13 @@
   }
   .menu-toggle:active { transform: scale(0.94); }
 
-  .topbar-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; color: var(--black); }
-  .topbar-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .topbar-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   .topbar-right { display: flex; align-items: center; gap: 14px; }
 
   .topbar-badge {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 7px;
     background: var(--green-50);
@@ -237,9 +237,12 @@
     font-size: 11.5px;
     font-weight: 700;
     border: 1px solid var(--green-100);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  .topbar-badge i { font-size: 9px; color: var(--green-600); }
+  .topbar-badge i { font-size: 9px; color: var(--green-600); flex-shrink: 0; line-height: 1; }
+  .topbar-badge span { line-height: 1; }
 
   .content { padding: 26px 28px 40px; flex: 1; max-width: 1280px; width: 100%; margin: 0 auto; }
 
@@ -552,7 +555,11 @@
   .pdf-modal-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    width: 100%; max-width: 1000px; height: 92vh;
+    width: 100%; max-width: 1000px;
+    height: 92vh;
+    height: min(92vh, 92dvh);
+    max-height: 92vh;
+    max-height: 92dvh;
     display: flex; flex-direction: column;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
@@ -568,13 +575,14 @@
   }
   .pdf-modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   
-  .pdf-header-actions { display: flex; align-items: center; gap: 10px; }
+  .pdf-header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   
   .pdf-close-btn { 
     background: rgba(255,255,255,0.12); border: none; color: var(--white); 
     width: 36px; height: 36px; border-radius: 10px; cursor: pointer; 
     font-size: 16px; display: flex; align-items: center; justify-content: center;
     transition: var(--transition);
+    flex-shrink: 0;
   }
   .pdf-close-btn:hover { background: rgba(255,255,255,0.25); }
 
@@ -582,15 +590,18 @@
     background: rgba(245, 158, 11, 0.2); color: #fbbf24;
     font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 20px;
     display: flex; align-items: center; gap: 6px; border: 1px solid rgba(245, 158, 11, 0.3);
+    flex-shrink: 0; white-space: nowrap;
   }
 
   .pdf-viewer-body { 
-    flex: 1; 
+    flex: 1 1 auto; 
+    min-height: 0;
     position: relative; 
     background: #334155; 
     overflow: auto; 
     display: flex;
     justify-content: center;
+    -webkit-overflow-scrolling: touch;
   }
   
   #pdfCanvasContainer { 
@@ -606,28 +617,31 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
     border-radius: 4px;
     background: #ffffff;
+    max-width: none;
   }
 
   .pdf-nav-bar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 20px; background: var(--white); border-top: 1px solid var(--gray-200);
     flex-shrink: 0; gap: 10px; flex-wrap: wrap;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 
-  .pdf-nav-controls { display: flex; align-items: center; gap: 8px; }
+  .pdf-nav-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
   
   .pdf-btn-icon {
     background: var(--gray-100); border: 1.5px solid var(--gray-300); border-radius: 9px;
     width: 36px; height: 36px; cursor: pointer; color: var(--gray-700);
     display: flex; align-items: center; justify-content: center;
     transition: var(--transition); font-size: 13px;
+    flex-shrink: 0;
   }
   .pdf-btn-icon:hover:not(:disabled) { background: var(--green-50); color: var(--green-800); border-color: var(--green-500); }
   .pdf-btn-icon:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .pdf-page-indicator { font-size: 13px; font-weight: 700; color: var(--black); min-width: 100px; text-align: center; }
 
-  .pdf-zoom-controls { display: flex; align-items: center; gap: 6px; background: var(--gray-100); padding: 4px; border-radius: 11px; border: 1px solid var(--gray-300); }
+  .pdf-zoom-controls { display: flex; align-items: center; gap: 6px; background: var(--gray-100); padding: 4px; border-radius: 11px; border: 1px solid var(--gray-300); flex-shrink: 0; }
   .pdf-zoom-val { font-size: 12px; font-weight: 700; color: var(--gray-700); min-width: 45px; text-align: center; }
 
   .pdf-loading, .pdf-error {
@@ -811,8 +825,9 @@
     /* Android Native Friendly Attendance History Cards */
     .att-table-wrap { background: transparent; border: none; box-shadow: none; overflow: visible; }
     .att-table, .att-table tbody, .att-table tr, .att-table td { display: block; width: 100%; }
+    .att-table thead { display: none; }
     .att-table th { display: none; }
-    .att-table tr {
+    .att-table tbody tr {
       background: var(--white);
       border: 1px solid var(--gray-200);
       border-radius: var(--radius-md);
@@ -839,6 +854,12 @@
     .att-table td:first-child { font-weight: 700; color: var(--black); border-bottom: 1px dashed var(--gray-200); padding-bottom: 8px; margin-bottom: 6px; }
     .att-table td:first-child::before { color: var(--green-700); }
     .att-table td:last-child { padding-top: 6px; }
+    /* Baris "belum ada riwayat" / "memuat" (colspan) tidak boleh diperlakukan sebagai kartu data */
+    .att-table tbody tr.att-row-empty {
+      background: transparent; border: none; box-shadow: none; padding: 20px 0; margin-bottom: 0;
+    }
+    .att-table tbody tr.att-row-empty td { display: block; }
+    .att-table tbody tr.att-row-empty td::before { content: none; }
 
     .book-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
     .book-cover { height: 120px; font-size: 34px; }
@@ -846,7 +867,13 @@
     .book-info h4 { font-size: 13px; }
 
     .pdf-modal-overlay { padding: 6px; }
-    .pdf-modal-card { height: 98vh; border-radius: 14px; }
+    .pdf-modal-card {
+      height: 98vh;
+      height: min(98vh, 98dvh);
+      max-height: 98vh;
+      max-height: 98dvh;
+      border-radius: 14px;
+    }
     .pdf-readonly-badge { display: none; }
     .pdf-nav-bar { padding: 10px; justify-content: center; gap: 8px; }
 
@@ -905,13 +932,13 @@
   <div class="topbar">
     <div class="topbar-left">
       <button class="menu-toggle" id="menuToggle" aria-label="Buka Menu"><i class="fa-solid fa-bars"></i></button>
-      <div>
+      <div style="min-width:0; overflow:hidden;">
         <div class="topbar-title" id="pageTitle">Beranda</div>
         <div class="topbar-subtitle" id="pageSubtitle">Ringkasan aktivitas perpustakaan Anda</div>
       </div>
     </div>
     <div class="topbar-right">
-      <div class="topbar-badge"><i class="fa-solid fa-circle"></i> Sesi Aktif</div>
+      <div class="topbar-badge"><i class="fa-solid fa-circle"></i><span>Sesi Aktif</span></div>
     </div>
   </div>
 
@@ -992,7 +1019,7 @@
             </tr>
           </thead>
           <tbody id="attHistoryBody">
-            <tr><td colspan="3" class="att-empty">Memuat riwayat...</td></tr>
+            <tr class="att-row-empty"><td colspan="3" class="att-empty">Memuat riwayat...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1256,7 +1283,7 @@
   // Render Riwayat Kehadiran (Android Card Adaptive)
   function renderHistory(riwayat) {
     if (!riwayat || riwayat.length === 0) {
-      attHistoryBody.innerHTML = `<tr><td colspan="3" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
+      attHistoryBody.innerHTML = `<tr class="att-row-empty"><td colspan="3" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
       return;
     }
     attHistoryBody.innerHTML = riwayat.map(r => `
@@ -1311,7 +1338,7 @@
     } catch (err) {
       attStatusValue.innerHTML = `<span class="dot"></span> Gagal memuat status`;
       attStatusMeta.textContent = 'Periksa koneksi Anda dan coba muat ulang halaman.';
-      attHistoryBody.innerHTML = `<tr><td colspan="3" class="att-empty">Gagal memuat riwayat.</td></tr>`;
+      attHistoryBody.innerHTML = `<tr class="att-row-empty"><td colspan="3" class="att-empty">Gagal memuat riwayat.</td></tr>`;
     }
   }
 
