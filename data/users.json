@@ -44,6 +44,17 @@
       "jabatan": "Wakil Admin",
       "salt": "12d16a081348c615da4af25ed8f8b8f0",
       "hash": "4e449210a9df89da67e21628447509b9f1ea5a266f6fa4e2b5174f17742a1dd3ffe81ff15fcea773ac5d148a45c8764de65f7d5490326ea319ce48b675cf7aab"
+    },
+    {
+      "id": "usr_1786784310246_9b588b",
+      "nama": "Fikri",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "IT Support",
+      "salt": "cb0dd7dc0f2e9860034b7eeacd35ffbf",
+      "hash": "0c3dd7223be4e0174aa203430e76fe6822eb008dfceab5e5d5aeac6d38325697710da4c3d0d73591b6d679f01b59e2a64046a19be1e9165c6985fe537ec5a6fb",
+      "createdAt": "2026-08-15T08:58:30.246Z",
+      "daftarMandiri": true
     }
   ]
 }
