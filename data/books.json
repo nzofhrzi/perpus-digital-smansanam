@@ -1,3 +1,17 @@
 {
-  "books": []
+  "books": [
+    {
+      "id": "book_1786776401366_f86f39",
+      "judul": "Blue Prints Ilmu Ketak",
+      "pengarang": "Enzo Fahrezi",
+      "penerbit": "Ilmu Ketak",
+      "tahun": 2026,
+      "kategori": "Umum",
+      "isbn": "-",
+      "deskripsi": "Contoh aja",
+      "linkPDF": "https://drive.google.com/file/d/1YnFWu5lldFg7jum9xCI0FMeruVgHAaLG/view?usp=drivesdk",
+      "dibuat": "2026-08-15T06:46:41.366Z",
+      "diperbarui": "2026-08-15T06:46:41.366Z"
+    }
+  ]
 }
