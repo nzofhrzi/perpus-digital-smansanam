@@ -13,6 +13,13 @@
       "jabatan": "Mahasiswa",
       "umur": 20,
       "waktuKunjungan": "2026-08-15T05:40:04.248Z"
+    },
+    {
+      "id": "tamu_1786773000123",
+      "nama": "Ridho",
+      "jabatan": "Mahasiswa",
+      "umur": 19,
+      "waktuKunjungan": "2026-08-15T05:50:00.123Z"
     }
   ]
 }
