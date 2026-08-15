@@ -1,3 +1,11 @@
 {
-  "guests": []
+  "guests": [
+    {
+      "id": "tamu_1786772162323",
+      "nama": "Kenzo",
+      "jabatan": "Rektor xyz",
+      "umur": 19,
+      "waktuKunjungan": "2026-08-15T05:36:02.323Z"
+    }
+  ]
 }
