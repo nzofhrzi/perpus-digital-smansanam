@@ -587,11 +587,36 @@
             </div>
           </div>
 
+          <!-- DROPDOWN SELECT KELAS SISWA -->
           <div class="field" id="kelasField" style="display:none;">
             <label><i class="fa-solid fa-chalkboard"></i> Kelas</label>
             <div class="input-wrap">
               <i class="fa-solid fa-layer-group field-icon"></i>
-              <input type="text" name="kelas" placeholder="Contoh: XII IPA 1">
+              <select name="kelas" id="kelasSelect">
+                <option value="" disabled selected>Pilih kelas</option>
+                <!-- KELAS 10 -->
+                <option value="10.1">10.1</option>
+                <option value="10.2">10.2</option>
+                <option value="10.3">10.3</option>
+                <option value="10.4">10.4</option>
+                <option value="10.5">10.5</option>
+                <option value="10.6">10.6</option>
+                <!-- KELAS 11 -->
+                <option value="11.1">11.1</option>
+                <option value="11.2">11.2</option>
+                <option value="11.3">11.3</option>
+                <option value="11.4">11.4</option>
+                <option value="11.5">11.5</option>
+                <option value="11.6">11.6</option>
+                <!-- KELAS 12 -->
+                <option value="12.1">12.1</option>
+                <option value="12.2">12.2</option>
+                <option value="12.3">12.3</option>
+                <option value="12.4">12.4</option>
+                <option value="12.5">12.5</option>
+                <option value="12.6">12.6</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
             </div>
           </div>
         </div>
@@ -716,13 +741,16 @@
   // ── TAMPILKAN FIELD KELAS JIKA STATUS = SISWA ──
   const statusSelect = document.getElementById('statusSelect');
   const kelasField = document.getElementById('kelasField');
+  const kelasSelect = document.getElementById('kelasSelect');
+
   statusSelect.addEventListener('change', () => {
     if (statusSelect.value === 'siswa') {
       kelasField.style.display = 'block';
-      kelasField.querySelector('input').setAttribute('required', 'required');
+      kelasSelect.setAttribute('required', 'required');
     } else {
       kelasField.style.display = 'none';
-      kelasField.querySelector('input').removeAttribute('required');
+      kelasSelect.removeAttribute('required');
+      kelasSelect.selectedIndex = 0; // Reset ke opsi default saat disembunyikan
     }
   });
 
