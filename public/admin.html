@@ -29,6 +29,8 @@
     --bg-app: #f6f9f8;
     --amber: #b45309;
     --amber-bg: #fffbeb;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
     --radius-md: 14px;
     --radius-lg: 18px;
     --transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
@@ -261,6 +263,99 @@
   .section-title { font-family: 'Poppins', sans-serif; font-size: 16.5px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
   .section-title i { color: var(--green-600); }
 
+  /* ══════════ KELOLA ABSENSI ══════════ */
+  .att-toolbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+  .att-field { display: flex; flex-direction: column; gap: 6px; }
+  .att-field label { font-size: 11.5px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.3px; }
+  .att-field input, .att-field select {
+    padding: 9px 12px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--white);
+  }
+  .att-field input:focus, .att-field select:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.14); }
+  .att-field-search { flex: 1; min-width: 180px; }
+  .att-btn-reset {
+    padding: 9.5px 16px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 9px;
+    background: var(--white);
+    color: var(--gray-700);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: var(--transition);
+  }
+  .att-btn-reset:hover { border-color: var(--green-600); color: var(--green-700); }
+
+  .att-table-wrap {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-300);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .att-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+  .att-table th {
+    text-align: left;
+    padding: 13px 16px;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .att-table td { padding: 13px 16px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
+  .att-table tr:hover td { background: var(--green-50); }
+  .att-empty { padding: 44px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
+
+  .att-role-chip {
+    display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px; text-transform: capitalize;
+    background: var(--green-50); color: var(--green-800);
+  }
+  .att-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .att-chip.done { background: var(--green-50); color: var(--green-800); }
+  .att-chip.progress { background: var(--amber-bg); color: var(--amber); }
+
+  .att-btn-del {
+    border: none; background: var(--danger-bg); color: var(--danger);
+    width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .att-btn-del:hover { background: var(--danger); color: var(--white); }
+
+  .att-mini-stats { display: flex; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+  .att-mini-card {
+    background: var(--white); border: 1px solid var(--gray-300); border-radius: var(--radius-md);
+    padding: 14px 18px; flex: 1; min-width: 150px; box-shadow: var(--shadow-sm);
+  }
+  .att-mini-card .v { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; color: var(--black); }
+  .att-mini-card .l { font-size: 11.5px; color: var(--gray-500); font-weight: 600; margin-top: 2px; }
+
+  @media (max-width: 640px) {
+    .att-toolbar { flex-direction: column; align-items: stretch; }
+    .att-field-search { min-width: unset; }
+  }
+
   .placeholder-card {
     background: var(--white);
     border: 1.5px dashed var(--gray-300);
@@ -452,11 +547,55 @@
     <!-- ══════ KELOLA ABSENSI ══════ -->
     <section class="section-view" id="section-absensi">
       <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Kelola Absensi</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-fingerprint"></i></div>
-        <h3>Rekap Absensi Kehadiran</h3>
-        <p>Lihat dan ekspor rekap kehadiran pengunjung perpustakaan per hari, minggu, atau bulan.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+
+      <div class="att-mini-stats">
+        <div class="att-mini-card"><div class="v" id="attMiniHariIni">0</div><div class="l">Total Absen Hari Ini</div></div>
+        <div class="att-mini-card"><div class="v" id="attMiniDiPerpus">0</div><div class="l">Sedang di Perpustakaan</div></div>
+        <div class="att-mini-card"><div class="v" id="attMiniHasil">0</div><div class="l">Hasil Sesuai Filter</div></div>
+      </div>
+
+      <div class="att-toolbar">
+        <div class="att-field">
+          <label>Tanggal</label>
+          <input type="date" id="attFilterTanggal">
+        </div>
+        <div class="att-field">
+          <label>Status</label>
+          <select id="attFilterStatus">
+            <option value="semua">Semua Status</option>
+            <option value="siswa">Siswa</option>
+            <option value="guru">Guru</option>
+            <option value="staf">Staf</option>
+            <option value="tamu">Tamu</option>
+          </select>
+        </div>
+        <div class="att-field att-field-search">
+          <label>Cari Nama</label>
+          <input type="text" id="attFilterQ" placeholder="Ketik nama pengunjung...">
+        </div>
+        <button class="att-btn-reset" id="btnAttResetFilter"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+      </div>
+
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Status</th>
+              <th>Kelas / Jabatan</th>
+              <th>Tanggal</th>
+              <th>Masuk</th>
+              <th>Keluar</th>
+              <th>Durasi</th>
+              <th>Keperluan</th>
+              <th>Kondisi</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="attAdminBody">
+            <tr><td colspan="10" class="att-empty">Memuat data absensi...</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -559,11 +698,17 @@
   }
 
   document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
-    btn.addEventListener('click', () => goToSection(btn.dataset.section));
+    btn.addEventListener('click', () => {
+      goToSection(btn.dataset.section);
+      if (btn.dataset.section === 'absensi') loadAttendanceAdmin();
+    });
   });
 
   document.querySelectorAll('.quick-action[data-goto]').forEach(btn => {
-    btn.addEventListener('click', () => goToSection(btn.dataset.goto));
+    btn.addEventListener('click', () => {
+      goToSection(btn.dataset.goto);
+      if (btn.dataset.goto === 'absensi') loadAttendanceAdmin();
+    });
   });
 
   // ══════ SIDEBAR MOBILE ══════
@@ -585,6 +730,119 @@
     localStorage.removeItem('perpus_user');
     window.location.href = 'index.html';
   });
+
+  // ══════ KELOLA ABSENSI (ADMIN) ══════
+  const attFilterTanggal = document.getElementById('attFilterTanggal');
+  const attFilterStatus = document.getElementById('attFilterStatus');
+  const attFilterQ = document.getElementById('attFilterQ');
+  const attAdminBody = document.getElementById('attAdminBody');
+  const btnAttResetFilter = document.getElementById('btnAttResetFilter');
+
+  let attLoadedOnce = false;
+  let attDebounce = null;
+
+  function fmtJam(iso) {
+    if (!iso) return '-';
+    return new Date(iso).toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function fmtTanggal(str) {
+    if (!str) return '-';
+    return new Date(`${str}T00:00:00+07:00`).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function fmtDurasi(menit) {
+    if (menit === null || menit === undefined) return '-';
+    if (menit < 60) return `${menit} mnt`;
+    const jam = Math.floor(menit / 60);
+    const sisa = menit % 60;
+    return sisa > 0 ? `${jam} jam ${sisa} mnt` : `${jam} jam`;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  async function loadAttendanceAdmin() {
+    attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...</td></tr>`;
+    try {
+      const params = new URLSearchParams();
+      if (attFilterTanggal.value) params.set('tanggal', attFilterTanggal.value);
+      if (attFilterStatus.value && attFilterStatus.value !== 'semua') params.set('status', attFilterStatus.value);
+      if (attFilterQ.value.trim()) params.set('q', attFilterQ.value.trim());
+
+      const res = await fetch(`${API_BASE}/attendance?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat data.');
+
+      document.getElementById('attMiniHariIni').textContent = data.hariIni ?? 0;
+      document.getElementById('attMiniDiPerpus').textContent = data.sedangDiPerpus ?? 0;
+      document.getElementById('attMiniHasil').textContent = data.total ?? 0;
+
+      if (!data.data || data.data.length === 0) {
+        attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty"><i class="fa-solid fa-inbox"></i> Tidak ada data absensi untuk filter ini.</td></tr>`;
+        return;
+      }
+
+      attAdminBody.innerHTML = data.data.map(r => `
+        <tr>
+          <td><strong>${escapeHtml(r.nama)}</strong></td>
+          <td><span class="att-role-chip">${escapeHtml(r.status)}</span></td>
+          <td>${escapeHtml(r.kelas || r.jabatan || '-')}</td>
+          <td>${fmtTanggal(r.tanggal)}</td>
+          <td>${fmtJam(r.waktuMasuk)}</td>
+          <td>${r.waktuKeluar ? fmtJam(r.waktuKeluar) : '-'}</td>
+          <td>${fmtDurasi(r.durasiMenit)}</td>
+          <td>${r.keperluan ? escapeHtml(r.keperluan) : '-'}</td>
+          <td>${r.waktuKeluar
+            ? '<span class="att-chip done"><i class="fa-solid fa-check"></i> Selesai</span>'
+            : '<span class="att-chip progress"><i class="fa-solid fa-clock"></i> Di Perpustakaan</span>'}</td>
+          <td><button class="att-btn-del" title="Hapus catatan" data-id="${r.id}"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>
+      `).join('');
+
+      attAdminBody.querySelectorAll('.att-btn-del').forEach(btn => {
+        btn.addEventListener('click', () => deleteAttendanceRecord(btn.dataset.id));
+      });
+    } catch (err) {
+      attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty">Gagal memuat data absensi.</td></tr>`;
+    }
+  }
+
+  async function deleteAttendanceRecord(id) {
+    if (!confirm('Hapus catatan absensi ini? Tindakan ini tidak dapat dibatalkan.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/attendance/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal menghapus catatan.');
+      loadAttendanceAdmin();
+    } catch (err) {
+      alert(err.message || 'Gagal menghapus catatan.');
+    }
+  }
+
+  attFilterTanggal.addEventListener('change', loadAttendanceAdmin);
+  attFilterStatus.addEventListener('change', loadAttendanceAdmin);
+  attFilterQ.addEventListener('input', () => {
+    clearTimeout(attDebounce);
+    attDebounce = setTimeout(loadAttendanceAdmin, 400);
+  });
+  btnAttResetFilter.addEventListener('click', () => {
+    attFilterTanggal.value = '';
+    attFilterStatus.value = 'semua';
+    attFilterQ.value = '';
+    loadAttendanceAdmin();
+  });
+
+  // Muat data absensi jika halaman dibuka langsung pada tab absensi (mis. refresh)
+  if (document.getElementById('section-absensi').classList.contains('active')) {
+    loadAttendanceAdmin();
+  }
 </script>
 
 </body>
