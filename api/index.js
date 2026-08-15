@@ -570,6 +570,372 @@ export default async function handler(req, res) {
       return sendJson(res, 200, { message: 'Catatan absensi berhasil dihapus.' });
     }
 
+    // ─── BUKU: LIST & CRUD ──────────────────────────────────────────
+    if (method === 'GET' && route === 'books') {
+      let booksData = { books: [] };
+      try {
+        booksData = JSON.parse(await readDataFile('books.json'));
+        if (!Array.isArray(booksData.books)) booksData.books = [];
+      } catch {}
+      return sendJson(res, 200, { books: booksData.books });
+    }
+
+    if (method === 'POST' && route === 'books') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi } = body;
+      if (!judul || !pengarang) {
+        return sendJson(res, 400, { message: 'Judul dan pengarang wajib diisi.' });
+      }
+
+      let booksData = { books: [] };
+      try {
+        booksData = JSON.parse(await readDataFile('books.json'));
+        if (!Array.isArray(booksData.books)) booksData.books = [];
+      } catch {
+        booksData = { books: [] };
+      }
+
+      const newBook = {
+        id: `book_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+        judul,
+        pengarang,
+        penerbit: penerbit || '',
+        tahun: tahun || new Date().getFullYear(),
+        kategori: kategori || 'Umum',
+        isbn: isbn || '',
+        deskripsi: deskripsi || '',
+        dibuat: new Date().toISOString(),
+        diperbarui: new Date().toISOString()
+      };
+
+      booksData.books.push(newBook);
+      try {
+        await writeDataFile('books.json', JSON.stringify(booksData, null, 2), `Tambah buku: ${judul}`);
+        return sendJson(res, 201, { message: 'Buku berhasil ditambahkan.', book: newBook });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menambah buku.' });
+      }
+    }
+
+    if (method === 'PUT' && parts[1] === 'books' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const bookId = parts[2];
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi } = body;
+
+      let booksData = { books: [] };
+      try {
+        booksData = JSON.parse(await readDataFile('books.json'));
+        if (!Array.isArray(booksData.books)) booksData.books = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data buku tidak dapat dimuat.' });
+      }
+
+      const bookIdx = booksData.books.findIndex((b) => b.id === bookId);
+      if (bookIdx === -1) {
+        return sendJson(res, 404, { message: 'Buku tidak ditemukan.' });
+      }
+
+      const updated = {
+        ...booksData.books[bookIdx],
+        judul: judul || booksData.books[bookIdx].judul,
+        pengarang: pengarang || booksData.books[bookIdx].pengarang,
+        penerbit: penerbit !== undefined ? penerbit : booksData.books[bookIdx].penerbit,
+        tahun: tahun || booksData.books[bookIdx].tahun,
+        kategori: kategori || booksData.books[bookIdx].kategori,
+        isbn: isbn !== undefined ? isbn : booksData.books[bookIdx].isbn,
+        deskripsi: deskripsi !== undefined ? deskripsi : booksData.books[bookIdx].deskripsi,
+        diperbarui: new Date().toISOString()
+      };
+
+      booksData.books[bookIdx] = updated;
+      try {
+        await writeDataFile('books.json', JSON.stringify(booksData, null, 2), `Update buku: ${updated.judul}`);
+        return sendJson(res, 200, { message: 'Buku berhasil diperbarui.', book: updated });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal memperbarui buku.' });
+      }
+    }
+
+    if (method === 'DELETE' && parts[1] === 'books' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const bookId = parts[2];
+      let booksData = { books: [] };
+      try {
+        booksData = JSON.parse(await readDataFile('books.json'));
+        if (!Array.isArray(booksData.books)) booksData.books = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data buku tidak dapat dimuat.' });
+      }
+
+      const sebelum = booksData.books.length;
+      booksData.books = booksData.books.filter((b) => b.id !== bookId);
+
+      if (booksData.books.length === sebelum) {
+        return sendJson(res, 404, { message: 'Buku tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('books.json', JSON.stringify(booksData, null, 2), `Hapus buku: ${bookId}`);
+        return sendJson(res, 200, { message: 'Buku berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus buku.' });
+      }
+    }
+
+    // ─── PENGGUNA: LIST & CRUD ──────────────────────────────────────
+    if (method === 'GET' && route === 'users/list') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {}
+      
+      const safe = usersData.users.map(u => ({
+        id: u.id,
+        nama: u.nama,
+        status: u.status,
+        kelas: u.kelas,
+        jabatan: u.jabatan
+      }));
+      return sendJson(res, 200, { users: safe });
+    }
+
+    if (method === 'POST' && route === 'users') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const { nama, status, kelas, jabatan, password } = body;
+      if (!nama || !status || !password) {
+        return sendJson(res, 400, { message: 'Nama, status, dan password wajib diisi.' });
+      }
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        usersData = { users: [] };
+      }
+
+      const salt = crypto.randomBytes(16).toString('hex');
+      const hash = hashPassword(password, salt);
+
+      const newUser = {
+        id: `user_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+        nama,
+        status,
+        kelas: status === 'siswa' ? (kelas || '') : null,
+        jabatan: status !== 'siswa' ? (jabatan || '') : null,
+        salt,
+        hash
+      };
+
+      usersData.users.push(newUser);
+      try {
+        await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Tambah pengguna: ${nama}`);
+        return sendJson(res, 201, { message: 'Pengguna berhasil ditambahkan.', user: { id: newUser.id, nama, status, kelas: newUser.kelas, jabatan: newUser.jabatan } });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menambah pengguna.' });
+      }
+    }
+
+    if (method === 'PUT' && parts[1] === 'users' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const userId = parts[2];
+      const { nama, status, kelas, jabatan, password } = body;
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
+      }
+
+      const userIdx = usersData.users.findIndex((u) => u.id === userId);
+      if (userIdx === -1) {
+        return sendJson(res, 404, { message: 'Pengguna tidak ditemukan.' });
+      }
+
+      const updated = { ...usersData.users[userIdx] };
+      if (nama) updated.nama = nama;
+      if (status) updated.status = status;
+      if (status === 'siswa') {
+        updated.kelas = kelas || updated.kelas || '';
+        updated.jabatan = null;
+      } else {
+        updated.jabatan = jabatan || updated.jabatan || '';
+        updated.kelas = null;
+      }
+      if (password) {
+        const salt = crypto.randomBytes(16).toString('hex');
+        updated.salt = salt;
+        updated.hash = hashPassword(password, salt);
+      }
+
+      usersData.users[userIdx] = updated;
+      try {
+        await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Update pengguna: ${updated.nama}`);
+        return sendJson(res, 200, { message: 'Pengguna berhasil diperbarui.', user: { id: updated.id, nama: updated.nama, status: updated.status, kelas: updated.kelas, jabatan: updated.jabatan } });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal memperbarui pengguna.' });
+      }
+    }
+
+    if (method === 'DELETE' && parts[1] === 'users' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const userId = parts[2];
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
+      }
+
+      const sebelum = usersData.users.length;
+      usersData.users = usersData.users.filter((u) => u.id !== userId);
+
+      if (usersData.users.length === sebelum) {
+        return sendJson(res, 404, { message: 'Pengguna tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Hapus pengguna: ${userId}`);
+        return sendJson(res, 200, { message: 'Pengguna berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus pengguna.' });
+      }
+    }
+
+    // ─── TAMU: LIST & DELETE ────────────────────────────────────────
+    if (method === 'GET' && route === 'guests') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let guestsData = { guests: [] };
+      try {
+        guestsData = JSON.parse(await readDataFile('guests.json'));
+        if (!Array.isArray(guestsData.guests)) guestsData.guests = [];
+      } catch {}
+
+      const reqUrl = new URL(`http://localhost${url}`);
+      const q = (reqUrl.searchParams.get('q') || '').trim().toLowerCase();
+      let hasil = guestsData.guests;
+      if (q) hasil = hasil.filter((g) => (g.nama || '').toLowerCase().includes(q));
+      hasil = [...hasil].sort((a, b) => new Date(b.waktuKunjungan) - new Date(a.waktuKunjungan));
+
+      return sendJson(res, 200, { total: hasil.length, data: hasil.slice(0, 500) });
+    }
+
+    if (method === 'DELETE' && parts[1] === 'guests' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const guestId = parts[2];
+      let guestsData = { guests: [] };
+      try {
+        guestsData = JSON.parse(await readDataFile('guests.json'));
+        if (!Array.isArray(guestsData.guests)) guestsData.guests = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data tamu tidak dapat dimuat.' });
+      }
+
+      const sebelum = guestsData.guests.length;
+      guestsData.guests = guestsData.guests.filter((g) => g.id !== guestId);
+
+      if (guestsData.guests.length === sebelum) {
+        return sendJson(res, 404, { message: 'Catatan tamu tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('guests.json', JSON.stringify(guestsData, null, 2), `Hapus catatan tamu: ${guestId}`);
+        return sendJson(res, 200, { message: 'Catatan tamu berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus catatan tamu.' });
+      }
+    }
+
+    // ─── PENGATURAN: GET & PUT ──────────────────────────────────────
+    if (method === 'GET' && route === 'settings') {
+      let settingsData = { 
+        namaSekolah: 'SMA Negeri Smansanam',
+        namaPerpus: 'Perpus Digital Smansanam',
+        logo: '📚',
+        warna: '#059669',
+        deskripsi: 'Sistem perpustakaan digital untuk sekolah kami'
+      };
+      try {
+        const data = JSON.parse(await readDataFile('settings.json'));
+        settingsData = { ...settingsData, ...data };
+      } catch {}
+      return sendJson(res, 200, settingsData);
+    }
+
+    if (method === 'PUT' && route === 'settings') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const { namaSekolah, namaPerpus, logo, warna, deskripsi } = body;
+      const settingsData = {
+        namaSekolah: namaSekolah || 'SMA Negeri Smansanam',
+        namaPerpus: namaPerpus || 'Perpus Digital Smansanam',
+        logo: logo || '📚',
+        warna: warna || '#059669',
+        deskripsi: deskripsi || 'Sistem perpustakaan digital'
+      };
+
+      try {
+        await writeDataFile('settings.json', JSON.stringify(settingsData, null, 2), 'Update pengaturan');
+        return sendJson(res, 200, { message: 'Pengaturan berhasil diperbarui.', settings: settingsData });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal memperbarui pengaturan.' });
+      }
+    }
+
     // ─── 404 ────────────────────────────────────────────────────────────
     return sendJson(res, 404, { message: 'Endpoint tidak ditemukan.' });
   } catch (err) {
