@@ -43,6 +43,17 @@
       "alasan": "Membaca Buku",
       "tanggal": "2026-08-15",
       "waktuAbsen": "2026-08-15T07:03:21.288Z"
+    },
+    {
+      "id": "abs_1786777977240_559a50",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "alasan": "Podcast",
+      "tanggal": "2026-08-15",
+      "waktuAbsen": "2026-08-15T07:12:57.240Z"
     }
   ]
 }
