@@ -388,6 +388,16 @@
   .alert.show { display: flex; }
   .alert i { margin-top: 1.5px; }
 
+  .info-box {
+    background: var(--gray-100);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 18px;
+    font-size: 11.5px;
+    color: var(--gray-700);
+    line-height: 1.7;
+  }
+
   .admin-access {
     text-align: center;
     margin-top: auto;
@@ -482,18 +492,6 @@
     margin-bottom: 20px;
   }
 
-  .demo-box {
-    background: var(--gray-100);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-top: 18px;
-    font-size: 11.5px;
-    color: var(--gray-700);
-    line-height: 1.7;
-  }
-
-  .demo-box strong { color: var(--green-800); }
-
   @media (max-width: 860px) {
     .wrapper { grid-template-columns: 1fr; max-width: 460px; }
     .brand-panel { display: none; }
@@ -545,7 +543,7 @@
   <div class="form-panel">
 
     <div class="form-head">
-      <h2>Selamat Datang 👋</h2>
+      <h2>Selamat Datang <i class="fa-solid fa-hand" style="color: var(--green-600); font-size: 20px; margin-left: 4px;"></i></h2>
       <p style="display:flex;align-items:center;gap:6px;">
         <i class="fa-solid fa-circle-info" style="color:var(--green-600);font-size:11.5px;"></i>
         Masuk untuk mengakses layanan perpustakaan digital.
@@ -613,12 +611,6 @@
           <i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Anggota
         </button>
       </form>
-
-      <div class="demo-box">
-        <i class="fa-solid fa-flask"></i> <strong>Akun demo:</strong><br>
-        Siswa — Ahmad Fauzan Ramadhan / XII IPA 1 / siswa123<br>
-        Guru — Siti Rahma, S.Pd / guru123
-      </div>
     </div>
 
     <!-- ══════ FORM TAMU ══════ -->
@@ -655,7 +647,7 @@
         </button>
       </form>
 
-      <div class="demo-box">
+      <div class="info-box">
         <i class="fa-solid fa-circle-info"></i>
         Kunjungan tamu akan dicatat otomatis oleh sistem dan tidak memerlukan password.
       </div>
@@ -704,10 +696,6 @@
         <i class="fa-solid fa-shield-halved"></i> Masuk ke Admin Panel
       </button>
     </form>
-
-    <div class="demo-box">
-      <i class="fa-solid fa-flask"></i> <strong>Akun demo:</strong> admin / admin123
-    </div>
   </div>
 </div>
 
