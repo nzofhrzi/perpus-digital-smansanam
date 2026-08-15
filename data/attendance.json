@@ -1,3 +1,17 @@
 {
-  "attendance": []
+  "attendance": [
+    {
+      "id": "abs_1786772180882_d2d9f5",
+      "userId": "tamu_1786772162323",
+      "nama": "Kenzo",
+      "status": "tamu",
+      "kelas": null,
+      "jabatan": "Rektor xyz",
+      "keperluan": "Membaca Buku",
+      "tanggal": "2026-08-15",
+      "waktuMasuk": "2026-08-15T05:36:20.883Z",
+      "waktuKeluar": null,
+      "durasiMenit": null
+    }
+  ]
 }
