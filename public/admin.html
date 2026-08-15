@@ -10,6 +10,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<!-- Library Pendukung Ekspor Data -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
   :root {
     --green-950: #052e21;
@@ -313,6 +319,22 @@
   }
   .att-btn-reset:hover { border-color: var(--green-600); color: var(--green-700); background: var(--green-50); }
 
+  .att-btn-export {
+    padding: 9.5px 16px;
+    border: 1.5px solid var(--green-600);
+    border-radius: 9px;
+    background: var(--green-50);
+    color: var(--green-800);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: var(--transition);
+    height: 41px;
+  }
+  .att-btn-export:hover { background: var(--green-600); color: var(--white); }
+
   /* Desktop Table Style */
   .att-table-wrap {
     background: var(--white);
@@ -351,6 +373,95 @@
   }
   .att-btn-del:hover { background: var(--danger); color: var(--white); }
 
+  /* ══════════ MODAL EKSPOR ══════════ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.22);
+    overflow: hidden;
+    animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal-header {
+    padding: 18px 20px;
+    background: var(--gray-100);
+    border-bottom: 1px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--green-950); display: flex; align-items: center; gap: 8px; }
+  .modal-close { background: none; border: none; font-size: 22px; color: var(--gray-500); cursor: pointer; padding: 0 4px; }
+  .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--gray-700); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .export-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .export-radio-card {
+    border: 1.5px solid var(--gray-300);
+    border-radius: 12px;
+    padding: 14px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+  }
+  .export-radio-card:has(input:checked) {
+    border-color: var(--green-600);
+    background: var(--green-50);
+  }
+  .export-radio-card input { display: none; }
+  .export-radio-card i { font-size: 24px; }
+  .icon-excel { color: #16a34a; }
+  .icon-pdf { color: #dc2626; }
+  .icon-png { color: #2563eb; }
+  .export-radio-card span { font-size: 11.5px; font-weight: 700; color: var(--black); }
+  .modal-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--white);
+  }
+  .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--gray-300);
+    display: flex; justify-content: flex-end; gap: 10px;
+    background: var(--gray-100);
+  }
+  .btn-cancel {
+    padding: 9.5px 16px; border: 1.5px solid var(--gray-300); border-radius: 9px;
+    background: var(--white); color: var(--gray-700); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-submit-export {
+    padding: 9.5px 18px; border: none; border-radius: 9px;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white); font-family: inherit; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-submit-export:hover { opacity: 0.95; }
+
   /* ══════════ RESPONSIVE MOBILE (ANDROID) ABSENSI ══════════ */
   @media (max-width: 640px) {
     .att-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -363,7 +474,7 @@
       padding: 14px;
     }
     .att-field, .att-field-search { width: 100%; min-width: unset; }
-    .att-btn-reset { width: 100%; height: 42px; }
+    .att-btn-reset, .att-btn-export { width: 100%; height: 42px; }
 
     /* Transformasi Tabel ke Tampilan List Card (Android Native Style) */
     .att-table-wrap {
@@ -674,6 +785,7 @@
           <input type="text" id="attFilterQ" placeholder="Ketik nama pengunjung...">
         </div>
         <button class="att-btn-reset" id="btnAttResetFilter"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        <button class="att-btn-export" id="btnOpenExportModal"><i class="fa-solid fa-file-export"></i> Ekspor Data</button>
       </div>
 
       <div class="att-table-wrap">
@@ -718,6 +830,50 @@
       </div>
     </section>
 
+  </div>
+</div>
+
+<!-- ══════════ MODAL DIALOG EKSPOR DATA ABSENSI ══════════ -->
+<div class="modal-overlay" id="modalExport">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-file-export"></i> Ekspor Data Absensi</h3>
+      <button class="modal-close" id="btnCloseExportModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Pilih Format File</label>
+        <div class="export-options-grid">
+          <label class="export-radio-card">
+            <input type="radio" name="exportFormat" value="excel" checked>
+            <i class="fa-solid fa-file-excel icon-excel"></i>
+            <span>Excel (.xlsx)</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="exportFormat" value="pdf">
+            <i class="fa-solid fa-file-pdf icon-pdf"></i>
+            <span>PDF (.pdf)</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="exportFormat" value="png">
+            <i class="fa-solid fa-file-image icon-png"></i>
+            <span>Gambar (.png)</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Rentang Waktu Data</label>
+        <select id="exportRange" class="modal-select">
+          <option value="1bulan">1 Bulan Terakhir</option>
+          <option value="1tahun">1 Tahun Terakhir</option>
+          <option value="semua" selected>Seluruh Data</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="btnCancelExport">Batal</button>
+      <button class="btn-submit-export" id="btnDoExport"><i class="fa-solid fa-download"></i> Unduh File</button>
+    </div>
   </div>
 </div>
 
@@ -928,6 +1084,225 @@
   // Muat data absensi jika halaman dibuka langsung pada tab absensi (mis. refresh)
   if (document.getElementById('section-absensi').classList.contains('active')) {
     loadAttendanceAdmin();
+  }
+
+  // ══════ FUNGSI LOGIK EKSPOR ABSENSI ══════
+  const modalExport = document.getElementById('modalExport');
+  const btnOpenExportModal = document.getElementById('btnOpenExportModal');
+  const btnCloseExportModal = document.getElementById('btnCloseExportModal');
+  const btnCancelExport = document.getElementById('btnCancelExport');
+  const btnDoExport = document.getElementById('btnDoExport');
+
+  if (btnOpenExportModal) {
+    btnOpenExportModal.addEventListener('click', () => modalExport.classList.add('show'));
+  }
+  if (btnCloseExportModal) {
+    btnCloseExportModal.addEventListener('click', () => modalExport.classList.remove('show'));
+  }
+  if (btnCancelExport) {
+    btnCancelExport.addEventListener('click', () => modalExport.classList.remove('show'));
+  }
+  if (modalExport) {
+    modalExport.addEventListener('click', (e) => {
+      if (e.target === modalExport) modalExport.classList.remove('show');
+    });
+  }
+
+  async function exportAttendanceData() {
+    const format = document.querySelector('input[name="exportFormat"]:checked')?.value || 'excel';
+    const range = document.getElementById('exportRange')?.value || 'semua';
+
+    btnDoExport.disabled = true;
+    btnDoExport.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`;
+
+    try {
+      const res = await fetch(`${API_BASE}/attendance`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.message || 'Gagal mengambil data absensi.');
+
+      let list = resData.data || [];
+
+      // Filter Berdasarkan Rentang Waktu yang Dipilih
+      const now = new Date();
+      if (range === '1bulan') {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(now.getDate() - 30);
+        list = list.filter(item => item.tanggal && new Date(`${item.tanggal}T00:00:00+07:00`) >= thirtyDaysAgo);
+      } else if (range === '1tahun') {
+        const oneYearAgo = new Date();
+        oneYearAgo.setDate(now.getDate() - 365);
+        list = list.filter(item => item.tanggal && new Date(`${item.tanggal}T00:00:00+07:00`) >= oneYearAgo);
+      }
+
+      if (list.length === 0) {
+        alert('Tidak ada data absensi untuk rentang waktu yang dipilih.');
+        return;
+      }
+
+      const rangeText = range === '1bulan' ? '1 Bulan Terakhir' : (range === '1tahun' ? '1 Tahun Terakhir' : 'Seluruh Data');
+      const datePrinted = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      if (format === 'excel') {
+        exportToExcel(list, rangeText, datePrinted);
+      } else if (format === 'pdf') {
+        exportToPDF(list, rangeText, datePrinted);
+      } else if (format === 'png') {
+        await exportToPNG(list, rangeText, datePrinted);
+      }
+
+      modalExport.classList.remove('show');
+    } catch (err) {
+      alert('Gagal melakukan ekspor data: ' + err.message);
+    } finally {
+      btnDoExport.disabled = false;
+      btnDoExport.innerHTML = `<i class="fa-solid fa-download"></i> Unduh File`;
+    }
+  }
+
+  function exportToExcel(data, rangeText, datePrinted) {
+    const sheetData = [
+      ['PERPUSTAKAAN DIGITAL SMANSANAM'],
+      ['REKAPITULASI DATA ABSENSI PENGUNJUNG'],
+      [`Rentang Waktu: ${rangeText} | Tanggal Cetak: ${datePrinted}`],
+      [],
+      ['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal Absen', 'Waktu Absen', 'Alasan Kunjungan']
+    ];
+
+    data.forEach((r, idx) => {
+      sheetData.push([
+        idx + 1,
+        r.nama || '-',
+        r.status || '-',
+        r.kelas || r.jabatan || '-',
+        fmtTanggal(r.tanggal),
+        fmtJam(r.waktuAbsen),
+        r.alasan || '-'
+      ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws['!cols'] = [
+      { wch: 6 },
+      { wch: 25 },
+      { wch: 14 },
+      { wch: 22 },
+      { wch: 18 },
+      { wch: 14 },
+      { wch: 28 }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
+    XLSX.writeFile(wb, `Rekap_Absensi_Smansanam_${rangeText.replace(/\s+/g, '_')}.xlsx`);
+  }
+
+  function exportToPDF(data, rangeText, datePrinted) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(5, 46, 33);
+    doc.text('PERPUSTAKAAN DIGITAL SMANSANAM', 14, 15);
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(55, 65, 81);
+    doc.text(`Rekapitulasi Data Absensi Pengunjung (${rangeText})`, 14, 22);
+    doc.setFontSize(9);
+    doc.text(`Dicetak pada: ${datePrinted} | Total Record: ${data.length}`, 14, 27);
+
+    const tableRows = data.map((r, idx) => [
+      idx + 1,
+      r.nama || '-',
+      r.status || '-',
+      r.kelas || r.jabatan || '-',
+      fmtTanggal(r.tanggal),
+      fmtJam(r.waktuAbsen),
+      r.alasan || '-'
+    ]);
+
+    doc.autoTable({
+      startY: 32,
+      head: [['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal', 'Waktu Absen', 'Alasan Kunjungan']],
+      body: tableRows,
+      theme: 'striped',
+      headStyles: { fillColor: [5, 150, 105], textColor: [255, 255, 255], fontStyle: 'bold' },
+      styles: { fontSize: 9, cellPadding: 3 },
+      columnStyles: {
+        0: { cellWidth: 12, halign: 'center' },
+        1: { cellWidth: 50 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 35 },
+        5: { cellWidth: 30 },
+        6: { cellWidth: 'auto' }
+      }
+    });
+
+    doc.save(`Rekap_Absensi_Smansanam_${rangeText.replace(/\s+/g, '_')}.pdf`);
+  }
+
+  async function exportToPNG(data, rangeText, datePrinted) {
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.top = '-9999px';
+    container.style.left = '-9999px';
+    container.style.width = '1000px';
+    container.style.background = '#ffffff';
+    container.style.padding = '30px';
+    container.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+
+    let rowsHtml = data.map((r, idx) => `
+      <tr style="border-bottom: 1px solid #e5e7eb;">
+        <td style="padding: 10px; text-align: center;">${idx + 1}</td>
+        <td style="padding: 10px; font-weight: 600;">${escapeHtml(r.nama || '-')}</td>
+        <td style="padding: 10px; text-transform: capitalize;">${escapeHtml(r.status || '-')}</td>
+        <td style="padding: 10px;">${escapeHtml(r.kelas || r.jabatan || '-')}</td>
+        <td style="padding: 10px;">${fmtTanggal(r.tanggal)}</td>
+        <td style="padding: 10px;">${fmtJam(r.waktuAbsen)}</td>
+        <td style="padding: 10px;">${escapeHtml(r.alasan || '-')}</td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="margin-bottom: 20px; border-bottom: 2px solid #059669; padding-bottom: 12px;">
+        <h2 style="color: #052e21; font-size: 20px; font-weight: 800; margin-bottom: 4px;">PERPUSTAKAAN DIGITAL SMANSANAM</h2>
+        <p style="color: #059669; font-size: 14px; font-weight: 700; margin: 0;">REKAPITULASI DATA ABSENSI PENGUNJUNG (${escapeHtml(rangeText)})</p>
+        <p style="color: #6b7280; font-size: 11px; margin-top: 4px;">Tanggal Cetak: ${escapeHtml(datePrinted)} | Total Data: ${data.length}</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #10151b;">
+        <thead>
+          <tr style="background: #ecfdf5; color: #047857; text-align: left; font-weight: 700;">
+            <th style="padding: 12px 10px; text-align: center;">No</th>
+            <th style="padding: 12px 10px;">Nama Pengunjung</th>
+            <th style="padding: 12px 10px;">Status</th>
+            <th style="padding: 12px 10px;">Kelas / Jabatan</th>
+            <th style="padding: 12px 10px;">Tanggal</th>
+            <th style="padding: 12px 10px;">Waktu Absen</th>
+            <th style="padding: 12px 10px;">Alasan Kunjungan</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    `;
+
+    document.body.appendChild(container);
+    const canvas = await html2canvas(container, { scale: 2 });
+    document.body.removeChild(container);
+
+    const link = document.createElement('a');
+    link.download = `Rekap_Absensi_Smansanam_${rangeText.replace(/\s+/g, '_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  if (btnDoExport) {
+    btnDoExport.addEventListener('click', exportAttendanceData);
   }
 </script>
 
