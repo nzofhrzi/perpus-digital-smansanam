@@ -273,6 +273,54 @@
   .welcome-card h1 { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; position: relative; }
   .welcome-card p { font-size: 13.5px; color: var(--green-100); max-width: 520px; line-height: 1.6; position: relative; }
 
+  /* ══════════ KARTU INFORMASI PERPUSTAKAAN ══════════ */
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 22px 24px;
+    margin-bottom: 26px;
+  }
+
+  .info-card-main { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+
+  .info-card-icon {
+    width: 54px; height: 54px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--green-600), var(--green-900));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 18px -6px rgba(5,150,105,0.4);
+  }
+
+  .info-card-text h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+  .info-card-text p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+  .info-card-school {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 8px; font-size: 11.5px; font-weight: 700;
+    color: var(--green-800); background: var(--green-50);
+    padding: 4px 11px; border-radius: 20px; border: 1px solid var(--green-100);
+  }
+
+  .info-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .info-mini-item { display: flex; align-items: flex-start; gap: 10px; }
+  .info-mini-item i { width: 32px; height: 32px; border-radius: 9px; background: var(--green-50); color: var(--green-700); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .info-mini-item div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .info-mini-item strong { font-size: 12px; color: var(--black); font-weight: 700; }
+  .info-mini-item span { font-size: 11.5px; color: var(--gray-500); line-height: 1.4; }
+
+  @media (max-width: 1000px) { .info-card-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .info-card-grid { grid-template-columns: 1fr; } .info-card-main { flex-direction: column; align-items: flex-start; } }
+
   .stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -794,6 +842,80 @@
   }
   .toast-notice.show { transform: translateY(0); opacity: 1; }
 
+  /* ══════════ MODAL EDIT PROFIL & GANTI PASSWORD ══════════ */
+  .modal-overlay-p {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(6, 20, 15, 0.6);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+    z-index: 210;
+    padding: 20px;
+  }
+  .modal-overlay-p.show { display: flex; animation: fadeIn 0.2s ease; }
+
+  .modal-box-p {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%; max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45);
+  }
+
+  .modal-box-p-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 22px; border-bottom: 1px solid var(--gray-200);
+  }
+  .modal-box-p-header h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
+  .modal-box-p-header i.hdr-icon { color: var(--green-600); }
+
+  .modal-close-p {
+    width: 32px; height: 32px; border-radius: 9px; border: none;
+    background: var(--gray-100); color: var(--gray-700); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .modal-close-p:hover { background: var(--danger-bg); color: var(--danger); }
+
+  .modal-box-p-body { padding: 20px 22px; }
+
+  .p-field { margin-bottom: 15px; }
+  .p-field label { display: block; font-size: 12.5px; font-weight: 700; color: var(--gray-700); margin-bottom: 7px; }
+  .p-field input, .p-field select {
+    width: 100%; padding: 11px 13px; border-radius: 10px; border: 1.5px solid var(--gray-300);
+    font-family: inherit; font-size: 13.5px; color: var(--black); background: var(--white); transition: var(--transition);
+  }
+  .p-field input:focus, .p-field select:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5,150,105,0.14); }
+  .p-field .hint-small { font-size: 11px; color: var(--gray-500); margin-top: 5px; }
+
+  .p-form-error {
+    display: none; align-items: flex-start; gap: 9px; padding: 11px 13px; border-radius: 10px;
+    background: var(--danger-bg); color: var(--danger); font-size: 12.5px; font-weight: 500; margin-bottom: 15px; line-height: 1.5;
+  }
+  .p-form-error.show { display: flex; }
+
+  .modal-box-p-footer { display: flex; gap: 10px; padding: 16px 22px; border-top: 1px solid var(--gray-200); }
+  .btn-p-cancel {
+    flex: 1; padding: 11px; border-radius: 11px; border: 1.5px solid var(--gray-300); background: var(--white);
+    color: var(--gray-700); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--transition);
+  }
+  .btn-p-cancel:hover { background: var(--gray-100); }
+  .btn-p-submit {
+    flex: 1.5; padding: 11px; border-radius: 11px; border: none;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800)); color: var(--white);
+    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: var(--transition);
+  }
+  .btn-p-submit:hover { transform: translateY(-1px); }
+  .btn-p-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+  .tamu-notice-card {
+    background: var(--amber-bg); border: 1px solid rgba(180,83,9,0.2); color: var(--amber);
+    border-radius: 12px; padding: 14px 16px; font-size: 12.5px; line-height: 1.6;
+    display: flex; align-items: flex-start; gap: 10px; margin-top: 6px;
+  }
+
   /* ══════════ RESPONSIVE ANDROID & MOBILE OPTIMIZATIONS ══════════ */
   @media (max-width: 1000px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -951,10 +1073,40 @@
         <p>Jelajahi koleksi buku digital, catat kehadiran Anda, dan pantau aktivitas literasi langsung dari dashboard ini.</p>
       </div>
 
+      <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Informasi Perpustakaan</div>
+      <div class="info-card" id="infoCard">
+        <div class="info-card-main">
+          <div class="info-card-icon" id="infoLogo">📚</div>
+          <div class="info-card-text">
+            <h3 id="infoNamaPerpus">Memuat informasi...</h3>
+            <p id="infoDeskripsi">&nbsp;</p>
+            <span class="info-card-school" id="infoNamaSekolah"></span>
+          </div>
+        </div>
+        <div class="info-card-grid">
+          <div class="info-mini-item">
+            <i class="fa-solid fa-clock"></i>
+            <div><strong>Jam Layanan</strong><span>Senin–Jumat, 07.00–15.00 WIB</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-fingerprint"></i>
+            <div><strong>Absensi Wajib</strong><span>Absen setiap kali berkunjung ke perpustakaan</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <div><strong>Baca Digital</strong><span>Seluruh koleksi tersedia untuk dibaca online</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <div><strong>Tata Tertib</strong><span>Jaga ketenangan &amp; kebersihan ruang perpustakaan</span></div>
+          </div>
+        </div>
+      </div>
+
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-icon" style="background:linear-gradient(135deg,#059669,#065f46);"><i class="fa-solid fa-book"></i></div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="statBukuTersedia">0</div>
           <div class="stat-label">Buku Tersedia</div>
         </div>
         <div class="stat-card">
@@ -963,23 +1115,15 @@
           <div class="stat-label">Kehadiran Bulan Ini</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:linear-gradient(135deg,#34d399,#059669);"><i class="fa-solid fa-book-open-reader"></i></div>
-          <div class="stat-value">0</div>
-          <div class="stat-label">Buku Dibaca</div>
+          <div class="stat-icon" style="background:linear-gradient(135deg,#34d399,#059669);"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="stat-value" id="statTotalKunjungan">0</div>
+          <div class="stat-label">Total Kunjungan</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:linear-gradient(135deg,#065f46,#052e21);"><i class="fa-solid fa-clock"></i></div>
-          <div class="stat-value">0 jam</div>
-          <div class="stat-label">Waktu Membaca</div>
+          <div class="stat-icon" style="background:linear-gradient(135deg,#065f46,#052e21);"><i class="fa-solid fa-list-check"></i></div>
+          <div class="stat-value" id="statAlasanFavorit">-</div>
+          <div class="stat-label">Aktivitas Favorit</div>
         </div>
-      </div>
-
-      <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Informasi</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-layer-group"></i></div>
-        <h3>Modul lengkap segera hadir</h3>
-        <p>Saat ini sistem berada pada tahap awal — fitur login, dashboard, &amp; absensi kehadiran sudah aktif. Fitur baca buku digital siap digunakan.</p>
-        <div class="tag"><i class="fa-solid fa-circle-check"></i> Sistem Aktif</div>
       </div>
     </section>
 
@@ -1056,6 +1200,10 @@
           <span class="status-chip" id="profileStatus">-</span>
 
           <button class="btn-profile-edit" id="btnEditProfile" style="width:100%; justify-content:center; margin-top:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit Informasi Profil</button>
+          <div class="tamu-notice-card" id="tamuNotice" style="display:none;">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Akun tamu bersifat sementara dan tidak memiliki data login, sehingga tidak dapat diedit.</span>
+          </div>
         </div>
 
         <!-- Profile Details List -->
@@ -1128,6 +1276,76 @@
   </div>
 </div>
 
+<!-- ══════════ MODAL EDIT PROFIL ══════════ -->
+<div class="modal-overlay-p" id="modalEditProfile">
+  <div class="modal-box-p">
+    <div class="modal-box-p-header">
+      <h3><i class="fa-solid fa-pen-to-square hdr-icon"></i> Edit Informasi Profil</h3>
+      <button class="modal-close-p" id="btnCloseEditProfile"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="formEditProfile">
+      <div class="modal-box-p-body">
+        <div class="p-form-error" id="editProfileError"><i class="fa-solid fa-circle-exclamation"></i><span id="editProfileErrorText"></span></div>
+        <div class="p-field">
+          <label for="editNama">Nama Lengkap</label>
+          <input type="text" id="editNama" required>
+        </div>
+        <div class="p-field" id="editKelasWrap">
+          <label for="editKelas">Kelas</label>
+          <select id="editKelas">
+            <option value="10.1">10.1</option><option value="10.2">10.2</option><option value="10.3">10.3</option>
+            <option value="10.4">10.4</option><option value="10.5">10.5</option><option value="10.6">10.6</option>
+            <option value="11.1">11.1</option><option value="11.2">11.2</option><option value="11.3">11.3</option>
+            <option value="11.4">11.4</option><option value="11.5">11.5</option><option value="11.6">11.6</option>
+            <option value="12.1">12.1</option><option value="12.2">12.2</option><option value="12.3">12.3</option>
+            <option value="12.4">12.4</option><option value="12.5">12.5</option><option value="12.6">12.6</option>
+          </select>
+        </div>
+        <div class="p-field" id="editJabatanWrap">
+          <label for="editJabatan">Jabatan</label>
+          <input type="text" id="editJabatan" placeholder="Contoh: Wali Kelas / Staf TU">
+        </div>
+      </div>
+      <div class="modal-box-p-footer">
+        <button type="button" class="btn-p-cancel" id="btnCancelEditProfile">Batal</button>
+        <button type="submit" class="btn-p-submit" id="btnSubmitEditProfile"><i class="fa-solid fa-check"></i> Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ MODAL GANTI PASSWORD ══════════ -->
+<div class="modal-overlay-p" id="modalChangePassword">
+  <div class="modal-box-p">
+    <div class="modal-box-p-header">
+      <h3><i class="fa-solid fa-key hdr-icon"></i> Ubah Password</h3>
+      <button class="modal-close-p" id="btnCloseChangePassword"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="formChangePassword">
+      <div class="modal-box-p-body">
+        <div class="p-form-error" id="changePassError"><i class="fa-solid fa-circle-exclamation"></i><span id="changePassErrorText"></span></div>
+        <div class="p-field">
+          <label for="currentPassword">Password Saat Ini</label>
+          <input type="password" id="currentPassword" required>
+        </div>
+        <div class="p-field">
+          <label for="newPassword">Password Baru</label>
+          <input type="password" id="newPassword" required minlength="4">
+          <div class="hint-small">Minimal 4 karakter.</div>
+        </div>
+        <div class="p-field">
+          <label for="confirmNewPassword">Konfirmasi Password Baru</label>
+          <input type="password" id="confirmNewPassword" required minlength="4">
+        </div>
+      </div>
+      <div class="modal-box-p-footer">
+        <button type="button" class="btn-p-cancel" id="btnCancelChangePassword">Batal</button>
+        <button type="submit" class="btn-p-submit" id="btnSubmitChangePassword"><i class="fa-solid fa-check"></i> Ubah Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- TOAST NOTIFICATION PLACEHOLDER -->
 <div class="toast-notice" id="toastNotice"><i class="fa-solid fa-circle-info"></i><span id="toastMsg">Fitur segera hadir!</span></div>
 
@@ -1136,7 +1354,7 @@
   const API_BASE = '/api';
 
   // ══════ AUTH GUARD ══════
-  const token = localStorage.getItem('perpus_token');
+  let token = localStorage.getItem('perpus_token');
   const userRaw = localStorage.getItem('perpus_user');
 
   if (!token || !userRaw) {
@@ -1202,10 +1420,166 @@
     document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
   }
 
-  // Action Edit Placeholders
-  document.getElementById('btnEditAvatar').addEventListener('click', () => showToast('Fitur ubah foto profil akan segera aktif.'));
-  document.getElementById('btnEditProfile').addEventListener('click', () => showToast('Fitur edit informasi profil akan segera aktif.'));
-  document.getElementById('btnChangePassword').addEventListener('click', () => showToast('Fitur ubah password akan segera aktif.'));
+  // ══════ KARTU INFORMASI PERPUSTAKAAN (BERANDA) ══════
+  async function loadInfoCard() {
+    try {
+      const res = await fetch(`${API_BASE}/settings`);
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      document.getElementById('infoLogo').textContent = data.logo || '📚';
+      document.getElementById('infoNamaPerpus').textContent = data.namaPerpus || 'Perpustakaan Digital';
+      document.getElementById('infoDeskripsi').textContent = data.deskripsi || 'Sistem perpustakaan digital sekolah.';
+      document.getElementById('infoNamaSekolah').innerHTML = `<i class="fa-solid fa-school"></i> ${data.namaSekolah || ''}`;
+    } catch {
+      document.getElementById('infoNamaPerpus').textContent = 'Perpustakaan Digital';
+      document.getElementById('infoDeskripsi').textContent = 'Jelajahi koleksi buku digital & catat kehadiran Anda di sini.';
+    }
+  }
+  loadInfoCard();
+
+  async function loadBookCountForHome() {
+    try {
+      const res = await fetch(`${API_BASE}/books`);
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      document.getElementById('statBukuTersedia').textContent = (data.books || []).length;
+    } catch {}
+  }
+  loadBookCountForHome();
+
+  // ══════ EDIT PROFIL & GANTI PASSWORD ══════
+  const isTamu = currentUser.status === 'tamu';
+  const modalEditProfile = document.getElementById('modalEditProfile');
+  const modalChangePassword = document.getElementById('modalChangePassword');
+
+  if (isTamu) {
+    document.getElementById('btnEditProfile').style.display = 'none';
+    document.getElementById('btnChangePassword').style.display = 'none';
+    document.getElementById('btnEditAvatar').style.display = 'none';
+    document.getElementById('tamuNotice').style.display = 'flex';
+  } else {
+    document.getElementById('btnEditAvatar').addEventListener('click', () => showToast('Fitur ubah foto profil akan segera aktif.'));
+
+    // ── EDIT PROFIL ──
+    const editProfileError = document.getElementById('editProfileError');
+    const editProfileErrorText = document.getElementById('editProfileErrorText');
+    const btnSubmitEditProfile = document.getElementById('btnSubmitEditProfile');
+
+    function openEditProfileModal() {
+      editProfileError.classList.remove('show');
+      document.getElementById('editNama').value = currentUser.nama || '';
+      if (currentUser.status === 'siswa') {
+        document.getElementById('editKelasWrap').style.display = 'block';
+        document.getElementById('editJabatanWrap').style.display = 'none';
+        document.getElementById('editKelas').value = currentUser.kelas || '';
+      } else {
+        document.getElementById('editKelasWrap').style.display = 'none';
+        document.getElementById('editJabatanWrap').style.display = 'block';
+        document.getElementById('editJabatan').value = currentUser.jabatan || '';
+      }
+      modalEditProfile.classList.add('show');
+    }
+
+    document.getElementById('btnEditProfile').addEventListener('click', openEditProfileModal);
+    document.getElementById('btnCloseEditProfile').addEventListener('click', () => modalEditProfile.classList.remove('show'));
+    document.getElementById('btnCancelEditProfile').addEventListener('click', () => modalEditProfile.classList.remove('show'));
+    modalEditProfile.addEventListener('click', (e) => { if (e.target === modalEditProfile) modalEditProfile.classList.remove('show'); });
+
+    document.getElementById('formEditProfile').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      editProfileError.classList.remove('show');
+      const payload = { nama: document.getElementById('editNama').value.trim() };
+      if (currentUser.status === 'siswa') {
+        payload.kelas = document.getElementById('editKelas').value;
+      } else {
+        payload.jabatan = document.getElementById('editJabatan').value.trim();
+      }
+      btnSubmitEditProfile.disabled = true;
+      btnSubmitEditProfile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal memperbarui profil.');
+
+        currentUser = { ...currentUser, ...data.user };
+        localStorage.setItem('perpus_user', JSON.stringify(currentUser));
+        localStorage.setItem('perpus_token', data.token);
+        token = data.token;
+
+        document.getElementById('userAvatar').textContent = initials(currentUser.nama);
+        document.getElementById('userName').textContent = currentUser.nama;
+        document.getElementById('welcomeText').textContent = `Selamat datang, ${currentUser.nama.split(' ')[0]}! 👋`;
+        document.getElementById('profileAvatar').textContent = initials(currentUser.nama);
+        document.getElementById('profileName').textContent = currentUser.nama;
+        if (currentUser.status === 'siswa') document.getElementById('profileKelas').textContent = currentUser.kelas || '-';
+        else document.getElementById('profileJabatan').textContent = currentUser.jabatan || '-';
+
+        modalEditProfile.classList.remove('show');
+        showToast('Profil berhasil diperbarui.');
+      } catch (err) {
+        editProfileErrorText.textContent = err.message;
+        editProfileError.classList.add('show');
+      } finally {
+        btnSubmitEditProfile.disabled = false;
+        btnSubmitEditProfile.innerHTML = '<i class="fa-solid fa-check"></i> Simpan Perubahan';
+      }
+    });
+
+    // ── GANTI PASSWORD ──
+    const changePassError = document.getElementById('changePassError');
+    const changePassErrorText = document.getElementById('changePassErrorText');
+    const btnSubmitChangePassword = document.getElementById('btnSubmitChangePassword');
+
+    document.getElementById('btnChangePassword').addEventListener('click', () => {
+      changePassError.classList.remove('show');
+      document.getElementById('formChangePassword').reset();
+      modalChangePassword.classList.add('show');
+    });
+    document.getElementById('btnCloseChangePassword').addEventListener('click', () => modalChangePassword.classList.remove('show'));
+    document.getElementById('btnCancelChangePassword').addEventListener('click', () => modalChangePassword.classList.remove('show'));
+    modalChangePassword.addEventListener('click', (e) => { if (e.target === modalChangePassword) modalChangePassword.classList.remove('show'); });
+
+    document.getElementById('formChangePassword').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      changePassError.classList.remove('show');
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+      if (newPassword !== confirmNewPassword) {
+        changePassErrorText.textContent = 'Konfirmasi password baru tidak sama.';
+        changePassError.classList.add('show');
+        return;
+      }
+
+      btnSubmitChangePassword.disabled = true;
+      btnSubmitChangePassword.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ currentPassword, newPassword, confirmNewPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengubah password.');
+
+        localStorage.setItem('perpus_token', data.token);
+        token = data.token;
+        modalChangePassword.classList.remove('show');
+        showToast('Password berhasil diubah.');
+      } catch (err) {
+        changePassErrorText.textContent = err.message;
+        changePassError.classList.add('show');
+      } finally {
+        btnSubmitChangePassword.disabled = false;
+        btnSubmitChangePassword.innerHTML = '<i class="fa-solid fa-check"></i> Ubah Password';
+      }
+    });
+  }
 
   // ══════ NAVIGASI SIDEBAR ══════
   const pageMeta = {
@@ -1335,6 +1709,19 @@
       renderHistory(data.riwayat);
       const statKehadiran = document.getElementById('statKehadiranBulanIni');
       if (statKehadiran) statKehadiran.textContent = data.totalBulanIni ?? 0;
+
+      const riwayat = data.riwayat || [];
+      const statTotalKunjungan = document.getElementById('statTotalKunjungan');
+      if (statTotalKunjungan) statTotalKunjungan.textContent = riwayat.length;
+
+      const statAlasanFavorit = document.getElementById('statAlasanFavorit');
+      if (statAlasanFavorit) {
+        const freq = {};
+        riwayat.forEach(r => { freq[r.alasan] = (freq[r.alasan] || 0) + 1; });
+        let top = '-', max = 0;
+        Object.entries(freq).forEach(([k, v]) => { if (v > max) { max = v; top = k; } });
+        statAlasanFavorit.textContent = top;
+      }
     } catch (err) {
       attStatusValue.innerHTML = `<span class="dot"></span> Gagal memuat status`;
       attStatusMeta.textContent = 'Periksa koneksi Anda dan coba muat ulang halaman.';
