@@ -54,6 +54,17 @@
       "alasan": "Podcast",
       "tanggal": "2026-08-15",
       "waktuAbsen": "2026-08-15T07:12:57.240Z"
+    },
+    {
+      "id": "abs_1786784327040_3ca156",
+      "userId": "usr_1786784310246_9b588b",
+      "nama": "Fikri",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "IT Support",
+      "alasan": "Membaca Buku",
+      "tanggal": "2026-08-15",
+      "waktuAbsen": "2026-08-15T08:58:47.040Z"
     }
   ]
 }
