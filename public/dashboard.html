@@ -459,6 +459,112 @@
     .att-form-wrap { padding: 16px; }
   }
 
+  /* ══════════ KOLEKSI BUKU (BACA ONLINE) ══════════ */
+  .book-toolbar { margin-bottom: 16px; }
+  .book-search-wrap {
+    position: relative;
+    max-width: 360px;
+  }
+  .book-search-wrap i {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-500); font-size: 13px;
+  }
+  .book-search-wrap input {
+    width: 100%; padding: 10px 12px 10px 36px;
+    border: 1.5px solid var(--gray-300); border-radius: 10px;
+    font-family: inherit; font-size: 13px; background: var(--white);
+  }
+  .book-search-wrap input:focus { outline: none; border-color: var(--green-600); }
+
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .book-card {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+  .book-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .book-cover {
+    height: 130px;
+    background: linear-gradient(135deg, var(--green-700), var(--green-950));
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.85);
+    font-size: 34px;
+  }
+  .book-info { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .book-info h4 { font-family: 'Poppins', sans-serif; font-size: 13.5px; color: var(--black); line-height: 1.35; }
+  .book-info .author { font-size: 12px; color: var(--gray-500); }
+  .book-info .meta-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  .btn-read-book {
+    margin-top: auto;
+    padding: 8px 12px; border: none; border-radius: 8px;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white); font-family: inherit; font-size: 12.5px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-read-book:hover { opacity: 0.95; }
+  .btn-read-book:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ══════════ MODAL PEMBACA PDF (READ-ONLY) ══════════ */
+  .pdf-modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 12px;
+  }
+  .pdf-modal-overlay.show { display: flex; }
+  .pdf-modal-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    width: 100%; max-width: 900px; height: 92vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .pdf-modal-header {
+    padding: 14px 18px;
+    background: var(--green-950);
+    color: var(--white);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .pdf-modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pdf-modal-header .pdf-close-btn { background: rgba(255,255,255,0.12); border: none; color: var(--white); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; flex-shrink: 0; }
+  .pdf-readonly-badge {
+    background: var(--amber-bg); color: var(--amber);
+    font-size: 11px; font-weight: 700; padding: 6px 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .pdf-viewer-body { flex: 1; position: relative; background: #525659; overflow: auto; }
+  #pdfCanvasContainer { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 0 40px; user-select: none; }
+  #pdfCanvasContainer canvas { box-shadow: 0 2px 10px rgba(0,0,0,0.3); max-width: 100%; }
+  .pdf-nav-bar {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 10px; background: var(--gray-100); border-top: 1px solid var(--gray-300);
+  }
+  .pdf-nav-bar button {
+    background: var(--white); border: 1.5px solid var(--gray-300); border-radius: 8px;
+    width: 32px; height: 32px; cursor: pointer; color: var(--green-800);
+  }
+  .pdf-nav-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pdf-nav-bar span { font-size: 12.5px; font-weight: 600; color: var(--gray-700); }
+  .pdf-loading, .pdf-error {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--white); gap: 10px; font-size: 13px; text-align: center; padding: 20px;
+  }
+  .pdf-error { color: var(--white); }
+  .pdf-error i { font-size: 30px; color: #fca5a5; }
+
   .profile-card {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -668,11 +774,16 @@
     <!-- ══════ BACA BUKU ══════ -->
     <section class="section-view" id="section-baca">
       <div class="section-title"><i class="fa-solid fa-book-open"></i> Baca Buku Online</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-book-open"></i></div>
-        <h3>Koleksi Buku Digital</h3>
-        <p>Koleksi e-book &amp; e-modul sekolah akan dapat dibaca langsung di sini (tampil layar / preview) tanpa opsi unduh.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+
+      <div class="book-toolbar">
+        <div class="book-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="bookSearchInput" placeholder="Cari judul atau pengarang...">
+        </div>
+      </div>
+
+      <div id="bookGrid" class="book-grid">
+        <div class="att-empty" style="padding:40px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat koleksi buku...</div>
       </div>
     </section>
 
@@ -710,6 +821,30 @@
   </div>
 </div>
 
+<!-- ══════════ MODAL PEMBACA PDF (READ-ONLY, TANPA UNDUH) ══════════ -->
+<div class="pdf-modal-overlay" id="pdfModal" oncontextmenu="return false;">
+  <div class="pdf-modal-card">
+    <div class="pdf-modal-header">
+      <h3 id="pdfModalTitle"><i class="fa-solid fa-book-open"></i> Judul Buku</h3>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="pdf-readonly-badge"><i class="fa-solid fa-lock"></i> Hanya Baca</span>
+        <button class="pdf-close-btn" id="btnClosePdfModal" title="Tutup"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="pdf-viewer-body" id="pdfViewerBody" oncontextmenu="return false;">
+      <div id="pdfCanvasContainer"></div>
+      <div class="pdf-loading" id="pdfLoading"><i class="fa-solid fa-spinner fa-spin" style="font-size:26px;"></i><span>Memuat buku...</span></div>
+      <div class="pdf-error" id="pdfError" style="display:none;"><i class="fa-solid fa-triangle-exclamation"></i><span>Gagal memuat file PDF. Periksa kembali link PDF buku ini.</span></div>
+    </div>
+    <div class="pdf-nav-bar">
+      <button id="btnPdfPrev" title="Halaman sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+      <span id="pdfPageInfo">Halaman - / -</span>
+      <button id="btnPdfNext" title="Halaman berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   const API_BASE = '/api';
 
@@ -789,6 +924,7 @@
       document.getElementById('section-' + sec).classList.add('active');
       document.getElementById('pageTitle').textContent = pageMeta[sec].title;
       document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
+      if (sec === 'baca') loadBooks();
       closeMobileSidebar();
     });
   });
@@ -938,6 +1074,181 @@
   });
 
   loadAttendance();
+
+  // ══════ KOLEKSI BUKU (BACA ONLINE) ══════
+  let cachedBooksUser = [];
+  let booksLoadedOnce = false;
+
+  function escapeHtmlUser(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  async function loadBooks() {
+    const grid = document.getElementById('bookGrid');
+    try {
+      const res = await fetch(`${API_BASE}/books`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat koleksi buku.');
+      cachedBooksUser = data.books || [];
+      booksLoadedOnce = true;
+      renderBookGrid(cachedBooksUser);
+    } catch (err) {
+      grid.innerHTML = `<div class="att-empty" style="grid-column:1/-1;padding:40px 0;"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtmlUser(err.message)}</div>`;
+    }
+  }
+
+  function renderBookGrid(books) {
+    const grid = document.getElementById('bookGrid');
+    if (!books || books.length === 0) {
+      grid.innerHTML = `<div class="att-empty" style="grid-column:1/-1;padding:40px 0;"><i class="fa-solid fa-inbox"></i> Belum ada buku yang tersedia.</div>`;
+      return;
+    }
+    grid.innerHTML = books.map(b => `
+      <div class="book-card">
+        <div class="book-cover"><i class="fa-solid fa-book"></i></div>
+        <div class="book-info">
+          <h4>${escapeHtmlUser(b.judul) || 'Tanpa Judul'}</h4>
+          <div class="author"><i class="fa-solid fa-feather"></i> ${escapeHtmlUser(b.pengarang) || '-'}</div>
+          <div class="meta-row">
+            <span class="tag-small">${escapeHtmlUser(b.kategori) || 'Umum'}</span>
+            ${b.tahun ? `<span style="font-size:11.5px;color:var(--gray-500);">${b.tahun}</span>` : ''}
+          </div>
+          ${b.linkPDF
+            ? `<button class="btn-read-book" data-id="${b.id}"><i class="fa-solid fa-book-open-reader"></i> Baca Online</button>`
+            : `<button class="btn-read-book" disabled title="PDF belum tersedia"><i class="fa-solid fa-ban"></i> Belum Tersedia</button>`}
+        </div>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.btn-read-book[data-id]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        const buku = cachedBooksUser.find(b => b.id === id);
+        if (buku && buku.linkPDF) openPdfViewer(buku);
+      });
+    });
+  }
+
+  document.getElementById('bookSearchInput').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    if (!q) return renderBookGrid(cachedBooksUser);
+    const filtered = cachedBooksUser.filter(b =>
+      (b.judul || '').toLowerCase().includes(q) || (b.pengarang || '').toLowerCase().includes(q)
+    );
+    renderBookGrid(filtered);
+  });
+
+  // ══════ PEMBACA PDF READ-ONLY (PDF.JS) — TANPA UNDUH / CETAK / KLIK KANAN ══════
+  if (window['pdfjsLib']) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  const pdfModal = document.getElementById('pdfModal');
+  const pdfCanvasContainer = document.getElementById('pdfCanvasContainer');
+  const pdfLoading = document.getElementById('pdfLoading');
+  const pdfErrorEl = document.getElementById('pdfError');
+  const pdfPageInfo = document.getElementById('pdfPageInfo');
+  const btnPdfPrev = document.getElementById('btnPdfPrev');
+  const btnPdfNext = document.getElementById('btnPdfNext');
+  const pdfViewerBody = document.getElementById('pdfViewerBody');
+
+  let pdfDocCurrent = null;
+  let pdfPageCurrent = 1;
+  let pdfPageCount = 0;
+  let pdfRenderTask = null;
+
+  async function openPdfViewer(buku) {
+    document.getElementById('pdfModalTitle').innerHTML = `<i class="fa-solid fa-book-open"></i> ${escapeHtmlUser(buku.judul)}`;
+    pdfCanvasContainer.innerHTML = '';
+    pdfErrorEl.style.display = 'none';
+    pdfLoading.style.display = 'flex';
+    pdfPageInfo.textContent = 'Halaman - / -';
+    pdfModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    try {
+      if (!window['pdfjsLib']) throw new Error('Pustaka PDF tidak dapat dimuat.');
+      const loadingTask = pdfjsLib.getDocument({ url: buku.linkPDF, disableAutoFetch: false });
+      pdfDocCurrent = await loadingTask.promise;
+      pdfPageCount = pdfDocCurrent.numPages;
+      pdfPageCurrent = 1;
+      pdfLoading.style.display = 'none';
+      await renderPdfPage(pdfPageCurrent);
+    } catch (err) {
+      pdfLoading.style.display = 'none';
+      pdfErrorEl.style.display = 'flex';
+    }
+  }
+
+  async function renderPdfPage(num) {
+    if (!pdfDocCurrent) return;
+    const page = await pdfDocCurrent.getPage(num);
+    const containerWidth = pdfViewerBody.clientWidth - 32;
+    const baseViewport = page.getViewport({ scale: 1 });
+    const scale = Math.min(2, Math.max(0.5, containerWidth / baseViewport.width));
+    const viewport = page.getViewport({ scale });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    canvas.oncontextmenu = () => false;
+    const ctx = canvas.getContext('2d');
+
+    pdfCanvasContainer.innerHTML = '';
+    pdfCanvasContainer.appendChild(canvas);
+
+    if (pdfRenderTask) {
+      try { pdfRenderTask.cancel(); } catch {}
+    }
+    pdfRenderTask = page.render({ canvasContext: ctx, viewport });
+    await pdfRenderTask.promise;
+
+    pdfPageInfo.textContent = `Halaman ${num} / ${pdfPageCount}`;
+    btnPdfPrev.disabled = num <= 1;
+    btnPdfNext.disabled = num >= pdfPageCount;
+  }
+
+  btnPdfPrev.addEventListener('click', () => {
+    if (pdfPageCurrent > 1) {
+      pdfPageCurrent -= 1;
+      renderPdfPage(pdfPageCurrent);
+      pdfViewerBody.scrollTop = 0;
+    }
+  });
+  btnPdfNext.addEventListener('click', () => {
+    if (pdfPageCurrent < pdfPageCount) {
+      pdfPageCurrent += 1;
+      renderPdfPage(pdfPageCurrent);
+      pdfViewerBody.scrollTop = 0;
+    }
+  });
+
+  function closePdfViewer() {
+    pdfModal.classList.remove('show');
+    document.body.style.overflow = '';
+    pdfCanvasContainer.innerHTML = '';
+    pdfDocCurrent = null;
+  }
+  document.getElementById('btnClosePdfModal').addEventListener('click', closePdfViewer);
+  pdfModal.addEventListener('click', (e) => { if (e.target === pdfModal) closePdfViewer(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && pdfModal.classList.contains('show')) closePdfViewer();
+  });
+
+  // Cegah klik kanan & shortcut simpan/cetak di dalam area pembaca PDF
+  pdfViewerBody.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('keydown', (e) => {
+    if (!pdfModal.classList.contains('show')) return;
+    const key = (e.key || '').toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p')) {
+      e.preventDefault();
+    }
+  });
+
+  // Muat koleksi buku otomatis jika pengguna langsung membuka tab "Baca Buku" (mis. via reload/hash)
+  if (document.getElementById('section-baca').classList.contains('active') && !booksLoadedOnce) {
+    loadBooks();
+  }
 </script>
 
 </body>
