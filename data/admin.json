@@ -1,0 +1,12 @@
+{
+  "admins": [
+    {
+      "id": "adm_001",
+      "username": "admin",
+      "nama": "Administrator Perpustakaan",
+      "salt": "4c858c20764c2bce244d86dfeabc6617",
+      "hash": "eeb48ae0a20a9ab4bc04144af8cc55018889df1f091f77561ac079d734537da0f1860de66f3c670ae294b2e77a089f58bf96f503897616ae00ec31cb10067971",
+      "createdAt": "2026-07-01T00:00:00.000Z"
+    }
+  ]
+}

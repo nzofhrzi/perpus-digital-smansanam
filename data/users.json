@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": "usr_001",
+      "nama": "Ahmad Fauzan Ramadhan",
+      "status": "siswa",
+      "kelas": "XII IPA 1",
+      "salt": "631eea71083199abdb71f8b824f1943c",
+      "hash": "fd699a209d71a5a148795e20909241871bf775f76659d1235ebf98d6dd4c7d6f02b644f9fdf6fff50f9c0f275c9dc17ba17b4e67a65081f5a8c47c4ab91dfc95",
+      "createdAt": "2026-07-01T00:00:00.000Z"
+    },
+    {
+      "id": "usr_002",
+      "nama": "Siti Rahma, S.Pd",
+      "status": "guru",
+      "kelas": null,
+      "salt": "57ad1f742ae54b5f71c3dc7b65fe3f8c",
+      "hash": "2ca9fb58c467934ed491244f2494f48b1b0fe6680c5940f233a3a4f19051ae42575bbc274bba042dbb579d1db2ad8aa69a6a72ca5a023e80b2f3ca8afc2c5372",
+      "createdAt": "2026-07-01T00:00:00.000Z"
+    },
+    {
+      "id": "usr_003",
+      "nama": "Budi Santoso",
+      "status": "staf",
+      "kelas": null,
+      "salt": "2ca6359231746066cf393330b2ba4091",
+      "hash": "e475ced87359f10a440f36b4242abde67feb4d7305724f34c9c5fd483116e5985a1986c193cff97f49895d3d8215828e89e538695e1e7e9c3f7a794b3818b5c7",
+      "createdAt": "2026-07-01T00:00:00.000Z"
+    }
+  ]
+}
