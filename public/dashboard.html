@@ -1168,7 +1168,8 @@
 
     try {
       if (!window['pdfjsLib']) throw new Error('Pustaka PDF tidak dapat dimuat.');
-      const loadingTask = pdfjsLib.getDocument({ url: buku.linkPDF, disableAutoFetch: false });
+      const proxiedUrl = `${API_BASE}/pdf-proxy?url=${encodeURIComponent(buku.linkPDF)}`;
+      const loadingTask = pdfjsLib.getDocument({ url: proxiedUrl, disableAutoFetch: false });
       pdfDocCurrent = await loadingTask.promise;
       pdfPageCount = pdfDocCurrent.numPages;
       pdfPageCurrent = 1;
