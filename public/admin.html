@@ -310,7 +310,7 @@
     box-shadow: var(--shadow-sm);
     overflow-x: auto;
   }
-  .att-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+  .att-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
   .att-table th {
     text-align: left;
     padding: 13px 16px;
@@ -331,9 +331,6 @@
     padding: 3px 9px; border-radius: 20px; text-transform: capitalize;
     background: var(--green-50); color: var(--green-800);
   }
-  .att-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-  .att-chip.done { background: var(--green-50); color: var(--green-800); }
-  .att-chip.progress { background: var(--amber-bg); color: var(--amber); }
 
   .att-btn-del {
     border: none; background: var(--danger-bg); color: var(--danger);
@@ -351,9 +348,14 @@
   .att-mini-card .v { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; color: var(--black); }
   .att-mini-card .l { font-size: 11.5px; color: var(--gray-500); font-weight: 600; margin-top: 2px; }
 
-  @media (max-width: 640px) {
+  @media (max-width: 880px) {
     .att-toolbar { flex-direction: column; align-items: stretch; }
     .att-field-search { min-width: unset; }
+    .att-mini-stats { flex-direction: column; }
+  }
+
+  @media (max-width: 560px) {
+    .att-table-wrap { overflow-x: auto; }
   }
 
   .placeholder-card {
@@ -550,7 +552,6 @@
 
       <div class="att-mini-stats">
         <div class="att-mini-card"><div class="v" id="attMiniHariIni">0</div><div class="l">Total Absen Hari Ini</div></div>
-        <div class="att-mini-card"><div class="v" id="attMiniDiPerpus">0</div><div class="l">Sedang di Perpustakaan</div></div>
         <div class="att-mini-card"><div class="v" id="attMiniHasil">0</div><div class="l">Hasil Sesuai Filter</div></div>
       </div>
 
@@ -569,6 +570,20 @@
             <option value="tamu">Tamu</option>
           </select>
         </div>
+        <div class="att-field">
+          <label>Alasan Kunjungan</label>
+          <select id="attFilterAlasan">
+            <option value="semua">Semua Alasan</option>
+            <option value="Membaca Buku">Membaca Buku</option>
+            <option value="Meminjam Buku">Meminjam Buku</option>
+            <option value="Mengembalikan Buku">Mengembalikan Buku</option>
+            <option value="Mengerjakan Tugas">Mengerjakan Tugas</option>
+            <option value="Diskusi Kelompok">Diskusi Kelompok</option>
+            <option value="Kunjungan Kelas">Kunjungan Kelas</option>
+            <option value="Podcast">Podcast</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
         <div class="att-field att-field-search">
           <label>Cari Nama</label>
           <input type="text" id="attFilterQ" placeholder="Ketik nama pengunjung...">
@@ -584,16 +599,13 @@
               <th>Status</th>
               <th>Kelas / Jabatan</th>
               <th>Tanggal</th>
-              <th>Masuk</th>
-              <th>Keluar</th>
-              <th>Durasi</th>
-              <th>Keperluan</th>
-              <th>Kondisi</th>
+              <th>Waktu Absen</th>
+              <th>Alasan Kunjungan</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="attAdminBody">
-            <tr><td colspan="10" class="att-empty">Memuat data absensi...</td></tr>
+            <tr><td colspan="7" class="att-empty">Memuat data absensi...</td></tr>
           </tbody>
         </table>
       </div>
@@ -734,11 +746,11 @@
   // ══════ KELOLA ABSENSI (ADMIN) ══════
   const attFilterTanggal = document.getElementById('attFilterTanggal');
   const attFilterStatus = document.getElementById('attFilterStatus');
+  const attFilterAlasan = document.getElementById('attFilterAlasan');
   const attFilterQ = document.getElementById('attFilterQ');
   const attAdminBody = document.getElementById('attAdminBody');
   const btnAttResetFilter = document.getElementById('btnAttResetFilter');
 
-  let attLoadedOnce = false;
   let attDebounce = null;
 
   function fmtJam(iso) {
@@ -751,24 +763,17 @@
     return new Date(`${str}T00:00:00+07:00`).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  function fmtDurasi(menit) {
-    if (menit === null || menit === undefined) return '-';
-    if (menit < 60) return `${menit} mnt`;
-    const jam = Math.floor(menit / 60);
-    const sisa = menit % 60;
-    return sisa > 0 ? `${jam} jam ${sisa} mnt` : `${jam} jam`;
-  }
-
   function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
   async function loadAttendanceAdmin() {
-    attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...</td></tr>`;
+    attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...</td></tr>`;
     try {
       const params = new URLSearchParams();
       if (attFilterTanggal.value) params.set('tanggal', attFilterTanggal.value);
       if (attFilterStatus.value && attFilterStatus.value !== 'semua') params.set('status', attFilterStatus.value);
+      if (attFilterAlasan.value && attFilterAlasan.value !== 'semua') params.set('alasan', attFilterAlasan.value);
       if (attFilterQ.value.trim()) params.set('q', attFilterQ.value.trim());
 
       const res = await fetch(`${API_BASE}/attendance?${params.toString()}`, {
@@ -778,11 +783,10 @@
       if (!res.ok) throw new Error(data.message || 'Gagal memuat data.');
 
       document.getElementById('attMiniHariIni').textContent = data.hariIni ?? 0;
-      document.getElementById('attMiniDiPerpus').textContent = data.sedangDiPerpus ?? 0;
       document.getElementById('attMiniHasil').textContent = data.total ?? 0;
 
       if (!data.data || data.data.length === 0) {
-        attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty"><i class="fa-solid fa-inbox"></i> Tidak ada data absensi untuk filter ini.</td></tr>`;
+        attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-inbox"></i> Tidak ada data absensi untuk filter ini.</td></tr>`;
         return;
       }
 
@@ -792,13 +796,8 @@
           <td><span class="att-role-chip">${escapeHtml(r.status)}</span></td>
           <td>${escapeHtml(r.kelas || r.jabatan || '-')}</td>
           <td>${fmtTanggal(r.tanggal)}</td>
-          <td>${fmtJam(r.waktuMasuk)}</td>
-          <td>${r.waktuKeluar ? fmtJam(r.waktuKeluar) : '-'}</td>
-          <td>${fmtDurasi(r.durasiMenit)}</td>
-          <td>${r.keperluan ? escapeHtml(r.keperluan) : '-'}</td>
-          <td>${r.waktuKeluar
-            ? '<span class="att-chip done"><i class="fa-solid fa-check"></i> Selesai</span>'
-            : '<span class="att-chip progress"><i class="fa-solid fa-clock"></i> Di Perpustakaan</span>'}</td>
+          <td>${fmtJam(r.waktuAbsen)}</td>
+          <td>${escapeHtml(r.alasan || '-')}</td>
           <td><button class="att-btn-del" title="Hapus catatan" data-id="${r.id}"><i class="fa-solid fa-trash"></i></button></td>
         </tr>
       `).join('');
@@ -807,7 +806,7 @@
         btn.addEventListener('click', () => deleteAttendanceRecord(btn.dataset.id));
       });
     } catch (err) {
-      attAdminBody.innerHTML = `<tr><td colspan="10" class="att-empty">Gagal memuat data absensi.</td></tr>`;
+      attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty">Gagal memuat data absensi.</td></tr>`;
     }
   }
 
@@ -828,6 +827,7 @@
 
   attFilterTanggal.addEventListener('change', loadAttendanceAdmin);
   attFilterStatus.addEventListener('change', loadAttendanceAdmin);
+  attFilterAlasan.addEventListener('change', loadAttendanceAdmin);
   attFilterQ.addEventListener('input', () => {
     clearTimeout(attDebounce);
     attDebounce = setTimeout(loadAttendanceAdmin, 400);
@@ -835,6 +835,7 @@
   btnAttResetFilter.addEventListener('click', () => {
     attFilterTanggal.value = '';
     attFilterStatus.value = 'semua';
+    attFilterAlasan.value = 'semua';
     attFilterQ.value = '';
     loadAttendanceAdmin();
   });
