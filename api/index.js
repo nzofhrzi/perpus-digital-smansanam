@@ -382,6 +382,7 @@ export default async function handler(req, res) {
       let totalTamuHariIni = 0;
       let kunjunganHariIni = 0;
       let alasanHariIni = {};
+      let totalBuku = 0;
 
       try {
         const usersData = JSON.parse(await readDataFile('users.json'));
@@ -402,11 +403,15 @@ export default async function handler(req, res) {
           return acc;
         }, {});
       } catch {}
+      try {
+        const booksData = JSON.parse(await readDataFile('books.json'));
+        totalBuku = (booksData.books || []).length;
+      } catch {}
 
       return sendJson(res, 200, {
         totalAnggota,
         totalTamuHariIni,
-        totalBuku: 0,
+        totalBuku,
         kunjunganHariIni,
         alasanHariIni
       });
@@ -587,9 +592,12 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
       }
 
-      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi } = body;
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF } = body;
       if (!judul || !pengarang) {
         return sendJson(res, 400, { message: 'Judul dan pengarang wajib diisi.' });
+      }
+      if (linkPDF && !/^https?:\/\//i.test(String(linkPDF).trim())) {
+        return sendJson(res, 400, { message: 'Link PDF harus berupa URL valid (diawali http:// atau https://).' });
       }
 
       let booksData = { books: [] };
@@ -609,6 +617,7 @@ export default async function handler(req, res) {
         kategori: kategori || 'Umum',
         isbn: isbn || '',
         deskripsi: deskripsi || '',
+        linkPDF: linkPDF ? String(linkPDF).trim() : '',
         dibuat: new Date().toISOString(),
         diperbarui: new Date().toISOString()
       };
@@ -630,7 +639,10 @@ export default async function handler(req, res) {
       }
 
       const bookId = parts[2];
-      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi } = body;
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF } = body;
+      if (linkPDF && !/^https?:\/\//i.test(String(linkPDF).trim())) {
+        return sendJson(res, 400, { message: 'Link PDF harus berupa URL valid (diawali http:// atau https://).' });
+      }
 
       let booksData = { books: [] };
       try {
@@ -654,6 +666,7 @@ export default async function handler(req, res) {
         kategori: kategori || booksData.books[bookIdx].kategori,
         isbn: isbn !== undefined ? isbn : booksData.books[bookIdx].isbn,
         deskripsi: deskripsi !== undefined ? deskripsi : booksData.books[bookIdx].deskripsi,
+        linkPDF: linkPDF !== undefined ? String(linkPDF).trim() : booksData.books[bookIdx].linkPDF,
         diperbarui: new Date().toISOString()
       };
 
