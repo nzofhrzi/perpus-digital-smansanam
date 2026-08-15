@@ -332,6 +332,46 @@
   }
   .att-btn-export:hover { background: var(--green-600); color: var(--white); }
 
+  .btn-primary {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 9px;
+    background: var(--green-600);
+    color: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+  }
+  .btn-primary:hover { background: var(--green-700); }
+  .btn-primary:disabled { background: var(--gray-500); cursor: not-allowed; }
+
+  .tag-small {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--green-100);
+    color: var(--green-800);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .status-chip {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 16px;
+    background: var(--green-100);
+    color: var(--green-800);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
   .att-table-wrap {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -580,6 +620,7 @@
     <button class="nav-item" data-section="buku"><i class="fa-solid fa-books"></i> Kelola Buku</button>
     <button class="nav-item" data-section="pengguna"><i class="fa-solid fa-users"></i> Kelola Pengguna</button>
     <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Kelola Absensi</button>
+    <button class="nav-item" data-section="tamu"><i class="fa-solid fa-person-booth"></i> Kelola Tamu</button>
     <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
 
     <div class="nav-label">Sistem</div>
@@ -658,22 +699,50 @@
     <!-- ══════ KELOLA BUKU ══════ -->
     <section class="section-view" id="section-buku">
       <div class="section-title"><i class="fa-solid fa-books"></i> Kelola Buku</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-books"></i></div>
-        <h3>Manajemen Koleksi Buku</h3>
-        <p>Tambah, edit, dan hapus koleksi buku digital (PDF tampil-saja) beserta kategori dan sampulnya akan tersedia di sini.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      
+      <button id="btnOpenBookModal" class="btn-primary" style="margin-bottom:20px;"><i class="fa-solid fa-plus"></i> Tambah Buku Baru</button>
+      
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Judul</th>
+              <th>Pengarang</th>
+              <th>Penerbit</th>
+              <th>Tahun</th>
+              <th>Kategori</th>
+              <th>ISBN</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="booksTableBody">
+            <tr><td colspan="7" class="att-empty">Memuat data buku...</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
     <!-- ══════ KELOLA PENGGUNA ══════ -->
     <section class="section-view" id="section-pengguna">
       <div class="section-title"><i class="fa-solid fa-users"></i> Kelola Pengguna</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-users"></i></div>
-        <h3>Manajemen Anggota</h3>
-        <p>Kelola data siswa, guru, dan staf — termasuk tambah akun baru, reset password, dan riwayat kunjungan tamu.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      
+      <button id="btnOpenUserModal" class="btn-primary" style="margin-bottom:20px;"><i class="fa-solid fa-plus"></i> Tambah Pengguna Baru</button>
+      
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Status</th>
+              <th>Kelas / Jabatan</th>
+              <th>ID Pengguna</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="5" class="att-empty">Memuat data pengguna...</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -743,6 +812,28 @@
       </div>
     </section>
 
+    <!-- ══════ KELOLA TAMU ══════ -->
+    <section class="section-view" id="section-tamu">
+      <div class="section-title"><i class="fa-solid fa-person-booth"></i> Kelola Tamu</div>
+      
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Nama Tamu</th>
+              <th>Keperluan / Jabatan</th>
+              <th>Umur</th>
+              <th>Tanggal Kunjungan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="guestsTableBody">
+            <tr><td colspan="5" class="att-empty">Memuat data tamu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- ══════ TRACKING ══════ -->
     <section class="section-view" id="section-tracking">
       <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
@@ -757,12 +848,38 @@
     <!-- ══════ PENGATURAN ══════ -->
     <section class="section-view" id="section-pengaturan">
       <div class="section-title"><i class="fa-solid fa-gear"></i> Pengaturan</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-gear"></i></div>
-        <h3>Pengaturan Sistem</h3>
-        <p>Konfigurasi identitas perpustakaan, kredensial admin, dan preferensi sistem lainnya.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
-      </div>
+      
+      <form id="settingsForm" style="max-width:600px;">
+        <div style="margin-bottom:20px;">
+          <label for="namaSekolah" style="display:block;margin-bottom:8px;font-weight:600;"><i class="fa-solid fa-school"></i> Nama Sekolah</label>
+          <input type="text" id="namaSekolah" placeholder="Contoh: SMA Negeri Smansanam" required style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <label for="namaPerpus" style="display:block;margin-bottom:8px;font-weight:600;"><i class="fa-solid fa-book"></i> Nama Perpustakaan</label>
+          <input type="text" id="namaPerpus" placeholder="Contoh: Perpus Digital Smansanam" required style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <label for="logo" style="display:block;margin-bottom:8px;font-weight:600;"><i class="fa-solid fa-icons"></i> Logo / Emoji</label>
+          <input type="text" id="logo" placeholder="📚" maxlength="2" required style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:20px;">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <label for="warna" style="display:block;margin-bottom:8px;font-weight:600;"><i class="fa-solid fa-palette"></i> Warna Tema</label>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="color" id="warna" value="#059669" style="width:60px;height:44px;border:none;border-radius:8px;cursor:pointer;">
+            <span id="warnaText" style="font-size:12px;color:var(--gray-500);">#059669</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:20px;">
+          <label for="deskripsi" style="display:block;margin-bottom:8px;font-weight:600;"><i class="fa-solid fa-comment"></i> Deskripsi</label>
+          <textarea id="deskripsi" placeholder="Deskripsi singkat tentang perpustakaan Anda..." rows="4" style="width:100%;padding:10px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;resize:vertical;"></textarea>
+        </div>
+        
+        <button type="button" id="btnSaveSettings" class="btn-primary" style="width:100%;"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
+      </form>
     </section>
 
   </div>
@@ -1412,6 +1529,218 @@
   if (btnDoExport) {
     btnDoExport.addEventListener('click', exportAttendanceData);
   }
+
+  // ══════ KELOLA BUKU ══════
+  async function loadBooks() {
+    try {
+      const res = await fetch(`${API_BASE}/books`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      renderBooksTable(data.books || []);
+    } catch (err) {
+      const body = document.getElementById('booksTableBody');
+      if (body) body.innerHTML = `<tr><td colspan="7" class="att-empty">${err.message}</td></tr>`;
+    }
+  }
+
+  function renderBooksTable(books) {
+    const body = document.getElementById('booksTableBody');
+    if (!body) return;
+    if (!books || books.length === 0) {
+      body.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada buku.</td></tr>`;
+      return;
+    }
+    body.innerHTML = books.map(b => `<tr>
+      <td>${b.judul || '-'}</td>
+      <td>${b.pengarang || '-'}</td>
+      <td>${b.penerbit || '-'}</td>
+      <td>${b.tahun || '-'}</td>
+      <td><span class="tag-small">${b.kategori || 'Umum'}</span></td>
+      <td>${b.isbn || '-'}</td>
+      <td>
+        <button class="btn-delete-book" data-id="${b.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+    attachBookButtons();
+  }
+
+  function attachBookButtons() {
+    document.querySelectorAll('.btn-delete-book').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (confirm('Hapus buku ini?')) {
+          const id = e.currentTarget.dataset.id;
+          try {
+            const res = await fetch(`${API_BASE}/books/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error('Gagal hapus');
+            loadBooks();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+    });
+  }
+
+  // ══════ KELOLA PENGGUNA ══════
+  async function loadUsers() {
+    try {
+      const res = await fetch(`${API_BASE}/users/list`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      renderUsersTable(data.users || []);
+    } catch (err) {
+      const body = document.getElementById('usersTableBody');
+      if (body) body.innerHTML = `<tr><td colspan="5" class="att-empty">${err.message}</td></tr>`;
+    }
+  }
+
+  function renderUsersTable(users) {
+    const body = document.getElementById('usersTableBody');
+    if (!body) return;
+    if (!users || users.length === 0) {
+      body.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada pengguna.</td></tr>`;
+      return;
+    }
+    body.innerHTML = users.map(u => `<tr>
+      <td>${u.nama || '-'}</td>
+      <td><span class="status-chip">${u.status || '-'}</span></td>
+      <td>${u.kelas || u.jabatan || '-'}</td>
+      <td><small>${u.id || '-'}</small></td>
+      <td>
+        <button class="btn-delete-user" data-id="${u.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+    attachUserButtons();
+  }
+
+  function attachUserButtons() {
+    document.querySelectorAll('.btn-delete-user').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (confirm('Hapus pengguna ini?')) {
+          const id = e.currentTarget.dataset.id;
+          try {
+            const res = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error('Gagal hapus');
+            loadUsers();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+    });
+  }
+
+  // ══════ KELOLA TAMU ══════
+  async function loadGuests() {
+    try {
+      const res = await fetch(`${API_BASE}/guests`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      renderGuestsTable(data.data || []);
+    } catch (err) {
+      const body = document.getElementById('guestsTableBody');
+      if (body) body.innerHTML = `<tr><td colspan="5" class="att-empty">${err.message}</td></tr>`;
+    }
+  }
+
+  function renderGuestsTable(guests) {
+    const body = document.getElementById('guestsTableBody');
+    if (!body) return;
+    if (!guests || guests.length === 0) {
+      body.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada data tamu.</td></tr>`;
+      return;
+    }
+    body.innerHTML = guests.map(g => `<tr>
+      <td>${g.nama || '-'}</td>
+      <td>${g.jabatan || g.keperluan || '-'}</td>
+      <td>${g.umur ? g.umur + ' tahun' : '-'}</td>
+      <td>${fmtTanggal(g.waktuKunjungan ? g.waktuKunjungan.slice(0, 10) : '')}</td>
+      <td>
+        <button class="btn-delete-guest" data-id="${g.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+    attachGuestButtons();
+  }
+
+  function attachGuestButtons() {
+    document.querySelectorAll('.btn-delete-guest').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (confirm('Hapus catatan tamu ini?')) {
+          const id = e.currentTarget.dataset.id;
+          try {
+            const res = await fetch(`${API_BASE}/guests/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            if (!res.ok) throw new Error('Gagal hapus');
+            loadGuests();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+    });
+  }
+
+  // ══════ PENGATURAN ══════
+  async function loadSettings() {
+    try {
+      const res = await fetch(`${API_BASE}/settings`);
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('namaSekolah').value = data.namaSekolah || '';
+        document.getElementById('namaPerpus').value = data.namaPerpus || '';
+        document.getElementById('logo').value = data.logo || '📚';
+        document.getElementById('warna').value = data.warna || '#059669';
+        document.getElementById('warnaText').textContent = data.warna || '#059669';
+        document.getElementById('deskripsi').value = data.deskripsi || '';
+      }
+    } catch (err) {
+      console.error('Gagal load settings:', err);
+    }
+  }
+
+  document.getElementById('warna').addEventListener('input', (e) => {
+    document.getElementById('warnaText').textContent = e.target.value;
+  });
+
+  document.getElementById('btnSaveSettings').addEventListener('click', async () => {
+    const btn = document.getElementById('btnSaveSettings');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+    
+    try {
+      const res = await fetch(`${API_BASE}/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          namaSekolah: document.getElementById('namaSekolah').value,
+          namaPerpus: document.getElementById('namaPerpus').value,
+          logo: document.getElementById('logo').value,
+          warna: document.getElementById('warna').value,
+          deskripsi: document.getElementById('deskripsi').value
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      alert('Pengaturan berhasil disimpan!');
+    } catch (err) {
+      alert('Gagal: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan';
+    }
+  });
+
+  // Initialize nav button untuk load data saat section dibuka
+  document.querySelectorAll('.nav-item[data-section]').forEach(nav => {
+    nav.addEventListener('click', (e) => {
+      const section = e.currentTarget.dataset.section;
+      setTimeout(() => {
+        if (section === 'buku') loadBooks();
+        if (section === 'pengguna') loadUsers();
+        if (section === 'tamu') loadGuests();
+        if (section === 'pengaturan') loadSettings();
+      }, 100);
+    });
+  });
 </script>
 
 </body>
