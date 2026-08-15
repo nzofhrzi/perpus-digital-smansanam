@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Admin Panel — Perpus Digital Smansanam</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  :root {
+    --green-950: #052e21;
+    --green-900: #064e3b;
+    --green-800: #065f46;
+    --green-700: #047857;
+    --green-600: #059669;
+    --green-500: #10b981;
+    --green-100: #d1fae5;
+    --green-50: #ecfdf5;
+    --white: #ffffff;
+    --black: #10151b;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-300: #e5e7eb;
+    --gray-100: #f4f6f5;
+    --bg-app: #f6f9f8;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+    --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.06);
+    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-app);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ══════════ SIDEBAR ══════════ */
+  .sidebar {
+    width: 264px;
+    background: linear-gradient(180deg, var(--black) 0%, #05100a 100%);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+    transition: var(--transition);
+    border-right: 1px solid rgba(16,185,129,0.15);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo-icon {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--green-500), var(--green-800));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo-text { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14.5px; line-height: 1.3; }
+  .sidebar-logo-text span { display: block; font-size: 10.5px; font-weight: 500; color: var(--green-100); letter-spacing: 0.3px; }
+
+  .sidebar-badge-admin {
+    margin: 14px 14px 6px;
+    padding: 12px 14px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .sidebar-badge-admin i {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-500), var(--green-800));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-badge-admin .name { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-badge-admin .role { font-size: 10px; color: var(--green-100); }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 10px 14px;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: rgba(209, 250, 229, 0.45);
+    padding: 14px 10px 8px;
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .nav-item i { width: 18px; text-align: center; font-size: 14.5px; }
+
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+
+  .nav-item.active {
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white);
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(220, 38, 38, 0.16);
+    color: #fca5a5;
+    border: none;
+    width: 100%;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .btn-logout:hover { background: rgba(220, 38, 38, 0.28); color: #fecaca; }
+
+  /* ══════════ MAIN ══════════ */
+  .main { margin-left: 264px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+  .topbar {
+    height: 68px;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+
+  .menu-toggle {
+    display: none;
+    background: var(--gray-100);
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--green-800);
+    font-size: 16px;
+  }
+
+  .topbar-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; }
+  .topbar-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  .topbar-badge {
+    display: flex; align-items: center; gap: 7px;
+    background: #111827; color: var(--green-100);
+    padding: 7px 13px; border-radius: 20px;
+    font-size: 11.5px; font-weight: 700;
+  }
+  .topbar-badge i { font-size: 10px; color: var(--green-500); }
+
+  .content { padding: 26px 28px 40px; flex: 1; }
+
+  .section-view { display: none; animation: fadeIn 0.3s ease; }
+  .section-view.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
+
+  .welcome-card {
+    background: linear-gradient(120deg, var(--black), var(--green-900) 130%);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .welcome-card::after {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(16,185,129,0.25) 0%, transparent 70%);
+    top: -80px; right: -60px;
+    border-radius: 50%;
+  }
+  .welcome-card h1 { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; position: relative; }
+  .welcome-card p { font-size: 13.5px; color: var(--green-100); max-width: 560px; line-height: 1.6; position: relative; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 26px; }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-300);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 17px; color: var(--white); }
+  .stat-value { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 16.5px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section-title i { color: var(--green-600); }
+
+  .placeholder-card {
+    background: var(--white);
+    border: 1.5px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    padding: 56px 30px;
+    text-align: center;
+    color: var(--gray-500);
+  }
+  .placeholder-card .icon-big {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: var(--green-50); color: var(--green-700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 18px;
+  }
+  .placeholder-card h3 { font-family: 'Poppins', sans-serif; font-size: 16px; color: var(--black); margin-bottom: 8px; }
+  .placeholder-card p { font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-card .tag {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    background: var(--amber-bg); color: var(--amber);
+    font-size: 11px; font-weight: 700; padding: 6px 13px; border-radius: 20px;
+  }
+
+  .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
+
+  .quick-action {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+  }
+  .quick-action:hover { border-color: var(--green-500); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .quick-action i { font-size: 19px; color: var(--green-700); }
+  .quick-action .qa-title { font-size: 13px; font-weight: 700; }
+  .quick-action .qa-sub { font-size: 11px; color: var(--gray-500); }
+
+  @media (max-width: 1000px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .quick-actions { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 880px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); box-shadow: 20px 0 60px rgba(0,0,0,0.25); }
+    .main { margin-left: 0; }
+    .menu-toggle { display: flex; }
+    .topbar-title { font-size: 15px; }
+  }
+
+  @media (max-width: 560px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .quick-actions { grid-template-columns: 1fr; }
+    .content { padding: 18px 16px 32px; }
+    .topbar { padding: 0 16px; }
+    .welcome-card { padding: 22px 20px; }
+  }
+
+  .overlay-mobile { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 40; }
+  .overlay-mobile.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+    <div class="sidebar-logo-text">Perpus Digital<span>SMANSANAM — ADMIN</span></div>
+  </div>
+
+  <div class="sidebar-badge-admin">
+    <i class="fa-solid fa-user-shield"></i>
+    <div>
+      <div class="name" id="adminName">-</div>
+      <div class="role">Administrator</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Ringkasan</div>
+    <button class="nav-item active" data-section="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+
+    <div class="nav-label">Manajemen Konten</div>
+    <button class="nav-item" data-section="buku"><i class="fa-solid fa-books"></i> Kelola Buku</button>
+    <button class="nav-item" data-section="pengguna"><i class="fa-solid fa-users"></i> Kelola Pengguna</button>
+    <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Kelola Absensi</button>
+    <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
+
+    <div class="nav-label">Sistem</div>
+    <button class="nav-item" data-section="pengaturan"><i class="fa-solid fa-gear"></i> Pengaturan</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<div class="overlay-mobile" id="overlayMobile"></div>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard Admin</div>
+        <div class="topbar-subtitle" id="pageSubtitle">Ringkasan pengelolaan perpustakaan digital</div>
+      </div>
+    </div>
+    <div class="topbar-badge"><i class="fa-solid fa-circle"></i> Admin Panel</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════ DASHBOARD ══════ -->
+    <section class="section-view active" id="section-dashboard">
+      <div class="welcome-card">
+        <h1 id="welcomeText">Halo, Admin 👋</h1>
+        <p>Kelola koleksi buku, data anggota, absensi, dan pantau statistik pembaca perpustakaan digital dari satu tempat.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#059669,#065f46);"><i class="fa-solid fa-book"></i></div>
+          <div class="stat-value" id="statBuku">0</div>
+          <div class="stat-label">Total Buku</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#047857);"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-value" id="statAnggota">0</div>
+          <div class="stat-label">Total Anggota</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#34d399,#059669);"><i class="fa-solid fa-id-badge"></i></div>
+          <div class="stat-value" id="statTamu">0</div>
+          <div class="stat-label">Tamu Hari Ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#065f46,#052e21);"><i class="fa-solid fa-fingerprint"></i></div>
+          <div class="stat-value" id="statKunjungan">0</div>
+          <div class="stat-label">Kunjungan Hari Ini</div>
+        </div>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-bolt"></i> Akses Cepat</div>
+      <div class="quick-actions">
+        <button class="quick-action" data-goto="buku"><i class="fa-solid fa-book-medical"></i><span class="qa-title">Tambah Buku</span><span class="qa-sub">Unggah koleksi baru</span></button>
+        <button class="quick-action" data-goto="pengguna"><i class="fa-solid fa-user-plus"></i><span class="qa-title">Tambah Pengguna</span><span class="qa-sub">Daftarkan anggota baru</span></button>
+        <button class="quick-action" data-goto="absensi"><i class="fa-solid fa-list-check"></i><span class="qa-title">Lihat Absensi</span><span class="qa-sub">Riwayat kehadiran</span></button>
+        <button class="quick-action" data-goto="tracking"><i class="fa-solid fa-chart-pie"></i><span class="qa-title">Lihat Statistik</span><span class="qa-sub">Aktivitas pembaca</span></button>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-layer-group"></i> Status Pengembangan</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-hammer"></i></div>
+        <h3>Tahap Awal: Login &amp; Navigasi</h3>
+        <p>Sistem otentikasi admin &amp; anggota sudah aktif. Modul pengelolaan buku, pengguna, absensi, dan tracking pembaca akan dikembangkan pada tahap berikutnya.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Dalam Pengembangan</div>
+      </div>
+    </section>
+
+    <!-- ══════ KELOLA BUKU ══════ -->
+    <section class="section-view" id="section-buku">
+      <div class="section-title"><i class="fa-solid fa-books"></i> Kelola Buku</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-books"></i></div>
+        <h3>Manajemen Koleksi Buku</h3>
+        <p>Tambah, edit, dan hapus koleksi buku digital (PDF tampil-saja) beserta kategori dan sampulnya akan tersedia di sini.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ KELOLA PENGGUNA ══════ -->
+    <section class="section-view" id="section-pengguna">
+      <div class="section-title"><i class="fa-solid fa-users"></i> Kelola Pengguna</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-users"></i></div>
+        <h3>Manajemen Anggota</h3>
+        <p>Kelola data siswa, guru, dan staf — termasuk tambah akun baru, reset password, dan riwayat kunjungan tamu.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ KELOLA ABSENSI ══════ -->
+    <section class="section-view" id="section-absensi">
+      <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Kelola Absensi</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-fingerprint"></i></div>
+        <h3>Rekap Absensi Kehadiran</h3>
+        <p>Lihat dan ekspor rekap kehadiran pengunjung perpustakaan per hari, minggu, atau bulan.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ TRACKING ══════ -->
+    <section class="section-view" id="section-tracking">
+      <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>Statistik Aktivitas Pembaca</h3>
+        <p>Pantau buku terpopuler, jam sibuk kunjungan, dan tren literasi seluruh anggota sekolah.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ PENGATURAN ══════ -->
+    <section class="section-view" id="section-pengaturan">
+      <div class="section-title"><i class="fa-solid fa-gear"></i> Pengaturan</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-gear"></i></div>
+        <h3>Pengaturan Sistem</h3>
+        <p>Konfigurasi identitas perpustakaan, kredensial admin, dan preferensi sistem lainnya.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  const API_BASE = '/api';
+
+  // ══════ AUTH GUARD (KHUSUS ADMIN) ══════
+  const token = localStorage.getItem('perpus_token');
+  const userRaw = localStorage.getItem('perpus_user');
+
+  if (!token || !userRaw) {
+    window.location.href = 'index.html';
+  }
+
+  let currentAdmin = null;
+  try {
+    currentAdmin = JSON.parse(userRaw);
+    if (currentAdmin.role !== 'admin') window.location.href = 'dashboard.html';
+  } catch {
+    window.location.href = 'index.html';
+  }
+
+  (async function verifySession() {
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('invalid');
+      const data = await res.json();
+      if (data.user.role !== 'admin') throw new Error('not admin');
+    } catch {
+      localStorage.removeItem('perpus_token');
+      localStorage.removeItem('perpus_user');
+      window.location.href = 'index.html';
+    }
+  })();
+
+  document.getElementById('adminName').textContent = currentAdmin.nama || currentAdmin.username;
+  document.getElementById('welcomeText').textContent = `Halo, ${(currentAdmin.nama || currentAdmin.username).split(' ')[0]} 👋`;
+
+  // ══════ AMBIL STATISTIK DASHBOARD ══════
+  (async function loadStats() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      document.getElementById('statBuku').textContent = data.totalBuku ?? 0;
+      document.getElementById('statAnggota').textContent = data.totalAnggota ?? 0;
+      document.getElementById('statTamu').textContent = data.totalTamuHariIni ?? 0;
+      document.getElementById('statKunjungan').textContent = data.kunjunganHariIni ?? 0;
+    } catch {}
+  })();
+
+  // ══════ NAVIGASI SIDEBAR ══════
+  const pageMeta = {
+    dashboard: { title: 'Dashboard Admin', sub: 'Ringkasan pengelolaan perpustakaan digital' },
+    buku: { title: 'Kelola Buku', sub: 'Manajemen koleksi buku digital' },
+    pengguna: { title: 'Kelola Pengguna', sub: 'Manajemen data anggota &amp; tamu' },
+    absensi: { title: 'Kelola Absensi', sub: 'Rekap kehadiran pengunjung' },
+    tracking: { title: 'Tracking Pembaca', sub: 'Statistik aktivitas literasi' },
+    pengaturan: { title: 'Pengaturan', sub: 'Konfigurasi sistem perpustakaan' }
+  };
+
+  function goToSection(sec) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+    const navBtn = document.querySelector(`.nav-item[data-section="${sec}"]`);
+    if (navBtn) navBtn.classList.add('active');
+    document.getElementById('section-' + sec).classList.add('active');
+    document.getElementById('pageTitle').textContent = pageMeta[sec].title;
+    document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
+    closeMobileSidebar();
+  }
+
+  document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => goToSection(btn.dataset.section));
+  });
+
+  document.querySelectorAll('.quick-action[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => goToSection(btn.dataset.goto));
+  });
+
+  // ══════ SIDEBAR MOBILE ══════
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlayMobile');
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  });
+  overlay.addEventListener('click', closeMobileSidebar);
+  function closeMobileSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+
+  // ══════ LOGOUT ══════
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    localStorage.removeItem('perpus_token');
+    localStorage.removeItem('perpus_user');
+    window.location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>

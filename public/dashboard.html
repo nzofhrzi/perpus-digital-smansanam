@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Dashboard — Perpus Digital Smansanam</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  :root {
+    --green-950: #052e21;
+    --green-900: #064e3b;
+    --green-800: #065f46;
+    --green-700: #047857;
+    --green-600: #059669;
+    --green-500: #10b981;
+    --green-100: #d1fae5;
+    --green-50: #ecfdf5;
+    --white: #ffffff;
+    --black: #10151b;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-300: #e5e7eb;
+    --gray-100: #f4f6f5;
+    --bg-app: #f6f9f8;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+    --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.06);
+    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-app);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ══════════ SIDEBAR ══════════ */
+  .sidebar {
+    width: 264px;
+    background: linear-gradient(180deg, var(--green-900) 0%, var(--green-950) 100%);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+    transition: var(--transition);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo-icon {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.14);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo-text { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14.5px; line-height: 1.3; }
+  .sidebar-logo-text span { display: block; font-size: 10.5px; font-weight: 500; color: var(--green-100); letter-spacing: 0.3px; }
+
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.05);
+    margin: 14px 14px 6px;
+    border-radius: 12px;
+  }
+
+  .sidebar-user-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-500), var(--green-700));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .sidebar-user-info { overflow: hidden; }
+  .sidebar-user-info .name { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-user-info .role { font-size: 10.5px; color: var(--green-100); text-transform: capitalize; }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 10px 14px;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: rgba(209, 250, 229, 0.5);
+    padding: 14px 10px 8px;
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: var(--green-100);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .nav-item i { width: 18px; text-align: center; font-size: 14.5px; }
+
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+
+  .nav-item.active {
+    background: var(--white);
+    color: var(--green-800);
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(220, 38, 38, 0.16);
+    color: #fca5a5;
+    border: none;
+    width: 100%;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .btn-logout:hover { background: rgba(220, 38, 38, 0.28); color: #fecaca; }
+
+  /* ══════════ MAIN AREA ══════════ */
+  .main {
+    margin-left: 264px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    height: 68px;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+
+  .menu-toggle {
+    display: none;
+    background: var(--gray-100);
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--green-800);
+    font-size: 16px;
+  }
+
+  .topbar-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; color: var(--black); }
+  .topbar-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+  .topbar-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--green-50);
+    color: var(--green-800);
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  .topbar-badge i { font-size: 10px; }
+
+  .content { padding: 26px 28px 40px; flex: 1; }
+
+  .section-view { display: none; animation: fadeIn 0.3s ease; }
+  .section-view.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
+
+  .welcome-card {
+    background: linear-gradient(120deg, var(--green-700), var(--green-900) 120%);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .welcome-card::after {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%);
+    top: -80px; right: -60px;
+    border-radius: 50%;
+  }
+
+  .welcome-card h1 { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; position: relative; }
+  .welcome-card p { font-size: 13.5px; color: var(--green-100); max-width: 520px; line-height: 1.6; position: relative; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-300);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 42px; height: 42px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    color: var(--white);
+  }
+
+  .stat-value { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; color: var(--black); }
+  .stat-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 16.5px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section-title i { color: var(--green-600); }
+
+  .placeholder-card {
+    background: var(--white);
+    border: 1.5px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    padding: 56px 30px;
+    text-align: center;
+    color: var(--gray-500);
+  }
+
+  .placeholder-card .icon-big {
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    background: var(--green-50);
+    color: var(--green-700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin: 0 auto 18px;
+  }
+
+  .placeholder-card h3 { font-family: 'Poppins', sans-serif; font-size: 16px; color: var(--black); margin-bottom: 8px; }
+  .placeholder-card p { font-size: 13px; max-width: 380px; margin: 0 auto; line-height: 1.6; }
+
+  .placeholder-card .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    background: var(--green-50);
+    color: var(--green-800);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 13px;
+    border-radius: 20px;
+  }
+
+  .profile-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-300);
+    padding: 28px;
+    max-width: 520px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .profile-avatar-lg {
+    width: 74px; height: 74px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--green-500), var(--green-800));
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 18px;
+  }
+
+  .profile-card h2 { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 3px; }
+  .profile-card .status-chip {
+    display: inline-block;
+    background: var(--green-100);
+    color: var(--green-800);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+    text-transform: capitalize;
+    margin-bottom: 20px;
+  }
+
+  .profile-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--gray-100);
+    font-size: 13px;
+  }
+
+  .profile-detail-row i { width: 20px; color: var(--green-600); text-align: center; }
+  .profile-detail-row .label { color: var(--gray-500); width: 130px; flex-shrink: 0; }
+  .profile-detail-row .value { color: var(--black); font-weight: 600; }
+
+  @media (max-width: 1000px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 880px) {
+    .sidebar { transform: translateX(-100%); box-shadow: 0 0 0 100vmax rgba(0,0,0,0); }
+    .sidebar.open { transform: translateX(0); box-shadow: 20px 0 60px rgba(0,0,0,0.25); }
+    .main { margin-left: 0; }
+    .menu-toggle { display: flex; }
+    .topbar-title { font-size: 15px; }
+  }
+
+  @media (max-width: 560px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .content { padding: 18px 16px 32px; }
+    .topbar { padding: 0 16px; }
+    .welcome-card { padding: 22px 20px; }
+  }
+
+  .overlay-mobile {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 40;
+  }
+  .overlay-mobile.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+    <div class="sidebar-logo-text">Perpus Digital<span>SMANSANAM</span></div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="sidebar-user-avatar" id="userAvatar">-</div>
+    <div class="sidebar-user-info">
+      <div class="name" id="userName">-</div>
+      <div class="role" id="userRole">-</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Menu Utama</div>
+    <button class="nav-item active" data-section="beranda"><i class="fa-solid fa-house"></i> Beranda</button>
+    <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</button>
+    <button class="nav-item" data-section="baca"><i class="fa-solid fa-book-open"></i> Baca Buku Online</button>
+    <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
+
+    <div class="nav-label">Akun</div>
+    <button class="nav-item" data-section="profil"><i class="fa-solid fa-user"></i> Profil Saya</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<div class="overlay-mobile" id="overlayMobile"></div>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <div>
+        <div class="topbar-title" id="pageTitle">Beranda</div>
+        <div class="topbar-subtitle" id="pageSubtitle">Ringkasan aktivitas perpustakaan Anda</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-badge"><i class="fa-solid fa-circle"></i> Sesi Aktif</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════ BERANDA ══════ -->
+    <section class="section-view active" id="section-beranda">
+      <div class="welcome-card">
+        <h1 id="welcomeText">Selamat datang kembali! 👋</h1>
+        <p>Jelajahi koleksi buku digital, catat kehadiran Anda, dan pantau aktivitas literasi langsung dari dashboard ini.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#059669,#065f46);"><i class="fa-solid fa-book"></i></div>
+          <div class="stat-value">0</div>
+          <div class="stat-label">Buku Tersedia</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#047857);"><i class="fa-solid fa-fingerprint"></i></div>
+          <div class="stat-value">0</div>
+          <div class="stat-label">Kehadiran Bulan Ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#34d399,#059669);"><i class="fa-solid fa-book-open-reader"></i></div>
+          <div class="stat-value">0</div>
+          <div class="stat-label">Buku Dibaca</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#065f46,#052e21);"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-value">0 jam</div>
+          <div class="stat-label">Waktu Membaca</div>
+        </div>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Informasi</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-layer-group"></i></div>
+        <h3>Modul lengkap segera hadir</h3>
+        <p>Saat ini sistem berada pada tahap awal — fitur login &amp; navigasi dashboard sudah aktif. Fitur absensi, baca buku, dan tracking akan menyusul di tahap berikutnya.</p>
+        <div class="tag"><i class="fa-solid fa-circle-check"></i> Login &amp; Dashboard Aktif</div>
+      </div>
+    </section>
+
+    <!-- ══════ ABSENSI ══════ -->
+    <section class="section-view" id="section-absensi">
+      <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-fingerprint"></i></div>
+        <h3>Fitur Absensi Kehadiran</h3>
+        <p>Nantinya Anda dapat melakukan absen masuk &amp; keluar perpustakaan secara digital di halaman ini, lengkap dengan riwayat kunjungan.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ BACA BUKU ══════ -->
+    <section class="section-view" id="section-baca">
+      <div class="section-title"><i class="fa-solid fa-book-open"></i> Baca Buku Online</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-book-open"></i></div>
+        <h3>Koleksi Buku Digital</h3>
+        <p>Koleksi e-book &amp; e-modul sekolah akan dapat dibaca langsung di sini (tampil layar / preview) tanpa opsi unduh.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ TRACKING ══════ -->
+    <section class="section-view" id="section-tracking">
+      <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
+      <div class="placeholder-card">
+        <div class="icon-big"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>Statistik Aktivitas Membaca</h3>
+        <p>Pantau progres membaca, buku favorit, dan waktu literasi Anda dari waktu ke waktu pada bagian ini.</p>
+        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+      </div>
+    </section>
+
+    <!-- ══════ PROFIL ══════ -->
+    <section class="section-view" id="section-profil">
+      <div class="section-title"><i class="fa-solid fa-user"></i> Profil Saya</div>
+      <div class="profile-card">
+        <div class="profile-avatar-lg" id="profileAvatar">-</div>
+        <h2 id="profileName">-</h2>
+        <span class="status-chip" id="profileStatus">-</span>
+
+        <div class="profile-detail-row">
+          <i class="fa-solid fa-id-badge"></i>
+          <span class="label">ID Pengguna</span>
+          <span class="value" id="profileId">-</span>
+        </div>
+        <div class="profile-detail-row" id="rowKelas">
+          <i class="fa-solid fa-chalkboard"></i>
+          <span class="label">Kelas</span>
+          <span class="value" id="profileKelas">-</span>
+        </div>
+        <div class="profile-detail-row" id="rowJabatan">
+          <i class="fa-solid fa-briefcase"></i>
+          <span class="label">Jabatan / Keperluan</span>
+          <span class="value" id="profileJabatan">-</span>
+        </div>
+        <div class="profile-detail-row" id="rowUmur">
+          <i class="fa-solid fa-cake-candles"></i>
+          <span class="label">Umur</span>
+          <span class="value" id="profileUmur">-</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  const API_BASE = '/api';
+
+  // ══════ AUTH GUARD ══════
+  const token = localStorage.getItem('perpus_token');
+  const userRaw = localStorage.getItem('perpus_user');
+
+  if (!token || !userRaw) {
+    window.location.href = 'index.html';
+  }
+
+  let currentUser = null;
+  try {
+    currentUser = JSON.parse(userRaw);
+    if (currentUser.role === 'admin') window.location.href = 'admin.html';
+  } catch {
+    window.location.href = 'index.html';
+  }
+
+  // Verifikasi token ke server; jika tidak valid, paksa logout
+  (async function verifySession() {
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('invalid');
+    } catch {
+      localStorage.removeItem('perpus_token');
+      localStorage.removeItem('perpus_user');
+      window.location.href = 'index.html';
+    }
+  })();
+
+  // ══════ RENDER DATA USER ══════
+  function initials(name) {
+    return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  }
+
+  document.getElementById('userAvatar').textContent = initials(currentUser.nama);
+  document.getElementById('userName').textContent = currentUser.nama;
+  document.getElementById('userRole').textContent = currentUser.status === 'tamu' ? 'Tamu' : currentUser.status;
+  document.getElementById('welcomeText').textContent = `Selamat datang, ${currentUser.nama.split(' ')[0]}! 👋`;
+
+  document.getElementById('profileAvatar').textContent = initials(currentUser.nama);
+  document.getElementById('profileName').textContent = currentUser.nama;
+  document.getElementById('profileStatus').textContent = currentUser.status === 'tamu' ? 'Tamu' : currentUser.status;
+  document.getElementById('profileId').textContent = currentUser.id;
+
+  if (currentUser.status === 'siswa') {
+    document.getElementById('profileKelas').textContent = currentUser.kelas || '-';
+    document.getElementById('rowJabatan').style.display = 'none';
+    document.getElementById('rowUmur').style.display = 'none';
+  } else if (currentUser.status === 'tamu') {
+    document.getElementById('rowKelas').style.display = 'none';
+    document.getElementById('profileJabatan').textContent = currentUser.jabatan || '-';
+    document.getElementById('profileUmur').textContent = currentUser.umur ? `${currentUser.umur} tahun` : '-';
+  } else {
+    document.getElementById('rowKelas').style.display = 'none';
+    document.getElementById('rowUmur').style.display = 'none';
+    document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
+  }
+
+  // ══════ NAVIGASI SIDEBAR (SPA SEDERHANA) ══════
+  const pageMeta = {
+    beranda: { title: 'Beranda', sub: 'Ringkasan aktivitas perpustakaan Anda' },
+    absensi: { title: 'Absensi Kehadiran', sub: 'Catat kehadiran kunjungan perpustakaan' },
+    baca: { title: 'Baca Buku Online', sub: 'Koleksi buku &amp; e-modul digital sekolah' },
+    tracking: { title: 'Tracking Pembaca', sub: 'Statistik dan aktivitas membaca Anda' },
+    profil: { title: 'Profil Saya', sub: 'Informasi akun Anda' }
+  };
+
+  document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      const sec = btn.dataset.section;
+      document.getElementById('section-' + sec).classList.add('active');
+      document.getElementById('pageTitle').textContent = pageMeta[sec].title;
+      document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
+      closeMobileSidebar();
+    });
+  });
+
+  // ══════ SIDEBAR MOBILE ══════
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlayMobile');
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  });
+  overlay.addEventListener('click', closeMobileSidebar);
+  function closeMobileSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+
+  // ══════ LOGOUT ══════
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    localStorage.removeItem('perpus_token');
+    localStorage.removeItem('perpus_user');
+    window.location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>
