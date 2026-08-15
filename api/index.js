@@ -381,6 +381,174 @@ export default async function handler(req, res) {
       });
     }
 
+    // ─── PENDAFTARAN MANDIRI ANGGOTA SEKOLAH (SISWA / GURU / STAF) ───────
+    if (method === 'POST' && route === 'auth/register') {
+      const { nama, status, kelas, jabatan, password, confirmPassword } = body;
+
+      if (!nama || !String(nama).trim()) {
+        return sendJson(res, 400, { message: 'Nama lengkap wajib diisi.' });
+      }
+      if (!['siswa', 'guru', 'staf'].includes(status)) {
+        return sendJson(res, 400, { message: 'Status/jabatan tidak valid.' });
+      }
+      if (status === 'siswa' && !kelas) {
+        return sendJson(res, 400, { message: 'Kelas wajib diisi untuk status siswa.' });
+      }
+      if (!password || String(password).length < 4) {
+        return sendJson(res, 400, { message: 'Password minimal 4 karakter.' });
+      }
+      if (confirmPassword !== undefined && password !== confirmPassword) {
+        return sendJson(res, 400, { message: 'Konfirmasi password tidak sama.' });
+      }
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        usersData = { users: [] };
+      }
+
+      const cleanNama = String(nama).trim().toLowerCase();
+      const sudahAda = usersData.users.find(
+        (u) => u.nama.trim().toLowerCase() === cleanNama && u.status === status
+      );
+      if (sudahAda) {
+        return sendJson(res, 409, { message: 'Akun dengan nama dan status ini sudah terdaftar. Silakan masuk (login) atau hubungi admin jika ini kesalahan.' });
+      }
+
+      const salt = crypto.randomBytes(16).toString('hex');
+      const hash = hashPassword(password, salt);
+
+      const newUser = {
+        id: `usr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+        nama: String(nama).trim(),
+        status,
+        kelas: status === 'siswa' ? String(kelas).trim() : null,
+        jabatan: status !== 'siswa' ? (jabatan ? String(jabatan).trim() : '') : null,
+        salt,
+        hash,
+        createdAt: new Date().toISOString(),
+        daftarMandiri: true
+      };
+
+      usersData.users.push(newUser);
+      try {
+        await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Pendaftaran mandiri: ${newUser.nama}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menyimpan pendaftaran. Silakan coba lagi.' });
+      }
+
+      const token = generateToken({
+        sub: newUser.id,
+        nama: newUser.nama,
+        status: newUser.status,
+        kelas: newUser.kelas || null,
+        jabatan: newUser.jabatan || null,
+        role: newUser.status,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12
+      });
+
+      return sendJson(res, 201, {
+        message: 'Pendaftaran berhasil! Selamat datang.',
+        token,
+        user: { id: newUser.id, nama: newUser.nama, status: newUser.status, kelas: newUser.kelas, jabatan: newUser.jabatan, role: newUser.status }
+      });
+    }
+
+    // ─── PROFIL SAYA: UPDATE DATA & GANTI PASSWORD (ANGGOTA LOGIN) ───────
+    if (method === 'PUT' && route === 'auth/profile') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !['siswa', 'guru', 'staf'].includes(payload.role)) {
+        return sendJson(res, 401, { message: 'Sesi tidak valid atau fitur ini khusus anggota sekolah.' });
+      }
+
+      const { nama, kelas, jabatan, currentPassword, newPassword, confirmNewPassword } = body;
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
+      }
+
+      const idx = usersData.users.findIndex((u) => u.id === payload.sub);
+      if (idx === -1) {
+        return sendJson(res, 404, { message: 'Akun tidak ditemukan.' });
+      }
+      const user = usersData.users[idx];
+
+      const updated = { ...user };
+
+      if (nama !== undefined) {
+        const cleanNama = String(nama).trim();
+        if (!cleanNama) {
+          return sendJson(res, 400, { message: 'Nama tidak boleh kosong.' });
+        }
+        const cleanNamaLower = cleanNama.toLowerCase();
+        const bentrok = usersData.users.find(
+          (u) => u.id !== user.id && u.nama.trim().toLowerCase() === cleanNamaLower && u.status === user.status
+        );
+        if (bentrok) {
+          return sendJson(res, 409, { message: 'Nama tersebut sudah digunakan oleh akun lain dengan status yang sama.' });
+        }
+        updated.nama = cleanNama;
+      }
+
+      if (user.status === 'siswa' && kelas !== undefined) {
+        if (!String(kelas).trim()) {
+          return sendJson(res, 400, { message: 'Kelas tidak boleh kosong.' });
+        }
+        updated.kelas = String(kelas).trim();
+      }
+      if (user.status !== 'siswa' && jabatan !== undefined) {
+        updated.jabatan = String(jabatan).trim();
+      }
+
+      if (newPassword) {
+        if (!currentPassword) {
+          return sendJson(res, 400, { message: 'Masukkan password saat ini untuk mengganti password.' });
+        }
+        if (!verifyPassword(currentPassword, user.salt, user.hash)) {
+          return sendJson(res, 401, { message: 'Password saat ini salah.' });
+        }
+        if (String(newPassword).length < 4) {
+          return sendJson(res, 400, { message: 'Password baru minimal 4 karakter.' });
+        }
+        if (confirmNewPassword !== undefined && newPassword !== confirmNewPassword) {
+          return sendJson(res, 400, { message: 'Konfirmasi password baru tidak sama.' });
+        }
+        const salt = crypto.randomBytes(16).toString('hex');
+        updated.salt = salt;
+        updated.hash = hashPassword(newPassword, salt);
+      }
+
+      usersData.users[idx] = updated;
+      try {
+        await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Update profil: ${updated.nama}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menyimpan perubahan profil.' });
+      }
+
+      const newToken = generateToken({
+        sub: updated.id,
+        nama: updated.nama,
+        status: updated.status,
+        kelas: updated.kelas || null,
+        jabatan: updated.jabatan || null,
+        role: updated.status,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12
+      });
+
+      return sendJson(res, 200, {
+        message: 'Profil berhasil diperbarui.',
+        token: newToken,
+        user: { id: updated.id, nama: updated.nama, status: updated.status, kelas: updated.kelas, jabatan: updated.jabatan, role: updated.status }
+      });
+    }
+
     // ─── VERIFIKASI TOKEN (DIPAKAI DASHBOARD & ADMIN PANEL) ────────────
     if (method === 'GET' && route === 'auth/verify') {
       const token = getBearerToken(headers);
@@ -686,9 +854,9 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
       }
 
-      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF } = body;
-      if (!judul || !pengarang) {
-        return sendJson(res, 400, { message: 'Judul dan pengarang wajib diisi.' });
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF, modeInput } = body;
+      if (!judul) {
+        return sendJson(res, 400, { message: 'Judul buku wajib diisi.' });
       }
       if (linkPDF && !/^https?:\/\//i.test(String(linkPDF).trim())) {
         return sendJson(res, 400, { message: 'Link PDF harus berupa URL valid (diawali http:// atau https://).' });
@@ -705,13 +873,14 @@ export default async function handler(req, res) {
       const newBook = {
         id: `book_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
         judul,
-        pengarang,
+        pengarang: pengarang || '-',
         penerbit: penerbit || '',
         tahun: tahun || new Date().getFullYear(),
         kategori: kategori || 'Umum',
         isbn: isbn || '',
         deskripsi: deskripsi || '',
         linkPDF: linkPDF ? String(linkPDF).trim() : '',
+        modeInput: modeInput === 'simpel' ? 'simpel' : 'manual',
         dibuat: new Date().toISOString(),
         diperbarui: new Date().toISOString()
       };
@@ -733,7 +902,7 @@ export default async function handler(req, res) {
       }
 
       const bookId = parts[2];
-      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF } = body;
+      const { judul, pengarang, penerbit, tahun, kategori, isbn, deskripsi, linkPDF, modeInput } = body;
       if (linkPDF && !/^https?:\/\//i.test(String(linkPDF).trim())) {
         return sendJson(res, 400, { message: 'Link PDF harus berupa URL valid (diawali http:// atau https://).' });
       }
@@ -761,6 +930,7 @@ export default async function handler(req, res) {
         isbn: isbn !== undefined ? isbn : booksData.books[bookIdx].isbn,
         deskripsi: deskripsi !== undefined ? deskripsi : booksData.books[bookIdx].deskripsi,
         linkPDF: linkPDF !== undefined ? String(linkPDF).trim() : booksData.books[bookIdx].linkPDF,
+        modeInput: modeInput === 'simpel' || modeInput === 'manual' ? modeInput : booksData.books[bookIdx].modeInput,
         diperbarui: new Date().toISOString()
       };
 
