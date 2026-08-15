@@ -27,6 +27,10 @@
     --gray-300: #e5e7eb;
     --gray-100: #f4f6f5;
     --bg-app: #f6f9f8;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
     --radius-md: 14px;
     --radius-lg: 18px;
     --transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
@@ -321,6 +325,142 @@
     border-radius: 20px;
   }
 
+  /* ══════════ ABSENSI ══════════ */
+  .att-status-card {
+    background: linear-gradient(120deg, var(--green-700), var(--green-900) 120%);
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .att-status-card::after {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%);
+    top: -80px; right: -60px;
+    border-radius: 50%;
+  }
+
+  .att-status-left { position: relative; z-index: 1; }
+  .att-status-label { font-size: 12px; color: var(--green-100); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+  .att-status-value { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .att-status-value .dot { width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; }
+  .att-status-value.in .dot { background: #34d399; box-shadow: 0 0 0 4px rgba(52,211,153,0.25); }
+  .att-status-meta { font-size: 12.5px; color: var(--green-100); margin-top: 6px; }
+
+  .att-status-right { display: flex; gap: 10px; position: relative; z-index: 1; flex-wrap: wrap; }
+
+  .att-btn {
+    border: none;
+    border-radius: 11px;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+  }
+
+  .att-btn-in { background: var(--white); color: var(--green-800); }
+  .att-btn-in:hover { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.25); }
+  .att-btn-out { background: rgba(220, 38, 38, 0.92); color: var(--white); }
+  .att-btn-out:hover { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.35); }
+  .att-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+
+  .att-keperluan-wrap {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .att-keperluan-wrap.show { display: block; }
+  .att-keperluan-wrap label { font-size: 12.5px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 8px; }
+  .att-keperluan-wrap input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+  .att-keperluan-wrap input:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.14); }
+
+  .att-alert {
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    background: var(--danger-bg);
+    color: var(--danger);
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .att-alert.success { background: var(--green-50); color: var(--green-800); }
+  .att-alert.show { display: flex; }
+
+  .att-table-wrap {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-300);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .att-table th {
+    text-align: left;
+    padding: 13px 16px;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .att-table td { padding: 13px 16px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
+  .att-table tr:hover td { background: var(--green-50); }
+
+  .att-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .att-chip.done { background: var(--green-50); color: var(--green-800); }
+  .att-chip.progress { background: var(--amber-bg); color: var(--amber); }
+
+  .att-empty { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
+
+  @media (max-width: 640px) {
+    .att-status-card { flex-direction: column; align-items: flex-start; }
+    .att-status-right { width: 100%; }
+    .att-btn { flex: 1; justify-content: center; }
+    .att-table-wrap { overflow-x: auto; }
+    .att-table { min-width: 560px; }
+  }
+
   .profile-card {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -462,7 +602,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#047857);"><i class="fa-solid fa-fingerprint"></i></div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="statKehadiranBulanIni">0</div>
           <div class="stat-label">Kehadiran Bulan Ini</div>
         </div>
         <div class="stat-card">
@@ -489,11 +629,44 @@
     <!-- ══════ ABSENSI ══════ -->
     <section class="section-view" id="section-absensi">
       <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-fingerprint"></i></div>
-        <h3>Fitur Absensi Kehadiran</h3>
-        <p>Nantinya Anda dapat melakukan absen masuk &amp; keluar perpustakaan secara digital di halaman ini, lengkap dengan riwayat kunjungan.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+
+      <div class="att-alert" id="attAlert"><i class="fa-solid fa-circle-exclamation"></i><span id="attAlertText"></span></div>
+
+      <div class="att-status-card">
+        <div class="att-status-left">
+          <div class="att-status-label">Status Anda Sekarang</div>
+          <div class="att-status-value" id="attStatusValue"><span class="dot"></span> Memuat status...</div>
+          <div class="att-status-meta" id="attStatusMeta">&nbsp;</div>
+        </div>
+        <div class="att-status-right">
+          <button class="att-btn att-btn-in" id="btnAttIn" disabled><i class="fa-solid fa-right-to-bracket"></i> Absen Masuk</button>
+          <button class="att-btn att-btn-out" id="btnAttOut" disabled style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Absen Keluar</button>
+        </div>
+      </div>
+
+      <div class="att-keperluan-wrap" id="attKeperluanWrap">
+        <label for="attKeperluanInput"><i class="fa-solid fa-note-sticky"></i> Keperluan kunjungan (opsional)</label>
+        <input type="text" id="attKeperluanInput" placeholder="Contoh: Membaca buku, mengerjakan tugas, meminjam buku..." maxlength="150">
+        <button class="att-btn att-btn-in" id="btnAttConfirmIn" style="background:var(--green-600); color:var(--white);"><i class="fa-solid fa-check"></i> Konfirmasi Absen Masuk</button>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Kehadiran</div>
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Masuk</th>
+              <th>Keluar</th>
+              <th>Durasi</th>
+              <th>Keperluan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="attHistoryBody">
+            <tr><td colspan="6" class="att-empty">Memuat riwayat...</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -656,6 +829,163 @@
     localStorage.removeItem('perpus_user');
     window.location.href = 'index.html';
   });
+
+  // ══════ ABSENSI KEHADIRAN ══════
+  const attStatusValue = document.getElementById('attStatusValue');
+  const attStatusMeta = document.getElementById('attStatusMeta');
+  const btnAttIn = document.getElementById('btnAttIn');
+  const btnAttOut = document.getElementById('btnAttOut');
+  const attKeperluanWrap = document.getElementById('attKeperluanWrap');
+  const attKeperluanInput = document.getElementById('attKeperluanInput');
+  const btnAttConfirmIn = document.getElementById('btnAttConfirmIn');
+  const attHistoryBody = document.getElementById('attHistoryBody');
+  const attAlert = document.getElementById('attAlert');
+  const attAlertText = document.getElementById('attAlertText');
+
+  function showAttAlert(message, type = 'error') {
+    attAlertText.textContent = message;
+    attAlert.classList.remove('success');
+    if (type === 'success') attAlert.classList.add('success');
+    attAlert.classList.add('show');
+    setTimeout(() => attAlert.classList.remove('show'), 4000);
+  }
+
+  function fmtJamTanggal(iso) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    return d.toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function fmtJam(iso) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    return d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function fmtTanggal(str) {
+    if (!str) return '-';
+    const d = new Date(`${str}T00:00:00+07:00`);
+    return d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function fmtDurasi(menit) {
+    if (menit === null || menit === undefined) return '-';
+    if (menit < 60) return `${menit} mnt`;
+    const jam = Math.floor(menit / 60);
+    const sisa = menit % 60;
+    return sisa > 0 ? `${jam} jam ${sisa} mnt` : `${jam} jam`;
+  }
+
+  function renderHistory(riwayat) {
+    if (!riwayat || riwayat.length === 0) {
+      attHistoryBody.innerHTML = `<tr><td colspan="6" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
+      return;
+    }
+    attHistoryBody.innerHTML = riwayat.map(r => `
+      <tr>
+        <td>${fmtTanggal(r.tanggal)}</td>
+        <td>${fmtJam(r.waktuMasuk)}</td>
+        <td>${r.waktuKeluar ? fmtJam(r.waktuKeluar) : '-'}</td>
+        <td>${fmtDurasi(r.durasiMenit)}</td>
+        <td>${r.keperluan ? r.keperluan.replace(/</g, '&lt;') : '-'}</td>
+        <td>${r.waktuKeluar
+          ? '<span class="att-chip done"><i class="fa-solid fa-check"></i> Selesai</span>'
+          : '<span class="att-chip progress"><i class="fa-solid fa-clock"></i> Di Perpustakaan</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function renderStatus(sedangHadir) {
+    if (sedangHadir) {
+      attStatusValue.className = 'att-status-value in';
+      attStatusValue.innerHTML = `<span class="dot"></span> Sedang Berada di Perpustakaan`;
+      attStatusMeta.textContent = `Absen masuk pukul ${fmtJam(sedangHadir.waktuMasuk)}${sedangHadir.keperluan ? ' · ' + sedangHadir.keperluan : ''}`;
+      btnAttIn.style.display = 'none';
+      btnAttOut.style.display = 'inline-flex';
+      btnAttOut.disabled = false;
+      attKeperluanWrap.classList.remove('show');
+    } else {
+      attStatusValue.className = 'att-status-value';
+      attStatusValue.innerHTML = `<span class="dot"></span> Belum Absen Masuk`;
+      attStatusMeta.textContent = 'Silakan absen masuk saat tiba di perpustakaan.';
+      btnAttIn.style.display = 'inline-flex';
+      btnAttIn.disabled = false;
+      btnAttOut.style.display = 'none';
+    }
+  }
+
+  async function loadAttendance() {
+    try {
+      const res = await fetch(`${API_BASE}/attendance/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat data absensi.');
+
+      renderStatus(data.sedangHadir);
+      renderHistory(data.riwayat);
+      const statKehadiran = document.getElementById('statKehadiranBulanIni');
+      if (statKehadiran) statKehadiran.textContent = data.totalBulanIni ?? 0;
+    } catch (err) {
+      attStatusValue.innerHTML = `<span class="dot"></span> Gagal memuat status`;
+      attStatusMeta.textContent = 'Periksa koneksi Anda dan coba muat ulang halaman.';
+      attHistoryBody.innerHTML = `<tr><td colspan="6" class="att-empty">Gagal memuat riwayat.</td></tr>`;
+    }
+  }
+
+  btnAttIn.addEventListener('click', () => {
+    attKeperluanWrap.classList.add('show');
+    attKeperluanInput.focus();
+  });
+
+  btnAttConfirmIn.addEventListener('click', async () => {
+    btnAttConfirmIn.disabled = true;
+    btnAttConfirmIn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+    try {
+      const res = await fetch(`${API_BASE}/attendance/checkin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ keperluan: attKeperluanInput.value })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal absen masuk.');
+      attKeperluanInput.value = '';
+      attKeperluanWrap.classList.remove('show');
+      showAttAlert('Absen masuk berhasil dicatat!', 'success');
+      await loadAttendance();
+    } catch (err) {
+      showAttAlert(err.message || 'Terjadi kesalahan. Coba lagi.');
+    } finally {
+      btnAttConfirmIn.disabled = false;
+      btnAttConfirmIn.innerHTML = '<i class="fa-solid fa-check"></i> Konfirmasi Absen Masuk';
+    }
+  });
+
+  btnAttOut.addEventListener('click', async () => {
+    btnAttOut.disabled = true;
+    btnAttOut.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+    try {
+      const res = await fetch(`${API_BASE}/attendance/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal absen keluar.');
+      showAttAlert('Absen keluar berhasil dicatat. Sampai jumpa lagi!', 'success');
+      await loadAttendance();
+    } catch (err) {
+      showAttAlert(err.message || 'Terjadi kesalahan. Coba lagi.');
+      btnAttOut.disabled = false;
+    } finally {
+      btnAttOut.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Absen Keluar';
+    }
+  });
+
+  loadAttendance();
 </script>
 
 </body>
