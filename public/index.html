@@ -388,6 +388,26 @@
   .alert.show { display: flex; }
   .alert i { margin-top: 1.5px; }
 
+  .switch-form-hint {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--gray-500);
+    margin-top: 16px;
+  }
+
+  .switch-form-hint button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--green-700);
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  .switch-form-hint button:hover { text-decoration: underline; }
+
   .info-box {
     background: var(--gray-100);
     border-radius: 10px;
@@ -636,6 +656,108 @@
           <i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Anggota
         </button>
       </form>
+
+      <div class="switch-form-hint">
+        Belum punya akun?
+        <button type="button" id="gotoRegister">Daftar di sini</button>
+      </div>
+    </div>
+
+    <!-- ══════ FORM DAFTAR AKUN ANGGOTA ══════ -->
+    <div class="panel-view" id="view-daftar">
+      <form id="formRegister" autocomplete="off">
+        <div class="field">
+          <label><i class="fa-solid fa-signature"></i> Nama Lengkap</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user field-icon"></i>
+            <input type="text" name="nama" placeholder="Contoh: Ahmad Fauzan Ramadhan" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label><i class="fa-solid fa-id-card-clip"></i> Status / Jabatan</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-briefcase field-icon"></i>
+              <select name="status" id="statusSelectReg" required>
+                <option value="" disabled selected>Pilih status</option>
+                <option value="siswa">Siswa</option>
+                <option value="guru">Guru</option>
+                <option value="staf">Staf Tata Usaha</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+          </div>
+
+          <div class="field" id="kelasFieldReg" style="display:none;">
+            <label><i class="fa-solid fa-chalkboard"></i> Kelas</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-layer-group field-icon"></i>
+              <select name="kelas" id="kelasSelectReg">
+                <option value="" disabled selected>Pilih kelas</option>
+                <option value="10.1">10.1</option>
+                <option value="10.2">10.2</option>
+                <option value="10.3">10.3</option>
+                <option value="10.4">10.4</option>
+                <option value="10.5">10.5</option>
+                <option value="10.6">10.6</option>
+                <option value="11.1">11.1</option>
+                <option value="11.2">11.2</option>
+                <option value="11.3">11.3</option>
+                <option value="11.4">11.4</option>
+                <option value="11.5">11.5</option>
+                <option value="11.6">11.6</option>
+                <option value="12.1">12.1</option>
+                <option value="12.2">12.2</option>
+                <option value="12.3">12.3</option>
+                <option value="12.4">12.4</option>
+                <option value="12.5">12.5</option>
+                <option value="12.6">12.6</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+          </div>
+
+          <div class="field" id="jabatanFieldReg" style="display:none;">
+            <label><i class="fa-solid fa-user-tie"></i> Jabatan</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-briefcase field-icon"></i>
+              <input type="text" name="jabatan" id="jabatanInputReg" placeholder="Contoh: Wali Kelas / Staf TU">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label><i class="fa-solid fa-lock"></i> Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-key field-icon"></i>
+            <input type="password" name="password" id="passReg" placeholder="Minimal 4 karakter" required minlength="4">
+            <button type="button" class="password-toggle" onclick="togglePass('passReg', this)">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label><i class="fa-solid fa-lock"></i> Konfirmasi Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-key field-icon"></i>
+            <input type="password" name="confirmPassword" id="passRegConfirm" placeholder="Ulangi password" required minlength="4">
+            <button type="button" class="password-toggle" onclick="togglePass('passRegConfirm', this)">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnRegister">
+          <i class="fa-solid fa-user-plus"></i> Daftar Akun
+        </button>
+      </form>
+
+      <div class="switch-form-hint">
+        Sudah punya akun?
+        <button type="button" id="gotoLogin">Masuk di sini</button>
+      </div>
     </div>
 
     <!-- ══════ FORM TAMU ══════ -->
@@ -751,6 +873,78 @@
       kelasField.style.display = 'none';
       kelasSelect.removeAttribute('required');
       kelasSelect.selectedIndex = 0; // Reset ke opsi default saat disembunyikan
+    }
+  });
+
+  // ── TAMPILKAN FIELD KELAS/JABATAN PADA FORM DAFTAR ──
+  const statusSelectReg = document.getElementById('statusSelectReg');
+  const kelasFieldReg = document.getElementById('kelasFieldReg');
+  const kelasSelectReg = document.getElementById('kelasSelectReg');
+  const jabatanFieldReg = document.getElementById('jabatanFieldReg');
+
+  statusSelectReg.addEventListener('change', () => {
+    if (statusSelectReg.value === 'siswa') {
+      kelasFieldReg.style.display = 'block';
+      kelasSelectReg.setAttribute('required', 'required');
+      jabatanFieldReg.style.display = 'none';
+    } else {
+      kelasFieldReg.style.display = 'none';
+      kelasSelectReg.removeAttribute('required');
+      kelasSelectReg.selectedIndex = 0;
+      jabatanFieldReg.style.display = 'block';
+    }
+  });
+
+  // ── SWITCH ANTARA LOGIN & DAFTAR AKUN ──
+  const tabsBar = document.querySelector('.tabs');
+  function showPanel(id) {
+    document.querySelectorAll('.panel-view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    hideAlert('globalAlert');
+  }
+  document.getElementById('gotoRegister').addEventListener('click', () => {
+    tabsBar.style.display = 'none';
+    showPanel('view-daftar');
+  });
+  document.getElementById('gotoLogin').addEventListener('click', () => {
+    tabsBar.style.display = 'flex';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.tab-btn[data-tab="anggota"]').classList.add('active');
+    showPanel('view-anggota');
+  });
+
+  // ── SUBMIT: DAFTAR AKUN ANGGOTA ──
+  document.getElementById('formRegister').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlert('globalAlert');
+    const fd = new FormData(e.target);
+    const payload = {
+      nama: fd.get('nama'),
+      status: fd.get('status'),
+      kelas: fd.get('kelas') || null,
+      jabatan: fd.get('jabatan') || '',
+      password: fd.get('password'),
+      confirmPassword: fd.get('confirmPassword')
+    };
+    if (payload.password !== payload.confirmPassword) {
+      showAlert('globalAlert', 'Konfirmasi password tidak sama.');
+      return;
+    }
+    const originalHtml = document.getElementById('btnRegister').innerHTML;
+    setLoading('btnRegister', true, originalHtml);
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Pendaftaran gagal.');
+      showAlert('globalAlert', 'Pendaftaran berhasil! Mengalihkan ke dashboard...', 'success');
+      setTimeout(() => saveSessionAndRedirect(data.token, data.user, 'dashboard.html'), 600);
+    } catch (err) {
+      showAlert('globalAlert', err.message);
+      setLoading('btnRegister', false, originalHtml);
     }
   });
 
