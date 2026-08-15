@@ -56,6 +56,23 @@ function verifyPassword(password, salt, storedHash) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// HELPER TANGGAL & WAKTU (ZONA WAKTU ASIA/JAKARTA / WIB)
+// ─────────────────────────────────────────────────────────────────────────
+function todayJakarta() {
+  // Format en-CA menghasilkan YYYY-MM-DD, konsisten untuk pengelompokan per hari
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+}
+
+function generateAttendanceId() {
+  return `abs_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+}
+
 function getBearerToken(headers) {
   const authHeader = headers.authorization || headers.Authorization;
   if (!authHeader) return null;
@@ -338,7 +355,7 @@ export default async function handler(req, res) {
       return sendJson(res, 200, { valid: true, user: payload });
     }
 
-    // ─── STATISTIK RINGKAS UNTUK DASHBOARD ADMIN (DUMMY SEMENTARA) ─────
+    // ─── STATISTIK RINGKAS UNTUK DASHBOARD ADMIN ────────────────────────
     if (method === 'GET' && route === 'admin/stats') {
       const token = getBearerToken(headers);
       const payload = token ? verifyToken(token) : null;
@@ -346,24 +363,224 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
       }
 
+      const today = todayJakarta();
       let totalAnggota = 0;
       let totalTamuHariIni = 0;
+      let kunjunganHariIni = 0;
+      let sedangDiPerpus = 0;
+
       try {
         const usersData = JSON.parse(await readDataFile('users.json'));
         totalAnggota = (usersData.users || []).length;
       } catch {}
       try {
         const guestsData = JSON.parse(await readDataFile('guests.json'));
-        const today = new Date().toISOString().slice(0, 10);
         totalTamuHariIni = (guestsData.guests || []).filter((g) => (g.waktuKunjungan || '').slice(0, 10) === today).length;
+      } catch {}
+      try {
+        const attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        const list = Array.isArray(attendanceData.attendance) ? attendanceData.attendance : [];
+        kunjunganHariIni = list.filter((a) => a.tanggal === today).length;
+        sedangDiPerpus = list.filter((a) => a.tanggal === today && !a.waktuKeluar).length;
       } catch {}
 
       return sendJson(res, 200, {
         totalAnggota,
         totalTamuHariIni,
         totalBuku: 0,
-        kunjunganHariIni: totalTamuHariIni
+        kunjunganHariIni,
+        sedangDiPerpus
       });
+    }
+
+    // ─── ABSEN MASUK ─────────────────────────────────────────────────────
+    if (method === 'POST' && route === 'attendance/checkin') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !payload.role || payload.role === 'admin') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
+      }
+
+      const keperluan = body.keperluan ? String(body.keperluan).trim().slice(0, 150) : null;
+      const today = todayJakarta();
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {
+        attendanceData = { attendance: [] };
+      }
+
+      const sudahHadir = attendanceData.attendance.find(
+        (a) => a.userId === payload.sub && a.tanggal === today && !a.waktuKeluar
+      );
+      if (sudahHadir) {
+        return sendJson(res, 400, { message: 'Anda sudah absen masuk hari ini dan belum absen keluar.' });
+      }
+
+      const record = {
+        id: generateAttendanceId(),
+        userId: payload.sub,
+        nama: payload.nama,
+        status: payload.status || payload.role,
+        kelas: payload.kelas || null,
+        jabatan: payload.jabatan || null,
+        keperluan,
+        tanggal: today,
+        waktuMasuk: new Date().toISOString(),
+        waktuKeluar: null,
+        durasiMenit: null
+      };
+
+      attendanceData.attendance.push(record);
+      try {
+        await writeDataFile('attendance.json', JSON.stringify(attendanceData, null, 2), `Absen masuk: ${record.nama}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menyimpan absensi. Silakan coba lagi.' });
+      }
+
+      return sendJson(res, 200, { message: 'Absen masuk berhasil dicatat.', record });
+    }
+
+    // ─── ABSEN KELUAR ────────────────────────────────────────────────────
+    if (method === 'POST' && route === 'attendance/checkout') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !payload.role || payload.role === 'admin') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
+      }
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data absensi tidak dapat dimuat.' });
+      }
+
+      const today = todayJakarta();
+      const record = [...attendanceData.attendance]
+        .reverse()
+        .find((a) => a.userId === payload.sub && a.tanggal === today && !a.waktuKeluar);
+
+      if (!record) {
+        return sendJson(res, 400, { message: 'Anda belum melakukan absen masuk hari ini.' });
+      }
+
+      const now = new Date();
+      record.waktuKeluar = now.toISOString();
+      record.durasiMenit = Math.max(0, Math.round((now - new Date(record.waktuMasuk)) / 60000));
+
+      try {
+        await writeDataFile('attendance.json', JSON.stringify(attendanceData, null, 2), `Absen keluar: ${record.nama}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menyimpan absensi. Silakan coba lagi.' });
+      }
+
+      return sendJson(res, 200, { message: 'Absen keluar berhasil dicatat.', record });
+    }
+
+    // ─── RIWAYAT & STATUS ABSENSI PENGGUNA YANG SEDANG LOGIN ────────────
+    if (method === 'GET' && route === 'attendance/me') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !payload.role || payload.role === 'admin') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
+      }
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {}
+
+      const milik = attendanceData.attendance
+        .filter((a) => a.userId === payload.sub)
+        .sort((a, b) => new Date(b.waktuMasuk) - new Date(a.waktuMasuk));
+
+      const today = todayJakarta();
+      const sedangHadir = milik.find((a) => a.tanggal === today && !a.waktuKeluar) || null;
+      const bulanIni = today.slice(0, 7);
+      const totalBulanIni = milik.filter((a) => a.tanggal.slice(0, 7) === bulanIni).length;
+
+      return sendJson(res, 200, {
+        sedangHadir,
+        totalBulanIni,
+        riwayat: milik.slice(0, 30)
+      });
+    }
+
+    // ─── REKAP ABSENSI UNTUK ADMIN ───────────────────────────────────────
+    if (method === 'GET' && route === 'attendance') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {}
+
+      const reqUrl = new URL(`http://localhost${url}`);
+      const tanggal = reqUrl.searchParams.get('tanggal');
+      const statusFilter = reqUrl.searchParams.get('status');
+      const q = (reqUrl.searchParams.get('q') || '').trim().toLowerCase();
+
+      let hasil = attendanceData.attendance;
+      if (tanggal) hasil = hasil.filter((a) => a.tanggal === tanggal);
+      if (statusFilter && statusFilter !== 'semua') hasil = hasil.filter((a) => a.status === statusFilter);
+      if (q) hasil = hasil.filter((a) => (a.nama || '').toLowerCase().includes(q));
+
+      hasil = [...hasil].sort((a, b) => new Date(b.waktuMasuk) - new Date(a.waktuMasuk));
+
+      const today = todayJakarta();
+      const semua = attendanceData.attendance;
+      const hariIni = semua.filter((a) => a.tanggal === today).length;
+      const sedangDiPerpus = semua.filter((a) => a.tanggal === today && !a.waktuKeluar).length;
+
+      return sendJson(res, 200, {
+        total: hasil.length,
+        hariIni,
+        sedangDiPerpus,
+        data: hasil.slice(0, 300)
+      });
+    }
+
+    // ─── HAPUS SATU CATATAN ABSENSI (ADMIN) ─────────────────────────────
+    if (method === 'DELETE' && parts[1] === 'attendance' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data absensi tidak dapat dimuat.' });
+      }
+
+      const targetId = parts[2];
+      const sebelum = attendanceData.attendance.length;
+      attendanceData.attendance = attendanceData.attendance.filter((a) => a.id !== targetId);
+
+      if (attendanceData.attendance.length === sebelum) {
+        return sendJson(res, 404, { message: 'Catatan absensi tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('attendance.json', JSON.stringify(attendanceData, null, 2), `Hapus catatan absensi: ${targetId}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus catatan absensi.' });
+      }
+
+      return sendJson(res, 200, { message: 'Catatan absensi berhasil dihapus.' });
     }
 
     // ─── 404 ────────────────────────────────────────────────────────────
