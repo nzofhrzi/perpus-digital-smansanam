@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dashboard — Perpus Digital Smansanam</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,21 +24,24 @@
     --black: #0f172a;
     --gray-700: #334155;
     --gray-500: #64748b;
-    --gray-300: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-200: #e2e8f0;
     --gray-100: #f8fafc;
     --bg-app: #f1f5f9;
     --danger: #dc2626;
     --danger-bg: #fee2e2;
     --amber: #b45309;
     --amber-bg: #fffbeb;
+    --radius-sm: 10px;
     --radius-md: 14px;
-    --radius-lg: 18px;
+    --radius-lg: 20px;
     --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.05);
-    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.15);
+    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.12);
+    --shadow-lg: 0 20px 40px -15px rgba(6, 78, 59, 0.2);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -46,6 +49,7 @@
     color: var(--black);
     min-height: 100vh;
     display: flex;
+    overflow-x: hidden;
   }
 
   /* ══════════ SIDEBAR ══════════ */
@@ -65,17 +69,18 @@
   .sidebar-logo {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 12px;
     padding: 22px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   .sidebar-logo-icon {
-    width: 40px; height: 40px;
-    border-radius: 11px;
+    width: 42px; height: 42px;
+    border-radius: 12px;
     background: rgba(255,255,255,0.14);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    font-size: 19px;
+    color: var(--white);
     flex-shrink: 0;
   }
 
@@ -85,25 +90,28 @@
   .sidebar-user {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 16px 20px;
-    background: rgba(255,255,255,0.06);
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.07);
     margin: 14px 14px 6px;
-    border-radius: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
   }
 
   .sidebar-user-avatar {
-    width: 38px; height: 38px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--green-500), var(--green-700));
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 700;
+    color: var(--white);
     flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
 
   .sidebar-user-info { overflow: hidden; }
-  .sidebar-user-info .name { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sidebar-user-info .role { font-size: 10.5px; color: var(--green-100); text-transform: capitalize; }
+  .sidebar-user-info .name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-user-info .role { font-size: 11px; color: var(--green-100); text-transform: capitalize; opacity: 0.85; }
 
   .sidebar-nav {
     flex: 1;
@@ -114,7 +122,7 @@
   .nav-label {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.7px;
+    letter-spacing: 0.8px;
     color: rgba(209, 250, 229, 0.5);
     padding: 14px 10px 8px;
     font-weight: 700;
@@ -125,7 +133,7 @@
     align-items: center;
     gap: 12px;
     padding: 11px 14px;
-    border-radius: 10px;
+    border-radius: 11px;
     color: var(--green-100);
     text-decoration: none;
     font-size: 13.5px;
@@ -160,7 +168,7 @@
     align-items: center;
     gap: 12px;
     padding: 11px 14px;
-    border-radius: 10px;
+    border-radius: 11px;
     background: rgba(220, 38, 38, 0.16);
     color: #fca5a5;
     border: none;
@@ -181,12 +189,13 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    width: calc(100% - 264px);
   }
 
   .topbar {
     height: 68px;
     background: var(--white);
-    border-bottom: 1px solid var(--gray-300);
+    border-bottom: 1px solid var(--gray-200);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -201,14 +210,16 @@
   .menu-toggle {
     display: none;
     background: var(--gray-100);
-    border: none;
-    width: 38px; height: 38px;
-    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    width: 40px; height: 40px;
+    border-radius: 11px;
     align-items: center; justify-content: center;
     cursor: pointer;
     color: var(--green-800);
-    font-size: 16px;
+    font-size: 17px;
+    transition: var(--transition);
   }
+  .menu-toggle:active { transform: scale(0.94); }
 
   .topbar-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; color: var(--black); }
   .topbar-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
@@ -225,15 +236,16 @@
     border-radius: 20px;
     font-size: 11.5px;
     font-weight: 700;
+    border: 1px solid var(--green-100);
   }
 
   .topbar-badge i { font-size: 9px; color: var(--green-600); }
 
-  .content { padding: 26px 28px 40px; flex: 1; }
+  .content { padding: 26px 28px 40px; flex: 1; max-width: 1280px; width: 100%; margin: 0 auto; }
 
-  .section-view { display: none; animation: fadeIn 0.3s ease; }
+  .section-view { display: none; animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
   .section-view.active { display: block; }
-  @keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
   .welcome-card {
     background: linear-gradient(120deg, var(--green-700), var(--green-900) 120%);
@@ -243,7 +255,7 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
   }
 
   .welcome-card::after {
@@ -270,7 +282,7 @@
     border-radius: var(--radius-md);
     padding: 20px;
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--gray-300);
+    border: 1px solid var(--gray-200);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -280,7 +292,7 @@
 
   .stat-icon {
     width: 42px; height: 42px;
-    border-radius: 11px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 17px;
     color: var(--white);
@@ -296,7 +308,7 @@
     background: var(--white);
     border: 1.5px dashed var(--gray-300);
     border-radius: var(--radius-lg);
-    padding: 48px 30px;
+    padding: 44px 24px;
     text-align: center;
     color: var(--gray-500);
   }
@@ -325,87 +337,95 @@
     font-weight: 700;
     padding: 6px 13px;
     border-radius: 20px;
+    border: 1px solid var(--green-100);
   }
 
-  /* ══════════ ABSENSI ══════════ */
+  /* ══════════ ABSENSI (OPTIMIZED FOR ANDROID & DESKTOP) ══════════ */
   .att-status-card {
-    background: linear-gradient(120deg, var(--green-700), var(--green-900) 120%);
+    background: linear-gradient(135deg, var(--green-800) 0%, var(--green-950) 100%);
     border-radius: var(--radius-lg);
-    padding: 26px 28px;
+    padding: 24px 26px;
     color: var(--white);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    flex-wrap: wrap;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-md);
   }
 
   .att-status-card::after {
     content: '';
     position: absolute;
-    width: 220px; height: 220px;
-    background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%);
-    top: -80px; right: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    top: -90px; right: -70px;
     border-radius: 50%;
+    pointer-events: none;
   }
 
-  .att-status-left { position: relative; z-index: 1; }
-  .att-status-label { font-size: 12px; color: var(--green-100); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
-  .att-status-value { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-  .att-status-value .dot { width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; }
+  .att-status-left { position: relative; z-index: 1; flex: 1; }
+  .att-status-label { font-size: 11px; color: var(--green-100); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.9; }
+  .att-status-value { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .att-status-value .dot { width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25); flex-shrink: 0; }
   .att-status-value.in .dot { background: #34d399; box-shadow: 0 0 0 4px rgba(52,211,153,0.25); }
-  .att-status-meta { font-size: 12.5px; color: var(--green-100); margin-top: 6px; }
+  .att-status-meta { font-size: 12.5px; color: var(--green-100); margin-top: 6px; opacity: 0.9; line-height: 1.4; }
 
-  .att-status-right { display: flex; gap: 10px; position: relative; z-index: 1; flex-wrap: wrap; }
+  .att-status-right { position: relative; z-index: 1; flex-shrink: 0; }
 
   .att-btn {
     border: none;
-    border-radius: 11px;
-    padding: 12px 22px;
+    border-radius: 12px;
+    padding: 13px 24px;
     font-family: inherit;
     font-size: 13.5px;
     font-weight: 700;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 9px;
     transition: var(--transition);
+    width: auto;
+    text-decoration: none;
   }
 
-  .att-btn-in { background: var(--white); color: var(--green-800); }
-  .att-btn-in:hover:not(:disabled) { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.25); }
-  .att-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+  .att-btn-in { background: var(--white); color: var(--green-900); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .att-btn-in:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.22); background: #ffffff; }
+  .att-btn-in:active:not(:disabled) { transform: translateY(0); }
+  .att-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
   .att-form-wrap {
     background: var(--white);
-    border: 1px solid var(--gray-300);
-    border-radius: var(--radius-md);
-    padding: 20px;
-    margin-bottom: 20px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 22px;
     display: none;
     box-shadow: var(--shadow-sm);
   }
-  .att-form-wrap.show { display: block; animation: fadeIn 0.2s ease; }
-  .att-form-wrap label { font-size: 12.5px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 8px; }
+  .att-form-wrap.show { display: block; animation: fadeIn 0.25s ease; }
+  .att-form-wrap label { font-size: 13px; font-weight: 700; color: var(--gray-700); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  
   .att-form-wrap select {
     width: 100%;
-    padding: 12px 14px;
+    padding: 13px 16px;
     border: 1.5px solid var(--gray-300);
-    border-radius: 10px;
+    border-radius: 12px;
     font-family: inherit;
     font-size: 13.5px;
     color: var(--black);
     background: var(--white);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23047857' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     background-size: 16px;
     cursor: pointer;
+    transition: var(--transition);
   }
   .att-form-wrap select:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.14); }
 
@@ -413,22 +433,24 @@
     display: none;
     align-items: flex-start;
     gap: 10px;
-    padding: 12px 14px;
-    border-radius: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
     background: var(--danger-bg);
     color: var(--danger);
     font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
     line-height: 1.5;
+    border: 1px solid rgba(220, 38, 38, 0.2);
   }
-  .att-alert.success { background: var(--green-50); color: var(--green-800); }
-  .att-alert.show { display: flex; }
+  .att-alert.success { background: var(--green-50); color: var(--green-800); border-color: var(--green-100); }
+  .att-alert.show { display: flex; animation: fadeIn 0.2s ease; }
 
+  /* Dynamic Table Container for Desktop & Android Cards */
   .att-table-wrap {
     background: var(--white);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-300);
+    border: 1px solid var(--gray-200);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
   }
@@ -436,32 +458,26 @@
   .att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .att-table th {
     text-align: left;
-    padding: 14px 18px;
+    padding: 14px 20px;
     background: var(--gray-100);
     color: var(--gray-700);
     font-weight: 700;
     font-size: 11.5px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid var(--gray-300);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-200);
   }
-  .att-table td { padding: 14px 18px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
+  .att-table td { padding: 15px 20px; border-top: 1px solid var(--gray-200); color: var(--black); vertical-align: middle; }
   .att-table tr:hover td { background: var(--green-50); }
 
-  .att-empty { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
+  .att-empty { padding: 44px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
 
   /* ══════════ KOLEKSI BUKU (BACA ONLINE) ══════════ */
   .book-toolbar { margin-bottom: 22px; }
-  .book-search-wrap {
-    position: relative;
-    max-width: 380px;
-  }
-  .book-search-wrap i {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--gray-500); font-size: 14px;
-  }
+  .book-search-wrap { position: relative; max-width: 380px; width: 100%; }
+  .book-search-wrap i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gray-500); font-size: 14px; }
   .book-search-wrap input {
-    width: 100%; padding: 11px 14px 11px 40px;
+    width: 100%; padding: 12px 16px 12px 42px;
     border: 1.5px solid var(--gray-300); border-radius: 12px;
     font-family: inherit; font-size: 13.5px; background: var(--white);
     transition: var(--transition);
@@ -475,7 +491,7 @@
   }
   .book-card {
     background: var(--white);
-    border: 1px solid var(--gray-300);
+    border: 1px solid var(--gray-200);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     display: flex;
@@ -490,14 +506,14 @@
     background: linear-gradient(135deg, var(--green-800), var(--green-950));
     display: flex; align-items: center; justify-content: center;
     color: rgba(255,255,255,0.9);
-    font-size: 42px;
+    font-size: 44px;
     position: relative;
   }
   .book-cover-badge {
-    position: absolute; top: 10px; right: 10px;
-    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px);
     color: var(--white); font-size: 10px; font-weight: 700;
-    padding: 3px 8px; border-radius: 6px; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.3px;
   }
 
   .book-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
@@ -507,26 +523,26 @@
   
   .tag-small {
     background: var(--green-50); color: var(--green-800);
-    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--green-100);
   }
 
   .btn-read-book {
     margin-top: 10px;
-    padding: 10px 14px; border: none; border-radius: 10px;
+    padding: 11px 14px; border: none; border-radius: 11px;
     background: linear-gradient(135deg, var(--green-600), var(--green-800));
     color: var(--white); font-family: inherit; font-size: 13px; font-weight: 700;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: var(--transition);
   }
   .btn-read-book:hover:not(:disabled) { background: linear-gradient(135deg, var(--green-700), var(--green-900)); box-shadow: 0 4px 12px rgba(6,78,59,0.25); }
-  .btn-read-book:disabled { opacity: 0.55; cursor: not-allowed; background: var(--gray-300); color: var(--gray-500); }
+  .btn-read-book:disabled { opacity: 0.55; cursor: not-allowed; background: var(--gray-200); color: var(--gray-500); }
 
-  /* ══════════ MODAL PEMBACA PDF (HD & TAJAM) ══════════ */
+  /* ══════════ MODAL PEMBACA PDF ══════════ */
   .pdf-modal-overlay {
     display: none;
     position: fixed; inset: 0;
     background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
     z-index: 200;
     align-items: center; justify-content: center;
     padding: 16px;
@@ -556,7 +572,7 @@
   
   .pdf-close-btn { 
     background: rgba(255,255,255,0.12); border: none; color: var(--white); 
-    width: 34px; height: 34px; border-radius: 9px; cursor: pointer; 
+    width: 36px; height: 36px; border-radius: 10px; cursor: pointer; 
     font-size: 16px; display: flex; align-items: center; justify-content: center;
     transition: var(--transition);
   }
@@ -586,25 +602,23 @@
     margin: auto 0;
   }
 
-  /* Render Kanvas HD yang Presisi */
   #pdfCanvasContainer canvas { 
     box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
     border-radius: 4px;
     background: #ffffff;
   }
 
-  /* Toolbar Kontrol PDF di Bawah */
   .pdf-nav-bar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 20px; background: var(--white); border-top: 1px solid var(--gray-300);
-    flex-shrink: 0;
+    padding: 12px 20px; background: var(--white); border-top: 1px solid var(--gray-200);
+    flex-shrink: 0; gap: 10px; flex-wrap: wrap;
   }
 
   .pdf-nav-controls { display: flex; align-items: center; gap: 8px; }
   
   .pdf-btn-icon {
-    background: var(--gray-100); border: 1.5px solid var(--gray-300); border-radius: 8px;
-    width: 34px; height: 34px; cursor: pointer; color: var(--gray-700);
+    background: var(--gray-100); border: 1.5px solid var(--gray-300); border-radius: 9px;
+    width: 36px; height: 36px; cursor: pointer; color: var(--gray-700);
     display: flex; align-items: center; justify-content: center;
     transition: var(--transition); font-size: 13px;
   }
@@ -613,7 +627,7 @@
 
   .pdf-page-indicator { font-size: 13px; font-weight: 700; color: var(--black); min-width: 100px; text-align: center; }
 
-  .pdf-zoom-controls { display: flex; align-items: center; gap: 6px; background: var(--gray-100); padding: 3px; border-radius: 10px; border: 1px solid var(--gray-300); }
+  .pdf-zoom-controls { display: flex; align-items: center; gap: 6px; background: var(--gray-100); padding: 4px; border-radius: 11px; border: 1px solid var(--gray-300); }
   .pdf-zoom-val { font-size: 12px; font-weight: 700; color: var(--gray-700); min-width: 45px; text-align: center; }
 
   .pdf-loading, .pdf-error {
@@ -623,91 +637,233 @@
   }
   .pdf-error i { font-size: 34px; color: #fca5a5; }
 
-  /* ══════════ PROFIL ══════════ */
+  /* ══════════ PROFIL SAYA & EDIT SYSTEM ══════════ */
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+
   .profile-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-300);
-    padding: 28px;
-    max-width: 520px;
+    border: 1px solid var(--gray-200);
+    padding: 28px 24px;
     box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-avatar-wrap {
+    position: relative;
+    margin-bottom: 16px;
   }
 
   .profile-avatar-lg {
-    width: 74px; height: 74px;
-    border-radius: 20px;
+    width: 86px; height: 86px;
+    border-radius: 24px;
     background: linear-gradient(135deg, var(--green-500), var(--green-800));
     color: var(--white);
     display: flex; align-items: center; justify-content: center;
-    font-size: 26px; font-weight: 700;
+    font-size: 30px; font-weight: 700;
     font-family: 'Poppins', sans-serif;
-    margin-bottom: 18px;
-    box-shadow: 0 8px 16px -4px rgba(5,150,105,0.3);
+    box-shadow: 0 10px 22px -6px rgba(5,150,105,0.4);
   }
 
-  .profile-card h2 { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 3px; }
+  .btn-avatar-edit {
+    position: absolute;
+    bottom: -4px; right: -4px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--green-600);
+    color: var(--green-700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: var(--transition);
+  }
+  .btn-avatar-edit:hover { background: var(--green-50); transform: scale(1.08); }
+
+  .profile-card h2 { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 4px; color: var(--black); }
+  
   .profile-card .status-chip {
     display: inline-block;
-    background: var(--green-100);
+    background: var(--green-50);
     color: var(--green-800);
+    border: 1px solid var(--green-100);
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 11px;
+    padding: 4px 13px;
     border-radius: 20px;
     text-transform: capitalize;
     margin-bottom: 20px;
   }
 
+  .profile-details-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .profile-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .profile-details-header h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-profile-edit {
+    background: var(--green-50);
+    color: var(--green-800);
+    border: 1px solid var(--green-100);
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: var(--transition);
+  }
+  .btn-profile-edit:hover { background: var(--green-100); color: var(--green-900); }
+
   .profile-detail-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-top: 1px solid var(--gray-100);
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--gray-100);
     font-size: 13px;
   }
+  .profile-detail-row:last-child { border-bottom: none; }
 
-  .profile-detail-row i { width: 20px; color: var(--green-600); text-align: center; }
-  .profile-detail-row .label { color: var(--gray-500); width: 130px; flex-shrink: 0; }
-  .profile-detail-row .value { color: var(--black); font-weight: 600; }
+  .profile-detail-row i { width: 20px; color: var(--green-600); text-align: center; font-size: 14.5px; }
+  .profile-detail-row .label { color: var(--gray-500); width: 140px; flex-shrink: 0; font-weight: 500; }
+  .profile-detail-row .value { color: var(--black); font-weight: 600; flex: 1; word-break: break-word; }
 
-  /* RESPONSIVE */
+  /* Notification Toast Modal Future Placeholder */
+  .toast-notice {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--black);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: var(--shadow-lg);
+    z-index: 300;
+    transform: translateY(100px); opacity: 0;
+    transition: var(--transition);
+  }
+  .toast-notice.show { transform: translateY(0); opacity: 1; }
+
+  /* ══════════ RESPONSIVE ANDROID & MOBILE OPTIMIZATIONS ══════════ */
   @media (max-width: 1000px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .profile-layout { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 880px) {
     .sidebar { transform: translateX(-100%); box-shadow: 0 0 0 100vmax rgba(0,0,0,0); }
-    .sidebar.open { transform: translateX(0); box-shadow: 20px 0 60px rgba(0,0,0,0.25); }
-    .main { margin-left: 0; }
+    .sidebar.open { transform: translateX(0); box-shadow: 20px 0 60px rgba(0,0,0,0.35); }
+    .main { margin-left: 0; width: 100%; }
     .menu-toggle { display: flex; }
     .topbar-title { font-size: 15px; }
-    .att-status-card { flex-direction: column; align-items: flex-start; padding: 22px 20px; }
-    .att-status-right { width: 100%; }
-    .att-btn { width: 100%; justify-content: center; }
-  }
-
-  @media (max-width: 560px) {
-    .stat-grid { grid-template-columns: 1fr; }
-    .content { padding: 18px 16px 32px; }
+    .content { padding: 20px 16px 36px; }
     .topbar { padding: 0 16px; }
     .welcome-card { padding: 22px 20px; }
-    .att-table-wrap { overflow-x: auto; }
-    .att-table { min-width: 420px; }
-    .att-status-value { font-size: 17px; }
-    .att-form-wrap { padding: 16px; }
-    .pdf-modal-overlay { padding: 8px; }
-    .pdf-modal-card { height: 96vh; }
+  }
+
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .stat-card { padding: 15px; gap: 8px; }
+    .stat-value { font-size: 20px; }
+    .stat-icon { width: 36px; height: 36px; font-size: 15px; border-radius: 10px; }
+
+    /* Absensi Card Layout Transformation for Android (No Horizontal Scroll) */
+    .att-status-card { flex-direction: column; align-items: stretch; padding: 20px 18px; text-align: left; }
+    .att-status-right { width: 100%; margin-top: 6px; }
+    .att-btn { width: 100%; justify-content: center; }
+
+    /* Android Native Friendly Attendance History Cards */
+    .att-table-wrap { background: transparent; border: none; box-shadow: none; overflow: visible; }
+    .att-table, .att-table tbody, .att-table tr, .att-table td { display: block; width: 100%; }
+    .att-table th { display: none; }
+    .att-table tr {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .att-table td {
+      padding: 6px 0;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+    }
+    .att-table td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: var(--gray-500);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .att-table td:first-child { font-weight: 700; color: var(--black); border-bottom: 1px dashed var(--gray-200); padding-bottom: 8px; margin-bottom: 6px; }
+    .att-table td:first-child::before { color: var(--green-700); }
+    .att-table td:last-child { padding-top: 6px; }
+
+    .book-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+    .book-cover { height: 120px; font-size: 34px; }
+    .book-info { padding: 12px; gap: 6px; }
+    .book-info h4 { font-size: 13px; }
+
+    .pdf-modal-overlay { padding: 6px; }
+    .pdf-modal-card { height: 98vh; border-radius: 14px; }
     .pdf-readonly-badge { display: none; }
+    .pdf-nav-bar { padding: 10px; justify-content: center; gap: 8px; }
+
+    .profile-card { padding: 22px 18px; }
+    .profile-details-card { padding: 18px 16px; }
+    .profile-detail-row { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 0; }
+    .profile-detail-row .label { width: 100%; }
   }
 
   .overlay-mobile {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
     z-index: 40;
   }
-  .overlay-mobile.show { display: block; }
+  .overlay-mobile.show { display: block; animation: fadeIn 0.2s ease; }
 </style>
 </head>
 <body>
@@ -744,11 +900,11 @@
 
 <div class="overlay-mobile" id="overlayMobile"></div>
 
-<!-- ══════════ MAIN ══════════ -->
+<!-- ══════════ MAIN AREA ══════════ -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Buka Menu"><i class="fa-solid fa-bars"></i></button>
       <div>
         <div class="topbar-title" id="pageTitle">Beranda</div>
         <div class="topbar-subtitle" id="pageSubtitle">Ringkasan aktivitas perpustakaan Anda</div>
@@ -800,7 +956,7 @@
       </div>
     </section>
 
-    <!-- ══════ ABSENSI ══════ -->
+    <!-- ══════ ABSENSI KEHADIRAN ══════ -->
     <section class="section-view" id="section-absensi">
       <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</div>
 
@@ -818,11 +974,11 @@
       </div>
 
       <div class="att-form-wrap" id="attFormWrap">
-        <label for="attAlasanSelect"><i class="fa-solid fa-list-check"></i> Alasan Kunjungan</label>
+        <label for="attAlasanSelect"><i class="fa-solid fa-list-check"></i> Pilih Alasan Kunjungan</label>
         <select id="attAlasanSelect">
           <option value="" disabled selected>Pilih alasan kunjungan...</option>
         </select>
-        <button class="att-btn att-btn-in" id="btnAttSubmit" style="background:var(--green-600); color:var(--white); width:100%; justify-content:center;"><i class="fa-solid fa-check"></i> Konfirmasi Absensi</button>
+        <button class="att-btn att-btn-in" id="btnAttSubmit" style="background:var(--green-600); color:var(--white); width:100%; justify-content:center; border-radius:12px;"><i class="fa-solid fa-check"></i> Konfirmasi Absensi</button>
       </div>
 
       <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Kehadiran</div>
@@ -842,7 +998,7 @@
       </div>
     </section>
 
-    <!-- ══════ BACA BUKU ══════ -->
+    <!-- ══════ BACA BUKU ONLINE ══════ -->
     <section class="section-view" id="section-baca">
       <div class="section-title"><i class="fa-solid fa-book-open"></i> Baca Buku Online</div>
 
@@ -858,33 +1014,50 @@
       </div>
     </section>
 
-    <!-- ══════ PROFIL ══════ -->
+    <!-- ══════ PROFIL SAYA ══════ -->
     <section class="section-view" id="section-profil">
       <div class="section-title"><i class="fa-solid fa-user"></i> Profil Saya</div>
-      <div class="profile-card">
-        <div class="profile-avatar-lg" id="profileAvatar">-</div>
-        <h2 id="profileName">-</h2>
-        <span class="status-chip" id="profileStatus">-</span>
+      
+      <div class="profile-layout">
+        <!-- Profile Card Brief -->
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar-lg" id="profileAvatar">-</div>
+            <button class="btn-avatar-edit" id="btnEditAvatar" title="Ubah Foto Profil"><i class="fa-solid fa-camera"></i></button>
+          </div>
+          <h2 id="profileName">-</h2>
+          <span class="status-chip" id="profileStatus">-</span>
 
-        <div class="profile-detail-row">
-          <i class="fa-solid fa-id-badge"></i>
-          <span class="label">ID Pengguna</span>
-          <span class="value" id="profileId">-</span>
+          <button class="btn-profile-edit" id="btnEditProfile" style="width:100%; justify-content:center; margin-top:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit Informasi Profil</button>
         </div>
-        <div class="profile-detail-row" id="rowKelas">
-          <i class="fa-solid fa-chalkboard"></i>
-          <span class="label">Kelas</span>
-          <span class="value" id="profileKelas">-</span>
-        </div>
-        <div class="profile-detail-row" id="rowJabatan">
-          <i class="fa-solid fa-briefcase"></i>
-          <span class="label">Jabatan / Keperluan</span>
-          <span class="value" id="profileJabatan">-</span>
-        </div>
-        <div class="profile-detail-row" id="rowUmur">
-          <i class="fa-solid fa-cake-candles"></i>
-          <span class="label">Umur</span>
-          <span class="value" id="profileUmur">-</span>
+
+        <!-- Profile Details List -->
+        <div class="profile-details-card">
+          <div class="profile-details-header">
+            <h3><i class="fa-solid fa-id-card"></i> Informasi Detail Akun</h3>
+            <button class="btn-profile-edit" id="btnChangePassword"><i class="fa-solid fa-key"></i> Ubah Password</button>
+          </div>
+
+          <div class="profile-detail-row">
+            <i class="fa-solid fa-id-badge"></i>
+            <span class="label">ID Pengguna</span>
+            <span class="value" id="profileId">-</span>
+          </div>
+          <div class="profile-detail-row" id="rowKelas">
+            <i class="fa-solid fa-chalkboard"></i>
+            <span class="label">Kelas</span>
+            <span class="value" id="profileKelas">-</span>
+          </div>
+          <div class="profile-detail-row" id="rowJabatan">
+            <i class="fa-solid fa-briefcase"></i>
+            <span class="label">Jabatan / Keperluan</span>
+            <span class="value" id="profileJabatan">-</span>
+          </div>
+          <div class="profile-detail-row" id="rowUmur">
+            <i class="fa-solid fa-cake-candles"></i>
+            <span class="label">Umur</span>
+            <span class="value" id="profileUmur">-</span>
+          </div>
         </div>
       </div>
     </section>
@@ -928,6 +1101,9 @@
   </div>
 </div>
 
+<!-- TOAST NOTIFICATION PLACEHOLDER -->
+<div class="toast-notice" id="toastNotice"><i class="fa-solid fa-circle-info"></i><span id="toastMsg">Fitur segera hadir!</span></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   const API_BASE = '/api';
@@ -962,6 +1138,14 @@
     }
   })();
 
+  // ══════ TOAST HELPER ══════
+  function showToast(msg) {
+    const toast = document.getElementById('toastNotice');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
   // ══════ RENDER DATA USER ══════
   function initials(name) {
     return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -990,6 +1174,11 @@
     document.getElementById('rowUmur').style.display = 'none';
     document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
   }
+
+  // Action Edit Placeholders
+  document.getElementById('btnEditAvatar').addEventListener('click', () => showToast('Fitur ubah foto profil akan segera aktif.'));
+  document.getElementById('btnEditProfile').addEventListener('click', () => showToast('Fitur edit informasi profil akan segera aktif.'));
+  document.getElementById('btnChangePassword').addEventListener('click', () => showToast('Fitur ubah password akan segera aktif.'));
 
   // ══════ NAVIGASI SIDEBAR ══════
   const pageMeta = {
@@ -1064,6 +1253,7 @@
     return d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' });
   }
 
+  // Render Riwayat Kehadiran (Android Card Adaptive)
   function renderHistory(riwayat) {
     if (!riwayat || riwayat.length === 0) {
       attHistoryBody.innerHTML = `<tr><td colspan="3" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
@@ -1071,9 +1261,9 @@
     }
     attHistoryBody.innerHTML = riwayat.map(r => `
       <tr>
-        <td>${fmtTanggal(r.tanggal)}</td>
-        <td>${fmtJam(r.waktuAbsen)}</td>
-        <td>${r.alasan ? r.alasan.replace(/</g, '&lt;') : '-'}</td>
+        <td data-label="Tanggal"><i class="fa-regular fa-calendar-check" style="margin-right:6px; color:var(--green-600);"></i> ${fmtTanggal(r.tanggal)}</td>
+        <td data-label="Waktu Absen"><i class="fa-regular fa-clock" style="margin-right:6px; color:var(--gray-500);"></i> ${fmtJam(r.waktuAbsen)}</td>
+        <td data-label="Alasan">${r.alasan ? r.alasan.replace(/</g, '&lt;') : '-'}</td>
       </tr>
     `).join('');
   }
@@ -1126,8 +1316,10 @@
   }
 
   btnAttOpen.addEventListener('click', () => {
-    attFormWrap.classList.add('show');
-    attAlasanSelect.focus();
+    attFormWrap.classList.toggle('show');
+    if (attFormWrap.classList.contains('show')) {
+      attAlasanSelect.focus();
+    }
   });
 
   btnAttSubmit.addEventListener('click', async () => {
@@ -1225,7 +1417,7 @@
     renderBookGrid(filtered);
   });
 
-  // ══════ PEMBACA PDF READ-ONLY HD (PDF.JS HIGH DPI FIX) ══════
+  // ══════ PEMBACA PDF READ-ONLY HD ══════
   if (window['pdfjsLib']) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
@@ -1275,7 +1467,6 @@
     }
   }
 
-  // Poin Penting: Perhitungan Device Pixel Ratio (DPI) untuk Menghilangkan Burem
   async function renderPdfPage(num) {
     if (!pdfDocCurrent) return;
 
@@ -1284,25 +1475,20 @@
     }
 
     const page = await pdfDocCurrent.getPage(num);
-    
-    // Hitung Fit Scale berdasarkan lebar kontainer viewer
-    const containerWidth = Math.max(300, pdfViewerBody.clientWidth - 48);
+    const containerWidth = Math.max(280, pdfViewerBody.clientWidth - 32);
     const baseViewport = page.getViewport({ scale: 1 });
     const fitScale = containerWidth / baseViewport.width;
     const effectiveScale = fitScale * pdfZoomScale;
 
-    // Perbaikan utama: Menggunakan Device Pixel Ratio layar pengguna (minimum 2.0x agar super tajam)
     const dpr = Math.max(window.devicePixelRatio || 1, 2.0);
     const viewport = page.getViewport({ scale: effectiveScale * dpr });
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d', { alpha: false });
 
-    // Ukuran fisik piksel internal canvas (resolusi tinggi)
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
 
-    // Ukuran tampilan CSS (di-downscale secara visual agar pas & jernih)
     canvas.style.width = Math.floor(viewport.width / dpr) + 'px';
     canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
 
@@ -1375,8 +1561,7 @@
 
   document.getElementById('btnClosePdfModal').addEventListener('click', closePdfViewer);
   pdfModal.addEventListener('click', (e) => { if (e.target === pdfModal) closePdfViewer(); });
-  
-  // Navigasi Shortcut Keyboard (Esc, Panah Kiri, Panah Kanan)
+
   document.addEventListener('keydown', (e) => {
     if (!pdfModal.classList.contains('show')) return;
     
@@ -1388,7 +1573,6 @@
       btnPdfNext.click();
     }
     
-    // Cegah Ctrl+S & Ctrl+P
     const key = (e.key || '').toLowerCase();
     if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p')) {
       e.preventDefault();
@@ -1397,7 +1581,6 @@
 
   pdfViewerBody.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  // Auto-load buku jika tab "Baca Buku" aktif
   if (document.getElementById('section-baca').classList.contains('active') && !booksLoadedOnce) {
     loadBooks();
   }
