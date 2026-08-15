@@ -32,6 +32,17 @@
       "alasan": "Diskusi Kelompok",
       "tanggal": "2026-08-15",
       "waktuAbsen": "2026-08-15T06:55:09.577Z"
+    },
+    {
+      "id": "abs_1786777401288_e22bb8",
+      "userId": "user_1786776243708_1f21a0",
+      "nama": "Dimz",
+      "status": "siswa",
+      "kelas": "X 3",
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "tanggal": "2026-08-15",
+      "waktuAbsen": "2026-08-15T07:03:21.288Z"
     }
   ]
 }
