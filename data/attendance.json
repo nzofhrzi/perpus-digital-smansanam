@@ -1,17 +1,6 @@
 {
   "attendance": [
     {
-      "id": "abs_1786773022622_7c1395",
-      "userId": "tamu_1786773000123",
-      "nama": "Ridho",
-      "status": "tamu",
-      "kelas": null,
-      "jabatan": "Mahasiswa",
-      "alasan": "Kunjungan Kelas",
-      "tanggal": "2026-08-15",
-      "waktuAbsen": "2026-08-15T05:50:22.622Z"
-    },
-    {
       "id": "abs_1786773068815_3e7c4f",
       "userId": "tamu_1786773061714",
       "nama": "Rio",
