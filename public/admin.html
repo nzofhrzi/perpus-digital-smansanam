@@ -148,9 +148,7 @@
   }
 
   .nav-item i { width: 18px; text-align: center; font-size: 14.5px; }
-
   .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--white); }
-
   .nav-item.active {
     background: linear-gradient(135deg, var(--green-600), var(--green-800));
     color: var(--white);
@@ -179,7 +177,6 @@
     cursor: pointer;
     transition: var(--transition);
   }
-
   .btn-logout:hover { background: rgba(220, 38, 38, 0.28); color: #fecaca; }
 
   /* ══════════ MAIN ══════════ */
@@ -335,7 +332,6 @@
   }
   .att-btn-export:hover { background: var(--green-600); color: var(--white); }
 
-  /* Desktop Table Style */
   .att-table-wrap {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -462,105 +458,52 @@
   }
   .btn-submit-export:hover { opacity: 0.95; }
 
-  /* ══════════ RESPONSIVE MOBILE (ANDROID) ABSENSI ══════════ */
+  /* RESPONSIVE MOBILE */
   @media (max-width: 640px) {
     .att-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .att-mini-card { padding: 12px 14px; min-width: unset; }
 
-    .att-toolbar {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 14px;
-    }
+    .att-toolbar { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
     .att-field, .att-field-search { width: 100%; min-width: unset; }
     .att-btn-reset, .att-btn-export { width: 100%; height: 42px; }
 
-    /* Transformasi Tabel ke Tampilan List Card (Android Native Style) */
-    .att-table-wrap {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      overflow: visible;
-    }
+    .att-table-wrap { background: transparent; border: none; box-shadow: none; overflow: visible; }
     .att-table { display: block; width: 100%; }
     .att-table thead { display: none; }
     .att-table tbody { display: flex; flex-direction: column; gap: 12px; }
     
     .att-table tr {
-      display: block;
-      background: var(--white);
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      position: relative;
-      box-shadow: var(--shadow-sm);
+      display: block; background: var(--white); border: 1px solid var(--gray-300);
+      border-radius: var(--radius-md); padding: 16px; position: relative; box-shadow: var(--shadow-sm);
     }
     .att-table tr:hover td { background: transparent; }
 
     .att-table td {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 0;
-      border: none;
-      border-bottom: 1px dashed var(--gray-100);
-      font-size: 12.5px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; border: none; border-bottom: 1px dashed var(--gray-100); font-size: 12.5px;
     }
     .att-table td:last-child { border-bottom: none; }
 
-    /* Nama Pengunjung (Header Card) */
     .att-table td:nth-child(1) {
-      display: block;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--green-950);
-      padding-right: 40px;
-      border-bottom: 1px solid var(--gray-300);
-      padding-bottom: 8px;
-      margin-bottom: 4px;
+      display: block; font-size: 15px; font-weight: 700; color: var(--green-950);
+      padding-right: 40px; border-bottom: 1px solid var(--gray-300); padding-bottom: 8px; margin-bottom: 4px;
     }
-    
-    /* Status Chip */
-    .att-table td:nth-child(2) {
-      justify-content: flex-start;
-      border-bottom: none;
-      padding: 2px 0 8px;
-    }
-
-    /* Label Otomatis untuk Rincian Data */
+    .att-table td:nth-child(2) { justify-content: flex-start; border-bottom: none; padding: 2px 0 8px; }
     .att-table td:nth-child(3)::before { content: "Kelas / Jabatan"; font-weight: 600; color: var(--gray-500); font-size: 11.5px; }
     .att-table td:nth-child(4)::before { content: "Tanggal"; font-weight: 600; color: var(--gray-500); font-size: 11.5px; }
     .att-table td:nth-child(5)::before { content: "Waktu Absen"; font-weight: 600; color: var(--gray-500); font-size: 11.5px; }
     .att-table td:nth-child(6)::before { content: "Alasan"; font-weight: 600; color: var(--gray-500); font-size: 11.5px; }
 
-    /* Tombol Hapus Pindah ke Pojok Kanan Atas Card */
-    .att-table td:nth-child(7) {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      padding: 0;
-      border: none;
-    }
+    .att-table td:nth-child(7) { position: absolute; top: 14px; right: 14px; padding: 0; border: none; }
 
-    /* Penanganan Khusus Status Kosong/Memuat Data */
     .att-table tr:has(.att-empty) { padding: 24px 16px; text-align: center; }
-    .att-table td.att-empty {
-      display: block !important;
-      text-align: center !important;
-      border: none !important;
-      padding: 0 !important;
-    }
+    .att-table td.att-empty { display: block !important; text-align: center !important; border: none !important; padding: 0 !important; }
     .att-table td.att-empty::before { display: none !important; content: "" !important; }
   }
 
   .placeholder-card {
-    background: var(--white);
-    border: 1.5px dashed var(--gray-300);
-    border-radius: var(--radius-lg);
-    padding: 56px 30px;
-    text-align: center;
-    color: var(--gray-500);
+    background: var(--white); border: 1.5px dashed var(--gray-300);
+    border-radius: var(--radius-lg); padding: 56px 30px; text-align: center; color: var(--gray-500);
   }
   .placeholder-card .icon-big {
     width: 68px; height: 68px; border-radius: 50%;
@@ -579,16 +522,8 @@
   .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
 
   .quick-action {
-    background: var(--white);
-    border: 1px solid var(--gray-300);
-    border-radius: var(--radius-md);
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    cursor: pointer;
-    transition: var(--transition);
-    text-align: left;
+    background: var(--white); border: 1px solid var(--gray-300); border-radius: var(--radius-md);
+    padding: 18px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: var(--transition); text-align: left;
   }
   .quick-action:hover { border-color: var(--green-500); transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .quick-action i { font-size: 19px; color: var(--green-700); }
@@ -1081,9 +1016,44 @@
     loadAttendanceAdmin();
   });
 
-  // Muat data absensi jika halaman dibuka langsung pada tab absensi (mis. refresh)
   if (document.getElementById('section-absensi').classList.contains('active')) {
     loadAttendanceAdmin();
+  }
+
+  // ══════ FUNGSI LOGIK ANALISIS & STATISTIK EKSPOR ══════
+  function calculateSummary(data) {
+    const visitorMap = {};
+    const borrowerMap = {};
+    const reasonMap = {};
+
+    data.forEach(r => {
+      const nama = r.nama ? r.nama.trim() : 'Tanpa Nama';
+      const alasan = r.alasan ? r.alasan.trim() : 'Lainnya';
+
+      // 1. Hitung total kunjungan per orang
+      visitorMap[nama] = (visitorMap[nama] || 0) + 1;
+
+      // 2. Hitung peminjam buku tersering
+      if (alasan.toLowerCase().includes('meminjam')) {
+        borrowerMap[nama] = (borrowerMap[nama] || 0) + 1;
+      }
+
+      // 3. Hitung distribusi alasan kunjungan
+      reasonMap[alasan] = (reasonMap[alasan] || 0) + 1;
+    });
+
+    const topVisitors = Object.entries(visitorMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    const topBorrowers = Object.entries(borrowerMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    const sortedReasons = Object.entries(reasonMap)
+      .sort((a, b) => b[1] - a[1]);
+
+    return { topVisitors, topBorrowers, sortedReasons };
   }
 
   // ══════ FUNGSI LOGIK EKSPOR ABSENSI ══════
@@ -1124,7 +1094,7 @@
 
       let list = resData.data || [];
 
-      // Filter Berdasarkan Rentang Waktu yang Dipilih
+      // Filter Berdasarkan Rentang Waktu
       const now = new Date();
       if (range === '1bulan') {
         const thirtyDaysAgo = new Date();
@@ -1143,13 +1113,14 @@
 
       const rangeText = range === '1bulan' ? '1 Bulan Terakhir' : (range === '1tahun' ? '1 Tahun Terakhir' : 'Seluruh Data');
       const datePrinted = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+      const summary = calculateSummary(list);
 
       if (format === 'excel') {
-        exportToExcel(list, rangeText, datePrinted);
+        exportToExcel(list, rangeText, datePrinted, summary);
       } else if (format === 'pdf') {
-        exportToPDF(list, rangeText, datePrinted);
+        exportToPDF(list, rangeText, datePrinted, summary);
       } else if (format === 'png') {
-        await exportToPNG(list, rangeText, datePrinted);
+        await exportToPNG(list, rangeText, datePrinted, summary);
       }
 
       modalExport.classList.remove('show');
@@ -1161,11 +1132,12 @@
     }
   }
 
-  function exportToExcel(data, rangeText, datePrinted) {
+  // 1. EXCEL EXPORT (DENGAN STATISTIK DIBAWAH TABEL)
+  function exportToExcel(data, rangeText, datePrinted, summary) {
     const sheetData = [
       ['PERPUSTAKAAN DIGITAL SMANSANAM'],
       ['REKAPITULASI DATA ABSENSI PENGUNJUNG'],
-      [`Rentang Waktu: ${rangeText} | Tanggal Cetak: ${datePrinted}`],
+      [`Rentang Waktu: ${rangeText} | Tanggal Cetak: ${datePrinted} | Total Record: ${data.length}`],
       [],
       ['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal Absen', 'Waktu Absen', 'Alasan Kunjungan']
     ];
@@ -1182,11 +1154,46 @@
       ]);
     });
 
+    // Tambahkan Baris Kosong & Header Ringkasan Statistik
+    sheetData.push([]);
+    sheetData.push([]);
+    sheetData.push(['RINGKASAN STATISTIK ABSENSI']);
+    sheetData.push([]);
+
+    // 1. Top 3 Pengunjung
+    sheetData.push(['--- 3 TOP PENGUNJUNG TERSERING ---']);
+    if (summary.topVisitors.length > 0) {
+      summary.topVisitors.forEach((v, i) => {
+        sheetData.push([`Peringkat ${i + 1}`, v[0], `${v[1]} Kunjungan`]);
+      });
+    } else {
+      sheetData.push(['-']);
+    }
+
+    sheetData.push([]);
+    // 2. Top 3 Peminjam
+    sheetData.push(['--- 3 TOP PEMINJAM BUKU TERSERING ---']);
+    if (summary.topBorrowers.length > 0) {
+      summary.topBorrowers.forEach((v, i) => {
+        sheetData.push([`Peringkat ${i + 1}`, v[0], `${v[1]} Kali Peminjaman`]);
+      });
+    } else {
+      sheetData.push(['Belum ada data peminjaman buku']);
+    }
+
+    sheetData.push([]);
+    // 3. Statistik Alasan Kunjungan
+    sheetData.push(['--- REKAP ALASAN KUNJUNGAN ---']);
+    summary.sortedReasons.forEach(r => {
+      const pct = Math.round((r[1] / data.length) * 100);
+      sheetData.push([r[0], `${r[1]} orang`, `(${pct}%)`]);
+    });
+
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
     ws['!cols'] = [
-      { wch: 6 },
-      { wch: 25 },
-      { wch: 14 },
+      { wch: 18 },
+      { wch: 28 },
+      { wch: 20 },
       { wch: 22 },
       { wch: 18 },
       { wch: 14 },
@@ -1194,11 +1201,12 @@
     ];
 
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
+    XLSX.utils.book_append_sheet(wb, ws, 'Absensi & Statistik');
     XLSX.writeFile(wb, `Rekap_Absensi_Smansanam_${rangeText.replace(/\s+/g, '_')}.xlsx`);
   }
 
-  function exportToPDF(data, rangeText, datePrinted) {
+  // 2. PDF EXPORT (DENGAN RINGKASAN REKAPITULASI OTOMATIS)
+  function exportToPDF(data, rangeText, datePrinted, summary) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
@@ -1230,41 +1238,119 @@
       body: tableRows,
       theme: 'striped',
       headStyles: { fillColor: [5, 150, 105], textColor: [255, 255, 255], fontStyle: 'bold' },
-      styles: { fontSize: 9, cellPadding: 3 },
+      styles: { fontSize: 8.5, cellPadding: 2.5 },
       columnStyles: {
-        0: { cellWidth: 12, halign: 'center' },
-        1: { cellWidth: 50 },
-        2: { cellWidth: 25 },
-        3: { cellWidth: 40 },
-        4: { cellWidth: 35 },
-        5: { cellWidth: 30 },
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 48 },
+        2: { cellWidth: 24 },
+        3: { cellWidth: 38 },
+        4: { cellWidth: 32 },
+        5: { cellWidth: 28 },
         6: { cellWidth: 'auto' }
       }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 10;
+    if (finalY > 150) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    // Bagian Ringkasan Statistik
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(5, 46, 33);
+    doc.text('RINGKASAN STATISTIK ABSENSI', 14, finalY);
+
+    const topVisRows = summary.topVisitors.map((v, i) => [`Top ${i + 1}`, v[0], `${v[1]} Kali Kunjungan`]);
+    const topBorRows = summary.topBorrowers.length > 0 
+      ? summary.topBorrowers.map((v, i) => [`Top ${i + 1}`, v[0], `${v[1]} Kali Pinjam`])
+      : [['-', 'Belum ada data peminjaman', '-']];
+
+    const reasonRows = summary.sortedReasons.map(r => [
+      r[0], 
+      `${r[1]} Orang`, 
+      `${Math.round((r[1] / data.length) * 100)}%`
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 4,
+      head: [['3 Top Pengunjung Tersering', 'Nama', 'Total']],
+      body: topVisRows,
+      theme: 'plain',
+      tableWidth: 85,
+      margin: { left: 14 },
+      headStyles: { fillColor: [236, 253, 245], textColor: [4, 120, 87], fontStyle: 'bold' },
+      styles: { fontSize: 8 }
+    });
+
+    doc.autoTable({
+      startY: finalY + 4,
+      head: [['3 Top Peminjam Buku Tersering', 'Nama', 'Total']],
+      body: topBorRows,
+      theme: 'plain',
+      tableWidth: 85,
+      margin: { left: 105 },
+      headStyles: { fillColor: [236, 253, 245], textColor: [4, 120, 87], fontStyle: 'bold' },
+      styles: { fontSize: 8 }
+    });
+
+    doc.autoTable({
+      startY: finalY + 4,
+      head: [['Alasan Kunjungan', 'Jumlah', 'Persentase']],
+      body: reasonRows,
+      theme: 'plain',
+      tableWidth: 85,
+      margin: { left: 196 },
+      headStyles: { fillColor: [236, 253, 245], textColor: [4, 120, 87], fontStyle: 'bold' },
+      styles: { fontSize: 8 }
     });
 
     doc.save(`Rekap_Absensi_Smansanam_${rangeText.replace(/\s+/g, '_')}.pdf`);
   }
 
-  async function exportToPNG(data, rangeText, datePrinted) {
+  // 3. PNG EXPORT (BERJUDUL + STATISTIK DIBAWAH)
+  async function exportToPNG(data, rangeText, datePrinted, summary) {
     const container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.top = '-9999px';
     container.style.left = '-9999px';
-    container.style.width = '1000px';
+    container.style.width = '1050px';
     container.style.background = '#ffffff';
-    container.style.padding = '30px';
+    container.style.padding = '32px';
     container.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
 
-    let rowsHtml = data.map((r, idx) => `
+    const rowsHtml = data.map((r, idx) => `
       <tr style="border-bottom: 1px solid #e5e7eb;">
-        <td style="padding: 10px; text-align: center;">${idx + 1}</td>
-        <td style="padding: 10px; font-weight: 600;">${escapeHtml(r.nama || '-')}</td>
-        <td style="padding: 10px; text-transform: capitalize;">${escapeHtml(r.status || '-')}</td>
-        <td style="padding: 10px;">${escapeHtml(r.kelas || r.jabatan || '-')}</td>
-        <td style="padding: 10px;">${fmtTanggal(r.tanggal)}</td>
-        <td style="padding: 10px;">${fmtJam(r.waktuAbsen)}</td>
-        <td style="padding: 10px;">${escapeHtml(r.alasan || '-')}</td>
+        <td style="padding: 9px; text-align: center;">${idx + 1}</td>
+        <td style="padding: 9px; font-weight: 600;">${escapeHtml(r.nama || '-')}</td>
+        <td style="padding: 9px; text-transform: capitalize;">${escapeHtml(r.status || '-')}</td>
+        <td style="padding: 9px;">${escapeHtml(r.kelas || r.jabatan || '-')}</td>
+        <td style="padding: 9px;">${fmtTanggal(r.tanggal)}</td>
+        <td style="padding: 9px;">${fmtJam(r.waktuAbsen)}</td>
+        <td style="padding: 9px;">${escapeHtml(r.alasan || '-')}</td>
       </tr>
+    `).join('');
+
+    const topVisHtml = summary.topVisitors.map((v, i) => `
+      <div style="display:flex; justify-between; padding: 4px 0; border-bottom: 1px dashed #e5e7eb; font-size: 11px;">
+        <span><strong>#${i+1}</strong> ${escapeHtml(v[0])}</span>
+        <span style="color:#059669; font-weight:700;">${v[1]} Kunjungan</span>
+      </div>
+    `).join('');
+
+    const topBorHtml = summary.topBorrowers.length > 0 ? summary.topBorrowers.map((v, i) => `
+      <div style="display:flex; justify-between; padding: 4px 0; border-bottom: 1px dashed #e5e7eb; font-size: 11px;">
+        <span><strong>#${i+1}</strong> ${escapeHtml(v[0])}</span>
+        <span style="color:#059669; font-weight:700;">${v[1]} Kali Pinjam</span>
+      </div>
+    `).join('') : '<div style="font-size:11px; color:#9ca3af; padding:4px 0;">Belum ada data peminjaman</div>';
+
+    const reasonHtml = summary.sortedReasons.map(r => `
+      <div style="display:flex; justify-between; padding: 4px 0; border-bottom: 1px dashed #e5e7eb; font-size: 11px;">
+        <span>${escapeHtml(r[0])}</span>
+        <span style="color:#374151; font-weight:700;">${r[1]} org (${Math.round((r[1]/data.length)*100)}%)</span>
+      </div>
     `).join('');
 
     container.innerHTML = `
@@ -1273,22 +1359,44 @@
         <p style="color: #059669; font-size: 14px; font-weight: 700; margin: 0;">REKAPITULASI DATA ABSENSI PENGUNJUNG (${escapeHtml(rangeText)})</p>
         <p style="color: #6b7280; font-size: 11px; margin-top: 4px;">Tanggal Cetak: ${escapeHtml(datePrinted)} | Total Data: ${data.length}</p>
       </div>
-      <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #10151b;">
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #10151b; margin-bottom: 24px;">
         <thead>
           <tr style="background: #ecfdf5; color: #047857; text-align: left; font-weight: 700;">
-            <th style="padding: 12px 10px; text-align: center;">No</th>
-            <th style="padding: 12px 10px;">Nama Pengunjung</th>
-            <th style="padding: 12px 10px;">Status</th>
-            <th style="padding: 12px 10px;">Kelas / Jabatan</th>
-            <th style="padding: 12px 10px;">Tanggal</th>
-            <th style="padding: 12px 10px;">Waktu Absen</th>
-            <th style="padding: 12px 10px;">Alasan Kunjungan</th>
+            <th style="padding: 10px; text-align: center;">No</th>
+            <th style="padding: 10px;">Nama Pengunjung</th>
+            <th style="padding: 10px;">Status</th>
+            <th style="padding: 10px;">Kelas / Jabatan</th>
+            <th style="padding: 10px;">Tanggal</th>
+            <th style="padding: 10px;">Waktu Absen</th>
+            <th style="padding: 10px;">Alasan Kunjungan</th>
           </tr>
         </thead>
         <tbody>
           ${rowsHtml}
         </tbody>
       </table>
+
+      <!-- PANEL RINGKASAN STATISTIK -->
+      <div style="background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 16px;">
+        <h4 style="font-size: 13px; font-weight: 800; color: #052e21; margin-bottom: 12px; text-transform: uppercase;">
+          <i class="fa-solid fa-chart-pie" style="color:#059669;"></i> Ringkasan Statistik Absensi
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <div style="font-size: 11px; font-weight: 800; color: #047857; margin-bottom: 6px;">🏆 Top 3 Pengunjung Tersering</div>
+            ${topVisHtml}
+          </div>
+          <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <div style="font-size: 11px; font-weight: 800; color: #047857; margin-bottom: 6px;">📚 Top 3 Peminjam Buku Tersering</div>
+            ${topBorHtml}
+          </div>
+          <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <div style="font-size: 11px; font-weight: 800; color: #047857; margin-bottom: 6px;">📊 Rekap Alasan Kunjungan</div>
+            ${reasonHtml}
+          </div>
+        </div>
+      </div>
     `;
 
     document.body.appendChild(container);
