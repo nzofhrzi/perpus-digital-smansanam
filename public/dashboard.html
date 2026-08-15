@@ -374,12 +374,10 @@
   }
 
   .att-btn-in { background: var(--white); color: var(--green-800); }
-  .att-btn-in:hover { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.25); }
-  .att-btn-out { background: rgba(220, 38, 38, 0.92); color: var(--white); }
-  .att-btn-out:hover { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.35); }
+  .att-btn-in:hover:not(:disabled) { transform: translateY(-1.5px); box-shadow: 0 10px 20px -8px rgba(0,0,0,0.25); }
   .att-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
 
-  .att-keperluan-wrap {
+  .att-form-wrap {
     background: var(--white);
     border: 1px solid var(--gray-300);
     border-radius: var(--radius-md);
@@ -387,9 +385,9 @@
     margin-bottom: 20px;
     display: none;
   }
-  .att-keperluan-wrap.show { display: block; }
-  .att-keperluan-wrap label { font-size: 12.5px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 8px; }
-  .att-keperluan-wrap input {
+  .att-form-wrap.show { display: block; }
+  .att-form-wrap label { font-size: 12.5px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 8px; }
+  .att-form-wrap select {
     width: 100%;
     padding: 11px 14px;
     border: 1.5px solid var(--gray-300);
@@ -397,9 +395,16 @@
     font-family: inherit;
     font-size: 13.5px;
     color: var(--black);
-    margin-bottom: 12px;
+    background: var(--white);
+    margin-bottom: 14px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    cursor: pointer;
   }
-  .att-keperluan-wrap input:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.14); }
+  .att-form-wrap select:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.14); }
 
   .att-alert {
     display: none;
@@ -439,26 +444,19 @@
   .att-table td { padding: 13px 16px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
   .att-table tr:hover td { background: var(--green-50); }
 
-  .att-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-  .att-chip.done { background: var(--green-50); color: var(--green-800); }
-  .att-chip.progress { background: var(--amber-bg); color: var(--amber); }
-
   .att-empty { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
 
-  @media (max-width: 640px) {
-    .att-status-card { flex-direction: column; align-items: flex-start; }
+  @media (max-width: 880px) {
+    .att-status-card { flex-direction: column; align-items: flex-start; padding: 22px 20px; }
     .att-status-right { width: 100%; }
-    .att-btn { flex: 1; justify-content: center; }
+    .att-btn { width: 100%; justify-content: center; }
+  }
+
+  @media (max-width: 560px) {
     .att-table-wrap { overflow-x: auto; }
-    .att-table { min-width: 560px; }
+    .att-table { min-width: 420px; }
+    .att-status-value { font-size: 17px; }
+    .att-form-wrap { padding: 16px; }
   }
 
   .profile-card {
@@ -557,7 +555,6 @@
     <button class="nav-item active" data-section="beranda"><i class="fa-solid fa-house"></i> Beranda</button>
     <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</button>
     <button class="nav-item" data-section="baca"><i class="fa-solid fa-book-open"></i> Baca Buku Online</button>
-    <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
 
     <div class="nav-label">Akun</div>
     <button class="nav-item" data-section="profil"><i class="fa-solid fa-user"></i> Profil Saya</button>
@@ -621,7 +618,7 @@
       <div class="placeholder-card">
         <div class="icon-big"><i class="fa-solid fa-layer-group"></i></div>
         <h3>Modul lengkap segera hadir</h3>
-        <p>Saat ini sistem berada pada tahap awal — fitur login &amp; navigasi dashboard sudah aktif. Fitur absensi, baca buku, dan tracking akan menyusul di tahap berikutnya.</p>
+        <p>Saat ini sistem berada pada tahap awal — fitur login, dashboard, &amp; absensi kehadiran sudah aktif. Fitur baca buku digital akan menyusul di tahap berikutnya.</p>
         <div class="tag"><i class="fa-solid fa-circle-check"></i> Login &amp; Dashboard Aktif</div>
       </div>
     </section>
@@ -634,20 +631,21 @@
 
       <div class="att-status-card">
         <div class="att-status-left">
-          <div class="att-status-label">Status Anda Sekarang</div>
+          <div class="att-status-label">Status Absensi Hari Ini</div>
           <div class="att-status-value" id="attStatusValue"><span class="dot"></span> Memuat status...</div>
           <div class="att-status-meta" id="attStatusMeta">&nbsp;</div>
         </div>
         <div class="att-status-right">
-          <button class="att-btn att-btn-in" id="btnAttIn" disabled><i class="fa-solid fa-right-to-bracket"></i> Absen Masuk</button>
-          <button class="att-btn att-btn-out" id="btnAttOut" disabled style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Absen Keluar</button>
+          <button class="att-btn att-btn-in" id="btnAttOpen"><i class="fa-solid fa-fingerprint"></i> Absen Sekarang</button>
         </div>
       </div>
 
-      <div class="att-keperluan-wrap" id="attKeperluanWrap">
-        <label for="attKeperluanInput"><i class="fa-solid fa-note-sticky"></i> Keperluan kunjungan (opsional)</label>
-        <input type="text" id="attKeperluanInput" placeholder="Contoh: Membaca buku, mengerjakan tugas, meminjam buku..." maxlength="150">
-        <button class="att-btn att-btn-in" id="btnAttConfirmIn" style="background:var(--green-600); color:var(--white);"><i class="fa-solid fa-check"></i> Konfirmasi Absen Masuk</button>
+      <div class="att-form-wrap" id="attFormWrap">
+        <label for="attAlasanSelect"><i class="fa-solid fa-list-check"></i> Alasan Kunjungan</label>
+        <select id="attAlasanSelect">
+          <option value="" disabled selected>Pilih alasan kunjungan...</option>
+        </select>
+        <button class="att-btn att-btn-in" id="btnAttSubmit" style="background:var(--green-600); color:var(--white); width:100%; justify-content:center;"><i class="fa-solid fa-check"></i> Konfirmasi Absensi</button>
       </div>
 
       <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Kehadiran</div>
@@ -656,15 +654,12 @@
           <thead>
             <tr>
               <th>Tanggal</th>
-              <th>Masuk</th>
-              <th>Keluar</th>
-              <th>Durasi</th>
-              <th>Keperluan</th>
-              <th>Status</th>
+              <th>Waktu Absen</th>
+              <th>Alasan Kunjungan</th>
             </tr>
           </thead>
           <tbody id="attHistoryBody">
-            <tr><td colspan="6" class="att-empty">Memuat riwayat...</td></tr>
+            <tr><td colspan="3" class="att-empty">Memuat riwayat...</td></tr>
           </tbody>
         </table>
       </div>
@@ -677,17 +672,6 @@
         <div class="icon-big"><i class="fa-solid fa-book-open"></i></div>
         <h3>Koleksi Buku Digital</h3>
         <p>Koleksi e-book &amp; e-modul sekolah akan dapat dibaca langsung di sini (tampil layar / preview) tanpa opsi unduh.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
-      </div>
-    </section>
-
-    <!-- ══════ TRACKING ══════ -->
-    <section class="section-view" id="section-tracking">
-      <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-chart-line"></i></div>
-        <h3>Statistik Aktivitas Membaca</h3>
-        <p>Pantau progres membaca, buku favorit, dan waktu literasi Anda dari waktu ke waktu pada bagian ini.</p>
         <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
       </div>
     </section>
@@ -793,7 +777,6 @@
     beranda: { title: 'Beranda', sub: 'Ringkasan aktivitas perpustakaan Anda' },
     absensi: { title: 'Absensi Kehadiran', sub: 'Catat kehadiran kunjungan perpustakaan' },
     baca: { title: 'Baca Buku Online', sub: 'Koleksi buku &amp; e-modul digital sekolah' },
-    tracking: { title: 'Tracking Pembaca', sub: 'Statistik dan aktivitas membaca Anda' },
     profil: { title: 'Profil Saya', sub: 'Informasi akun Anda' }
   };
 
@@ -833,11 +816,10 @@
   // ══════ ABSENSI KEHADIRAN ══════
   const attStatusValue = document.getElementById('attStatusValue');
   const attStatusMeta = document.getElementById('attStatusMeta');
-  const btnAttIn = document.getElementById('btnAttIn');
-  const btnAttOut = document.getElementById('btnAttOut');
-  const attKeperluanWrap = document.getElementById('attKeperluanWrap');
-  const attKeperluanInput = document.getElementById('attKeperluanInput');
-  const btnAttConfirmIn = document.getElementById('btnAttConfirmIn');
+  const btnAttOpen = document.getElementById('btnAttOpen');
+  const attFormWrap = document.getElementById('attFormWrap');
+  const attAlasanSelect = document.getElementById('attAlasanSelect');
+  const btnAttSubmit = document.getElementById('btnAttSubmit');
   const attHistoryBody = document.getElementById('attHistoryBody');
   const attAlert = document.getElementById('attAlert');
   const attAlertText = document.getElementById('attAlertText');
@@ -848,16 +830,6 @@
     if (type === 'success') attAlert.classList.add('success');
     attAlert.classList.add('show');
     setTimeout(() => attAlert.classList.remove('show'), 4000);
-  }
-
-  function fmtJamTanggal(iso) {
-    if (!iso) return '-';
-    const d = new Date(iso);
-    return d.toLocaleString('id-ID', {
-      timeZone: 'Asia/Jakarta',
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
   }
 
   function fmtJam(iso) {
@@ -872,50 +844,45 @@
     return d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  function fmtDurasi(menit) {
-    if (menit === null || menit === undefined) return '-';
-    if (menit < 60) return `${menit} mnt`;
-    const jam = Math.floor(menit / 60);
-    const sisa = menit % 60;
-    return sisa > 0 ? `${jam} jam ${sisa} mnt` : `${jam} jam`;
-  }
-
   function renderHistory(riwayat) {
     if (!riwayat || riwayat.length === 0) {
-      attHistoryBody.innerHTML = `<tr><td colspan="6" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
+      attHistoryBody.innerHTML = `<tr><td colspan="3" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada riwayat kehadiran.</td></tr>`;
       return;
     }
     attHistoryBody.innerHTML = riwayat.map(r => `
       <tr>
         <td>${fmtTanggal(r.tanggal)}</td>
-        <td>${fmtJam(r.waktuMasuk)}</td>
-        <td>${r.waktuKeluar ? fmtJam(r.waktuKeluar) : '-'}</td>
-        <td>${fmtDurasi(r.durasiMenit)}</td>
-        <td>${r.keperluan ? r.keperluan.replace(/</g, '&lt;') : '-'}</td>
-        <td>${r.waktuKeluar
-          ? '<span class="att-chip done"><i class="fa-solid fa-check"></i> Selesai</span>'
-          : '<span class="att-chip progress"><i class="fa-solid fa-clock"></i> Di Perpustakaan</span>'}</td>
+        <td>${fmtJam(r.waktuAbsen)}</td>
+        <td>${r.alasan ? r.alasan.replace(/</g, '&lt;') : '-'}</td>
       </tr>
     `).join('');
   }
 
-  function renderStatus(sedangHadir) {
-    if (sedangHadir) {
+  function renderStatus(sudahAbsenHariIni) {
+    if (sudahAbsenHariIni) {
       attStatusValue.className = 'att-status-value in';
-      attStatusValue.innerHTML = `<span class="dot"></span> Sedang Berada di Perpustakaan`;
-      attStatusMeta.textContent = `Absen masuk pukul ${fmtJam(sedangHadir.waktuMasuk)}${sedangHadir.keperluan ? ' · ' + sedangHadir.keperluan : ''}`;
-      btnAttIn.style.display = 'none';
-      btnAttOut.style.display = 'inline-flex';
-      btnAttOut.disabled = false;
-      attKeperluanWrap.classList.remove('show');
+      attStatusValue.innerHTML = `<span class="dot"></span> Sudah Absen Hari Ini`;
+      attStatusMeta.textContent = `Absen pukul ${fmtJam(sudahAbsenHariIni.waktuAbsen)} · ${sudahAbsenHariIni.alasan}`;
+      btnAttOpen.disabled = true;
+      btnAttOpen.innerHTML = '<i class="fa-solid fa-check"></i> Sudah Absen';
+      attFormWrap.classList.remove('show');
     } else {
       attStatusValue.className = 'att-status-value';
-      attStatusValue.innerHTML = `<span class="dot"></span> Belum Absen Masuk`;
-      attStatusMeta.textContent = 'Silakan absen masuk saat tiba di perpustakaan.';
-      btnAttIn.style.display = 'inline-flex';
-      btnAttIn.disabled = false;
-      btnAttOut.style.display = 'none';
+      attStatusValue.innerHTML = `<span class="dot"></span> Belum Absen Hari Ini`;
+      attStatusMeta.textContent = 'Silakan absen saat Anda berkunjung ke perpustakaan.';
+      btnAttOpen.disabled = false;
+      btnAttOpen.innerHTML = '<i class="fa-solid fa-fingerprint"></i> Absen Sekarang';
     }
+  }
+
+  function populateAlasanOptions(daftarAlasan) {
+    if (!daftarAlasan || attAlasanSelect.options.length > 1) return;
+    daftarAlasan.forEach(alasan => {
+      const opt = document.createElement('option');
+      opt.value = alasan;
+      opt.textContent = alasan;
+      attAlasanSelect.appendChild(opt);
+    });
   }
 
   async function loadAttendance() {
@@ -926,62 +893,47 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Gagal memuat data absensi.');
 
-      renderStatus(data.sedangHadir);
+      populateAlasanOptions(data.daftarAlasan);
+      renderStatus(data.sudahAbsenHariIni);
       renderHistory(data.riwayat);
       const statKehadiran = document.getElementById('statKehadiranBulanIni');
       if (statKehadiran) statKehadiran.textContent = data.totalBulanIni ?? 0;
     } catch (err) {
       attStatusValue.innerHTML = `<span class="dot"></span> Gagal memuat status`;
       attStatusMeta.textContent = 'Periksa koneksi Anda dan coba muat ulang halaman.';
-      attHistoryBody.innerHTML = `<tr><td colspan="6" class="att-empty">Gagal memuat riwayat.</td></tr>`;
+      attHistoryBody.innerHTML = `<tr><td colspan="3" class="att-empty">Gagal memuat riwayat.</td></tr>`;
     }
   }
 
-  btnAttIn.addEventListener('click', () => {
-    attKeperluanWrap.classList.add('show');
-    attKeperluanInput.focus();
+  btnAttOpen.addEventListener('click', () => {
+    attFormWrap.classList.add('show');
+    attAlasanSelect.focus();
   });
 
-  btnAttConfirmIn.addEventListener('click', async () => {
-    btnAttConfirmIn.disabled = true;
-    btnAttConfirmIn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+  btnAttSubmit.addEventListener('click', async () => {
+    if (!attAlasanSelect.value) {
+      showAttAlert('Silakan pilih alasan kunjungan terlebih dahulu.');
+      return;
+    }
+    btnAttSubmit.disabled = true;
+    btnAttSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
     try {
-      const res = await fetch(`${API_BASE}/attendance/checkin`, {
+      const res = await fetch(`${API_BASE}/attendance/absen`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ keperluan: attKeperluanInput.value })
+        body: JSON.stringify({ alasan: attAlasanSelect.value })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal absen masuk.');
-      attKeperluanInput.value = '';
-      attKeperluanWrap.classList.remove('show');
-      showAttAlert('Absen masuk berhasil dicatat!', 'success');
+      if (!res.ok) throw new Error(data.message || 'Gagal mencatat absensi.');
+      attAlasanSelect.value = '';
+      attFormWrap.classList.remove('show');
+      showAttAlert('Absensi berhasil dicatat!', 'success');
       await loadAttendance();
     } catch (err) {
       showAttAlert(err.message || 'Terjadi kesalahan. Coba lagi.');
     } finally {
-      btnAttConfirmIn.disabled = false;
-      btnAttConfirmIn.innerHTML = '<i class="fa-solid fa-check"></i> Konfirmasi Absen Masuk';
-    }
-  });
-
-  btnAttOut.addEventListener('click', async () => {
-    btnAttOut.disabled = true;
-    btnAttOut.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-    try {
-      const res = await fetch(`${API_BASE}/attendance/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal absen keluar.');
-      showAttAlert('Absen keluar berhasil dicatat. Sampai jumpa lagi!', 'success');
-      await loadAttendance();
-    } catch (err) {
-      showAttAlert(err.message || 'Terjadi kesalahan. Coba lagi.');
-      btnAttOut.disabled = false;
-    } finally {
-      btnAttOut.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Absen Keluar';
+      btnAttSubmit.disabled = false;
+      btnAttSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Konfirmasi Absensi';
     }
   });
 
