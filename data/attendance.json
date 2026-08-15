@@ -1,19 +1,6 @@
 {
   "attendance": [
     {
-      "id": "abs_1786772417633_ece8b5",
-      "userId": "tamu_1786772404248",
-      "nama": "William",
-      "status": "tamu",
-      "kelas": null,
-      "jabatan": "Mahasiswa",
-      "keperluan": "Meminjam Buku",
-      "tanggal": "2026-08-15",
-      "waktuMasuk": "2026-08-15T05:40:17.633Z",
-      "waktuKeluar": null,
-      "durasiMenit": null
-    },
-    {
       "id": "abs_1786773022622_7c1395",
       "userId": "tamu_1786773000123",
       "nama": "Ridho",
