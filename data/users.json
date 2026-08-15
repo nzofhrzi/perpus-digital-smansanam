@@ -35,6 +35,15 @@
       "jabatan": null,
       "salt": "6f593b7ffaea7d8cc3ca392fe44154d8",
       "hash": "014eefcf89122487acd54e768393c5b7fc0be91fb1aa61790b976a40bb417ee4b077f5b7c7e6fad3a0cc79f32dbb9f6a344080012fd45d0b8a52a0103e43ebd9"
+    },
+    {
+      "id": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Wakil Admin",
+      "salt": "12d16a081348c615da4af25ed8f8b8f0",
+      "hash": "4e449210a9df89da67e21628447509b9f1ea5a266f6fa4e2b5174f17742a1dd3ffe81ff15fcea773ac5d148a45c8764de65f7d5490326ea319ce48b675cf7aab"
     }
   ]
 }
