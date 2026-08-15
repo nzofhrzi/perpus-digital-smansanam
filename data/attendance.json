@@ -1,19 +1,6 @@
 {
   "attendance": [
     {
-      "id": "abs_1786772180882_d2d9f5",
-      "userId": "tamu_1786772162323",
-      "nama": "Kenzo",
-      "status": "tamu",
-      "kelas": null,
-      "jabatan": "Rektor xyz",
-      "keperluan": "Membaca Buku",
-      "tanggal": "2026-08-15",
-      "waktuMasuk": "2026-08-15T05:36:20.883Z",
-      "waktuKeluar": "2026-08-15T05:37:11.446Z",
-      "durasiMenit": 1
-    },
-    {
       "id": "abs_1786772417633_ece8b5",
       "userId": "tamu_1786772404248",
       "nama": "William",
