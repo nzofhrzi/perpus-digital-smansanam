@@ -21,21 +21,21 @@
     --green-100: #d1fae5;
     --green-50: #ecfdf5;
     --white: #ffffff;
-    --black: #10151b;
-    --gray-700: #374151;
-    --gray-500: #6b7280;
-    --gray-300: #e5e7eb;
-    --gray-100: #f4f6f5;
-    --bg-app: #f6f9f8;
+    --black: #0f172a;
+    --gray-700: #334155;
+    --gray-500: #64748b;
+    --gray-300: #e2e8f0;
+    --gray-100: #f8fafc;
+    --bg-app: #f1f5f9;
     --danger: #dc2626;
     --danger-bg: #fee2e2;
     --amber: #b45309;
     --amber-bg: #fffbeb;
     --radius-md: 14px;
     --radius-lg: 18px;
-    --transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
-    --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.06);
-    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.18);
+    --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.05);
+    --shadow-md: 0 12px 30px -12px rgba(6, 78, 59, 0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -87,7 +87,7 @@
     align-items: center;
     gap: 11px;
     padding: 16px 20px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.06);
     margin: 14px 14px 6px;
     border-radius: 12px;
   }
@@ -132,7 +132,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     border: none;
     background: none;
     width: 100%;
@@ -141,7 +141,6 @@
   }
 
   .nav-item i { width: 18px; text-align: center; font-size: 14.5px; }
-
   .nav-item:hover { background: rgba(255,255,255,0.08); color: var(--white); }
 
   .nav-item.active {
@@ -228,7 +227,7 @@
     font-weight: 700;
   }
 
-  .topbar-badge i { font-size: 10px; }
+  .topbar-badge i { font-size: 9px; color: var(--green-600); }
 
   .content { padding: 26px 28px 40px; flex: 1; }
 
@@ -244,6 +243,7 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
   }
 
   .welcome-card::after {
@@ -274,7 +274,9 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    transition: var(--transition);
   }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
   .stat-icon {
     width: 42px; height: 42px;
@@ -287,14 +289,14 @@
   .stat-value { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; color: var(--black); }
   .stat-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
 
-  .section-title { font-family: 'Poppins', sans-serif; font-size: 16.5px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 16.5px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; color: var(--black); }
   .section-title i { color: var(--green-600); }
 
   .placeholder-card {
     background: var(--white);
     border: 1.5px dashed var(--gray-300);
     border-radius: var(--radius-lg);
-    padding: 56px 30px;
+    padding: 48px 30px;
     text-align: center;
     color: var(--gray-500);
   }
@@ -310,7 +312,7 @@
   }
 
   .placeholder-card h3 { font-family: 'Poppins', sans-serif; font-size: 16px; color: var(--black); margin-bottom: 8px; }
-  .placeholder-card p { font-size: 13px; max-width: 380px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-card p { font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.6; }
 
   .placeholder-card .tag {
     display: inline-flex;
@@ -381,15 +383,16 @@
     background: var(--white);
     border: 1px solid var(--gray-300);
     border-radius: var(--radius-md);
-    padding: 18px 20px;
+    padding: 20px;
     margin-bottom: 20px;
     display: none;
+    box-shadow: var(--shadow-sm);
   }
-  .att-form-wrap.show { display: block; }
+  .att-form-wrap.show { display: block; animation: fadeIn 0.2s ease; }
   .att-form-wrap label { font-size: 12.5px; font-weight: 700; color: var(--gray-700); display: block; margin-bottom: 8px; }
   .att-form-wrap select {
     width: 100%;
-    padding: 11px 14px;
+    padding: 12px 14px;
     border: 1.5px solid var(--gray-300);
     border-radius: 10px;
     font-family: inherit;
@@ -398,9 +401,9 @@
     background: var(--white);
     margin-bottom: 14px;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 14px center;
     background-size: 16px;
     cursor: pointer;
   }
@@ -410,11 +413,11 @@
     display: none;
     align-items: flex-start;
     gap: 10px;
-    padding: 11px 13px;
+    padding: 12px 14px;
     border-radius: 10px;
     background: var(--danger-bg);
     color: var(--danger);
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 500;
     margin-bottom: 16px;
     line-height: 1.5;
@@ -433,53 +436,42 @@
   .att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .att-table th {
     text-align: left;
-    padding: 13px 16px;
+    padding: 14px 18px;
     background: var(--gray-100);
     color: var(--gray-700);
     font-weight: 700;
     font-size: 11.5px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--gray-300);
   }
-  .att-table td { padding: 13px 16px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
+  .att-table td { padding: 14px 18px; border-top: 1px solid var(--gray-300); color: var(--black); vertical-align: middle; }
   .att-table tr:hover td { background: var(--green-50); }
 
   .att-empty { padding: 40px 20px; text-align: center; color: var(--gray-500); font-size: 13px; }
 
-  @media (max-width: 880px) {
-    .att-status-card { flex-direction: column; align-items: flex-start; padding: 22px 20px; }
-    .att-status-right { width: 100%; }
-    .att-btn { width: 100%; justify-content: center; }
-  }
-
-  @media (max-width: 560px) {
-    .att-table-wrap { overflow-x: auto; }
-    .att-table { min-width: 420px; }
-    .att-status-value { font-size: 17px; }
-    .att-form-wrap { padding: 16px; }
-  }
-
   /* ══════════ KOLEKSI BUKU (BACA ONLINE) ══════════ */
-  .book-toolbar { margin-bottom: 16px; }
+  .book-toolbar { margin-bottom: 22px; }
   .book-search-wrap {
     position: relative;
-    max-width: 360px;
+    max-width: 380px;
   }
   .book-search-wrap i {
     position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--gray-500); font-size: 13px;
+    color: var(--gray-500); font-size: 14px;
   }
   .book-search-wrap input {
-    width: 100%; padding: 10px 12px 10px 36px;
-    border: 1.5px solid var(--gray-300); border-radius: 10px;
-    font-family: inherit; font-size: 13px; background: var(--white);
+    width: 100%; padding: 11px 14px 11px 40px;
+    border: 1.5px solid var(--gray-300); border-radius: 12px;
+    font-family: inherit; font-size: 13.5px; background: var(--white);
+    transition: var(--transition);
   }
-  .book-search-wrap input:focus { outline: none; border-color: var(--green-600); }
+  .book-search-wrap input:focus { outline: none; border-color: var(--green-600); box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.12); }
 
   .book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
   }
   .book-card {
     background: var(--white);
@@ -491,80 +483,147 @@
     overflow: hidden;
     transition: var(--transition);
   }
-  .book-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .book-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  
   .book-cover {
-    height: 130px;
-    background: linear-gradient(135deg, var(--green-700), var(--green-950));
+    height: 150px;
+    background: linear-gradient(135deg, var(--green-800), var(--green-950));
     display: flex; align-items: center; justify-content: center;
-    color: rgba(255,255,255,0.85);
-    font-size: 34px;
+    color: rgba(255,255,255,0.9);
+    font-size: 42px;
+    position: relative;
   }
-  .book-info { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .book-info h4 { font-family: 'Poppins', sans-serif; font-size: 13.5px; color: var(--black); line-height: 1.35; }
-  .book-info .author { font-size: 12px; color: var(--gray-500); }
-  .book-info .meta-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
-  .btn-read-book {
-    margin-top: auto;
-    padding: 8px 12px; border: none; border-radius: 8px;
-    background: linear-gradient(135deg, var(--green-600), var(--green-800));
-    color: var(--white); font-family: inherit; font-size: 12.5px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  .book-cover-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+    color: var(--white); font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 6px; text-transform: uppercase;
   }
-  .btn-read-book:hover { opacity: 0.95; }
-  .btn-read-book:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* ══════════ MODAL PEMBACA PDF (READ-ONLY) ══════════ */
+  .book-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .book-info h4 { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700; color: var(--black); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .book-info .author { font-size: 12px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
+  .book-info .meta-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 6px; }
+  
+  .tag-small {
+    background: var(--green-50); color: var(--green-800);
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+  }
+
+  .btn-read-book {
+    margin-top: 10px;
+    padding: 10px 14px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white); font-family: inherit; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: var(--transition);
+  }
+  .btn-read-book:hover:not(:disabled) { background: linear-gradient(135deg, var(--green-700), var(--green-900)); box-shadow: 0 4px 12px rgba(6,78,59,0.25); }
+  .btn-read-book:disabled { opacity: 0.55; cursor: not-allowed; background: var(--gray-300); color: var(--gray-500); }
+
+  /* ══════════ MODAL PEMBACA PDF (HD & TAJAM) ══════════ */
   .pdf-modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.78);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
     z-index: 200;
     align-items: center; justify-content: center;
-    padding: 12px;
+    padding: 16px;
   }
-  .pdf-modal-overlay.show { display: flex; }
+  .pdf-modal-overlay.show { display: flex; animation: fadeIn 0.25s ease; }
+  
   .pdf-modal-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    width: 100%; max-width: 900px; height: 92vh;
+    width: 100%; max-width: 1000px; height: 92vh;
     display: flex; flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
   }
+  
   .pdf-modal-header {
-    padding: 14px 18px;
+    padding: 14px 20px;
     background: var(--green-950);
     color: var(--white);
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
+    flex-shrink: 0;
   }
-  .pdf-modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pdf-modal-header .pdf-close-btn { background: rgba(255,255,255,0.12); border: none; color: var(--white); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; flex-shrink: 0; }
+  .pdf-modal-header h3 { font-family: 'Poppins', sans-serif; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  
+  .pdf-header-actions { display: flex; align-items: center; gap: 10px; }
+  
+  .pdf-close-btn { 
+    background: rgba(255,255,255,0.12); border: none; color: var(--white); 
+    width: 34px; height: 34px; border-radius: 9px; cursor: pointer; 
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .pdf-close-btn:hover { background: rgba(255,255,255,0.25); }
+
   .pdf-readonly-badge {
-    background: var(--amber-bg); color: var(--amber);
-    font-size: 11px; font-weight: 700; padding: 6px 12px;
-    display: flex; align-items: center; gap: 6px;
+    background: rgba(245, 158, 11, 0.2); color: #fbbf24;
+    font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 20px;
+    display: flex; align-items: center; gap: 6px; border: 1px solid rgba(245, 158, 11, 0.3);
   }
-  .pdf-viewer-body { flex: 1; position: relative; background: #525659; overflow: auto; }
-  #pdfCanvasContainer { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 0 40px; user-select: none; }
-  #pdfCanvasContainer canvas { box-shadow: 0 2px 10px rgba(0,0,0,0.3); max-width: 100%; }
+
+  .pdf-viewer-body { 
+    flex: 1; 
+    position: relative; 
+    background: #334155; 
+    overflow: auto; 
+    display: flex;
+    justify-content: center;
+  }
+  
+  #pdfCanvasContainer { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px; 
+    user-select: none;
+    margin: auto 0;
+  }
+
+  /* Render Kanvas HD yang Presisi */
+  #pdfCanvasContainer canvas { 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+    border-radius: 4px;
+    background: #ffffff;
+  }
+
+  /* Toolbar Kontrol PDF di Bawah */
   .pdf-nav-bar {
-    display: flex; align-items: center; justify-content: center; gap: 14px;
-    padding: 10px; background: var(--gray-100); border-top: 1px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; background: var(--white); border-top: 1px solid var(--gray-300);
+    flex-shrink: 0;
   }
-  .pdf-nav-bar button {
-    background: var(--white); border: 1.5px solid var(--gray-300); border-radius: 8px;
-    width: 32px; height: 32px; cursor: pointer; color: var(--green-800);
+
+  .pdf-nav-controls { display: flex; align-items: center; gap: 8px; }
+  
+  .pdf-btn-icon {
+    background: var(--gray-100); border: 1.5px solid var(--gray-300); border-radius: 8px;
+    width: 34px; height: 34px; cursor: pointer; color: var(--gray-700);
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition); font-size: 13px;
   }
-  .pdf-nav-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
-  .pdf-nav-bar span { font-size: 12.5px; font-weight: 600; color: var(--gray-700); }
+  .pdf-btn-icon:hover:not(:disabled) { background: var(--green-50); color: var(--green-800); border-color: var(--green-500); }
+  .pdf-btn-icon:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .pdf-page-indicator { font-size: 13px; font-weight: 700; color: var(--black); min-width: 100px; text-align: center; }
+
+  .pdf-zoom-controls { display: flex; align-items: center; gap: 6px; background: var(--gray-100); padding: 3px; border-radius: 10px; border: 1px solid var(--gray-300); }
+  .pdf-zoom-val { font-size: 12px; font-weight: 700; color: var(--gray-700); min-width: 45px; text-align: center; }
+
   .pdf-loading, .pdf-error {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: var(--white); gap: 10px; font-size: 13px; text-align: center; padding: 20px;
+    color: var(--white); gap: 12px; font-size: 13.5px; text-align: center; padding: 20px;
+    background: #334155;
   }
-  .pdf-error { color: var(--white); }
-  .pdf-error i { font-size: 30px; color: #fca5a5; }
+  .pdf-error i { font-size: 34px; color: #fca5a5; }
 
+  /* ══════════ PROFIL ══════════ */
   .profile-card {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -583,6 +642,7 @@
     font-size: 26px; font-weight: 700;
     font-family: 'Poppins', sans-serif;
     margin-bottom: 18px;
+    box-shadow: 0 8px 16px -4px rgba(5,150,105,0.3);
   }
 
   .profile-card h2 { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 3px; }
@@ -611,6 +671,7 @@
   .profile-detail-row .label { color: var(--gray-500); width: 130px; flex-shrink: 0; }
   .profile-detail-row .value { color: var(--black); font-weight: 600; }
 
+  /* RESPONSIVE */
   @media (max-width: 1000px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -621,6 +682,9 @@
     .main { margin-left: 0; }
     .menu-toggle { display: flex; }
     .topbar-title { font-size: 15px; }
+    .att-status-card { flex-direction: column; align-items: flex-start; padding: 22px 20px; }
+    .att-status-right { width: 100%; }
+    .att-btn { width: 100%; justify-content: center; }
   }
 
   @media (max-width: 560px) {
@@ -628,6 +692,13 @@
     .content { padding: 18px 16px 32px; }
     .topbar { padding: 0 16px; }
     .welcome-card { padding: 22px 20px; }
+    .att-table-wrap { overflow-x: auto; }
+    .att-table { min-width: 420px; }
+    .att-status-value { font-size: 17px; }
+    .att-form-wrap { padding: 16px; }
+    .pdf-modal-overlay { padding: 8px; }
+    .pdf-modal-card { height: 96vh; }
+    .pdf-readonly-badge { display: none; }
   }
 
   .overlay-mobile {
@@ -724,8 +795,8 @@
       <div class="placeholder-card">
         <div class="icon-big"><i class="fa-solid fa-layer-group"></i></div>
         <h3>Modul lengkap segera hadir</h3>
-        <p>Saat ini sistem berada pada tahap awal — fitur login, dashboard, &amp; absensi kehadiran sudah aktif. Fitur baca buku digital akan menyusul di tahap berikutnya.</p>
-        <div class="tag"><i class="fa-solid fa-circle-check"></i> Login &amp; Dashboard Aktif</div>
+        <p>Saat ini sistem berada pada tahap awal — fitur login, dashboard, &amp; absensi kehadiran sudah aktif. Fitur baca buku digital siap digunakan.</p>
+        <div class="tag"><i class="fa-solid fa-circle-check"></i> Sistem Aktif</div>
       </div>
     </section>
 
@@ -821,25 +892,38 @@
   </div>
 </div>
 
-<!-- ══════════ MODAL PEMBACA PDF (READ-ONLY, TANPA UNDUH) ══════════ -->
+<!-- ══════════ MODAL PEMBACA PDF (READ-ONLY, TAJAM & INTERAKTIF) ══════════ -->
 <div class="pdf-modal-overlay" id="pdfModal" oncontextmenu="return false;">
   <div class="pdf-modal-card">
     <div class="pdf-modal-header">
       <h3 id="pdfModalTitle"><i class="fa-solid fa-book-open"></i> Judul Buku</h3>
-      <div style="display:flex;align-items:center;gap:10px;">
+      <div class="pdf-header-actions">
         <span class="pdf-readonly-badge"><i class="fa-solid fa-lock"></i> Hanya Baca</span>
-        <button class="pdf-close-btn" id="btnClosePdfModal" title="Tutup"><i class="fa-solid fa-xmark"></i></button>
+        <button class="pdf-close-btn" id="btnClosePdfModal" title="Tutup (Esc)"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
+    
     <div class="pdf-viewer-body" id="pdfViewerBody" oncontextmenu="return false;">
       <div id="pdfCanvasContainer"></div>
-      <div class="pdf-loading" id="pdfLoading"><i class="fa-solid fa-spinner fa-spin" style="font-size:26px;"></i><span>Memuat buku...</span></div>
+      <div class="pdf-loading" id="pdfLoading"><i class="fa-solid fa-spinner fa-spin" style="font-size:32px; color:var(--green-500);"></i><span>Memuat halaman buku...</span></div>
       <div class="pdf-error" id="pdfError" style="display:none;"><i class="fa-solid fa-triangle-exclamation"></i><span>Gagal memuat file PDF. Periksa kembali link PDF buku ini.</span></div>
     </div>
+    
     <div class="pdf-nav-bar">
-      <button id="btnPdfPrev" title="Halaman sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
-      <span id="pdfPageInfo">Halaman - / -</span>
-      <button id="btnPdfNext" title="Halaman berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+      <!-- Kontrol Halaman -->
+      <div class="pdf-nav-controls">
+        <button class="pdf-btn-icon" id="btnPdfPrev" title="Halaman Sebelumnya (Panah Kiri)"><i class="fa-solid fa-chevron-left"></i></button>
+        <span class="pdf-page-indicator" id="pdfPageInfo">Halaman - / -</span>
+        <button class="pdf-btn-icon" id="btnPdfNext" title="Halaman Berikutnya (Panah Kanan)"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+
+      <!-- Kontrol Zoom -->
+      <div class="pdf-zoom-controls">
+        <button class="pdf-btn-icon" id="btnZoomOut" title="Perkecil (-)"><i class="fa-solid fa-minus"></i></button>
+        <span class="pdf-zoom-val" id="zoomVal">100%</span>
+        <button class="pdf-btn-icon" id="btnZoomIn" title="Perbesar (+)"><i class="fa-solid fa-plus"></i></button>
+        <button class="pdf-btn-icon" id="btnZoomReset" title="Reset Scale"><i class="fa-solid fa-rotate-right"></i></button>
+      </div>
     </div>
   </div>
 </div>
@@ -864,7 +948,7 @@
     window.location.href = 'index.html';
   }
 
-  // Verifikasi token ke server; jika tidak valid, paksa logout
+  // Verifikasi session token ke server
   (async function verifySession() {
     try {
       const res = await fetch(`${API_BASE}/auth/verify`, {
@@ -907,7 +991,7 @@
     document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
   }
 
-  // ══════ NAVIGASI SIDEBAR (SPA SEDERHANA) ══════
+  // ══════ NAVIGASI SIDEBAR ══════
   const pageMeta = {
     beranda: { title: 'Beranda', sub: 'Ringkasan aktivitas perpustakaan Anda' },
     absensi: { title: 'Absensi Kehadiran', sub: 'Catat kehadiran kunjungan perpustakaan' },
@@ -1105,13 +1189,16 @@
     }
     grid.innerHTML = books.map(b => `
       <div class="book-card">
-        <div class="book-cover"><i class="fa-solid fa-book"></i></div>
+        <div class="book-cover">
+          <i class="fa-solid fa-book-journal-whills"></i>
+          <span class="book-cover-badge">E-Book</span>
+        </div>
         <div class="book-info">
           <h4>${escapeHtmlUser(b.judul) || 'Tanpa Judul'}</h4>
-          <div class="author"><i class="fa-solid fa-feather"></i> ${escapeHtmlUser(b.pengarang) || '-'}</div>
+          <div class="author"><i class="fa-solid fa-feather-pointed"></i> ${escapeHtmlUser(b.pengarang) || '-'}</div>
           <div class="meta-row">
             <span class="tag-small">${escapeHtmlUser(b.kategori) || 'Umum'}</span>
-            ${b.tahun ? `<span style="font-size:11.5px;color:var(--gray-500);">${b.tahun}</span>` : ''}
+            ${b.tahun ? `<span style="font-size:11.5px;color:var(--gray-500);font-weight:600;">${b.tahun}</span>` : ''}
           </div>
           ${b.linkPDF
             ? `<button class="btn-read-book" data-id="${b.id}"><i class="fa-solid fa-book-open-reader"></i> Baca Online</button>`
@@ -1138,7 +1225,7 @@
     renderBookGrid(filtered);
   });
 
-  // ══════ PEMBACA PDF READ-ONLY (PDF.JS) — TANPA UNDUH / CETAK / KLIK KANAN ══════
+  // ══════ PEMBACA PDF READ-ONLY HD (PDF.JS HIGH DPI FIX) ══════
   if (window['pdfjsLib']) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
@@ -1150,12 +1237,17 @@
   const pdfPageInfo = document.getElementById('pdfPageInfo');
   const btnPdfPrev = document.getElementById('btnPdfPrev');
   const btnPdfNext = document.getElementById('btnPdfNext');
+  const btnZoomIn = document.getElementById('btnZoomIn');
+  const btnZoomOut = document.getElementById('btnZoomOut');
+  const btnZoomReset = document.getElementById('btnZoomReset');
+  const zoomVal = document.getElementById('zoomVal');
   const pdfViewerBody = document.getElementById('pdfViewerBody');
 
   let pdfDocCurrent = null;
   let pdfPageCurrent = 1;
   let pdfPageCount = 0;
   let pdfRenderTask = null;
+  let pdfZoomScale = 1.0;
 
   async function openPdfViewer(buku) {
     document.getElementById('pdfModalTitle').innerHTML = `<i class="fa-solid fa-book-open"></i> ${escapeHtmlUser(buku.judul)}`;
@@ -1163,6 +1255,8 @@
     pdfErrorEl.style.display = 'none';
     pdfLoading.style.display = 'flex';
     pdfPageInfo.textContent = 'Halaman - / -';
+    pdfZoomScale = 1.0;
+    updateZoomDisplay();
     pdfModal.classList.add('show');
     document.body.style.overflow = 'hidden';
 
@@ -1181,32 +1275,55 @@
     }
   }
 
+  // Poin Penting: Perhitungan Device Pixel Ratio (DPI) untuk Menghilangkan Burem
   async function renderPdfPage(num) {
     if (!pdfDocCurrent) return;
-    const page = await pdfDocCurrent.getPage(num);
-    const containerWidth = pdfViewerBody.clientWidth - 32;
-    const baseViewport = page.getViewport({ scale: 1 });
-    const scale = Math.min(2, Math.max(0.5, containerWidth / baseViewport.width));
-    const viewport = page.getViewport({ scale });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    canvas.oncontextmenu = () => false;
-    const ctx = canvas.getContext('2d');
-
-    pdfCanvasContainer.innerHTML = '';
-    pdfCanvasContainer.appendChild(canvas);
 
     if (pdfRenderTask) {
       try { pdfRenderTask.cancel(); } catch {}
     }
-    pdfRenderTask = page.render({ canvasContext: ctx, viewport });
+
+    const page = await pdfDocCurrent.getPage(num);
+    
+    // Hitung Fit Scale berdasarkan lebar kontainer viewer
+    const containerWidth = Math.max(300, pdfViewerBody.clientWidth - 48);
+    const baseViewport = page.getViewport({ scale: 1 });
+    const fitScale = containerWidth / baseViewport.width;
+    const effectiveScale = fitScale * pdfZoomScale;
+
+    // Perbaikan utama: Menggunakan Device Pixel Ratio layar pengguna (minimum 2.0x agar super tajam)
+    const dpr = Math.max(window.devicePixelRatio || 1, 2.0);
+    const viewport = page.getViewport({ scale: effectiveScale * dpr });
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    // Ukuran fisik piksel internal canvas (resolusi tinggi)
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+
+    // Ukuran tampilan CSS (di-downscale secara visual agar pas & jernih)
+    canvas.style.width = Math.floor(viewport.width / dpr) + 'px';
+    canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
+
+    pdfCanvasContainer.innerHTML = '';
+    pdfCanvasContainer.appendChild(canvas);
+
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+
+    pdfRenderTask = page.render(renderContext);
     await pdfRenderTask.promise;
 
     pdfPageInfo.textContent = `Halaman ${num} / ${pdfPageCount}`;
     btnPdfPrev.disabled = num <= 1;
     btnPdfNext.disabled = num >= pdfPageCount;
+  }
+
+  function updateZoomDisplay() {
+    zoomVal.textContent = `${Math.round(pdfZoomScale * 100)}%`;
   }
 
   btnPdfPrev.addEventListener('click', () => {
@@ -1216,11 +1333,36 @@
       pdfViewerBody.scrollTop = 0;
     }
   });
+
   btnPdfNext.addEventListener('click', () => {
     if (pdfPageCurrent < pdfPageCount) {
       pdfPageCurrent += 1;
       renderPdfPage(pdfPageCurrent);
       pdfViewerBody.scrollTop = 0;
+    }
+  });
+
+  btnZoomIn.addEventListener('click', () => {
+    if (pdfZoomScale < 2.5) {
+      pdfZoomScale += 0.25;
+      updateZoomDisplay();
+      renderPdfPage(pdfPageCurrent);
+    }
+  });
+
+  btnZoomOut.addEventListener('click', () => {
+    if (pdfZoomScale > 0.5) {
+      pdfZoomScale -= 0.25;
+      updateZoomDisplay();
+      renderPdfPage(pdfPageCurrent);
+    }
+  });
+
+  btnZoomReset.addEventListener('click', () => {
+    if (pdfZoomScale !== 1.0) {
+      pdfZoomScale = 1.0;
+      updateZoomDisplay();
+      renderPdfPage(pdfPageCurrent);
     }
   });
 
@@ -1230,23 +1372,32 @@
     pdfCanvasContainer.innerHTML = '';
     pdfDocCurrent = null;
   }
+
   document.getElementById('btnClosePdfModal').addEventListener('click', closePdfViewer);
   pdfModal.addEventListener('click', (e) => { if (e.target === pdfModal) closePdfViewer(); });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && pdfModal.classList.contains('show')) closePdfViewer();
-  });
-
-  // Cegah klik kanan & shortcut simpan/cetak di dalam area pembaca PDF
-  pdfViewerBody.addEventListener('contextmenu', (e) => e.preventDefault());
+  
+  // Navigasi Shortcut Keyboard (Esc, Panah Kiri, Panah Kanan)
   document.addEventListener('keydown', (e) => {
     if (!pdfModal.classList.contains('show')) return;
+    
+    if (e.key === 'Escape') {
+      closePdfViewer();
+    } else if (e.key === 'ArrowLeft') {
+      btnPdfPrev.click();
+    } else if (e.key === 'ArrowRight') {
+      btnPdfNext.click();
+    }
+    
+    // Cegah Ctrl+S & Ctrl+P
     const key = (e.key || '').toLowerCase();
     if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p')) {
       e.preventDefault();
     }
   });
 
-  // Muat koleksi buku otomatis jika pengguna langsung membuka tab "Baca Buku" (mis. via reload/hash)
+  pdfViewerBody.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Auto-load buku jika tab "Baca Buku" aktif
   if (document.getElementById('section-baca').classList.contains('active') && !booksLoadedOnce) {
     loadBooks();
   }
