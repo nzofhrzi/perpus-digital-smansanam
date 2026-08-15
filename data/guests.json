@@ -6,6 +6,13 @@
       "jabatan": "Rektor xyz",
       "umur": 19,
       "waktuKunjungan": "2026-08-15T05:36:02.323Z"
+    },
+    {
+      "id": "tamu_1786772404248",
+      "nama": "William",
+      "jabatan": "Mahasiswa",
+      "umur": 20,
+      "waktuKunjungan": "2026-08-15T05:40:04.248Z"
     }
   ]
 }
