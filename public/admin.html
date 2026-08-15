@@ -498,6 +498,43 @@
   }
   .btn-submit-export:hover { opacity: 0.95; }
 
+  /* ══════════ MODAL FORM (BUKU / PENGGUNA) ══════════ */
+  .modal-card.modal-form { max-width: 520px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--white);
+    transition: var(--transition);
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--green-600); }
+  .form-textarea { resize: vertical; min-height: 70px; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 11px; color: var(--gray-500); margin-top: 6px; }
+  .form-error {
+    display: none;
+    background: var(--danger-bg); color: var(--danger);
+    font-size: 12px; font-weight: 600; padding: 9px 12px; border-radius: 8px;
+  }
+  .form-error.show { display: block; }
+  .btn-submit-form {
+    padding: 9.5px 18px; border: none; border-radius: 9px;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white); font-family: inherit; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-submit-form:hover { opacity: 0.95; }
+  .btn-submit-form:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-edit-row {
+    background: var(--green-50); color: var(--green-700); border: none;
+    padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-right: 6px;
+  }
+
   /* RESPONSIVE MOBILE */
   @media (max-width: 640px) {
     .att-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -712,11 +749,12 @@
               <th>Tahun</th>
               <th>Kategori</th>
               <th>ISBN</th>
+              <th>PDF</th>
               <th>Aksi</th>
             </tr>
           </thead>
           <tbody id="booksTableBody">
-            <tr><td colspan="7" class="att-empty">Memuat data buku...</td></tr>
+            <tr><td colspan="8" class="att-empty">Memuat data buku...</td></tr>
           </tbody>
         </table>
       </div>
@@ -929,6 +967,117 @@
   </div>
 </div>
 
+<!-- ══════════ MODAL FORM TAMBAH / EDIT BUKU ══════════ -->
+<div class="modal-overlay" id="modalBook">
+  <div class="modal-card modal-form">
+    <div class="modal-header">
+      <h3 id="bookModalTitle"><i class="fa-solid fa-book-medical"></i> Tambah Buku Baru</h3>
+      <button class="modal-close" id="btnCloseBookModal">&times;</button>
+    </div>
+    <form id="formBook">
+      <div class="modal-body">
+        <div class="form-error" id="bookFormError"></div>
+        <input type="hidden" id="bookId">
+        <div class="form-group">
+          <label for="bookJudul">Judul Buku *</label>
+          <input type="text" id="bookJudul" class="form-input" placeholder="Contoh: Laskar Pelangi" required>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="bookPengarang">Pengarang *</label>
+            <input type="text" id="bookPengarang" class="form-input" placeholder="Nama pengarang" required>
+          </div>
+          <div class="form-group">
+            <label for="bookPenerbit">Penerbit</label>
+            <input type="text" id="bookPenerbit" class="form-input" placeholder="Nama penerbit">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="bookTahun">Tahun Terbit</label>
+            <input type="number" id="bookTahun" class="form-input" placeholder="2024" min="1900" max="2100">
+          </div>
+          <div class="form-group">
+            <label for="bookKategori">Kategori</label>
+            <select id="bookKategori" class="form-select">
+              <option value="Umum">Umum</option>
+              <option value="Fiksi">Fiksi</option>
+              <option value="Non-Fiksi">Non-Fiksi</option>
+              <option value="Sains">Sains</option>
+              <option value="Sejarah">Sejarah</option>
+              <option value="Agama">Agama</option>
+              <option value="Pelajaran">Pelajaran</option>
+              <option value="Biografi">Biografi</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bookIsbn">ISBN</label>
+          <input type="text" id="bookIsbn" class="form-input" placeholder="Contoh: 978-602-291-000-0">
+        </div>
+        <div class="form-group">
+          <label for="bookDeskripsi">Deskripsi</label>
+          <textarea id="bookDeskripsi" class="form-textarea" placeholder="Ringkasan singkat buku..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="bookLinkPDF">Link PDF (Baca Online)</label>
+          <input type="url" id="bookLinkPDF" class="form-input" placeholder="https://contoh.com/file-buku.pdf">
+          <div class="form-hint"><i class="fa-solid fa-circle-info"></i> Tautan langsung ke file PDF (mis. dari GitHub raw / Google Drive direct link). Anggota hanya bisa membaca online, tidak bisa mengunduh.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" id="btnCancelBook">Batal</button>
+        <button type="submit" class="btn-submit-form" id="btnSubmitBook"><i class="fa-solid fa-floppy-disk"></i> Simpan Buku</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ MODAL FORM TAMBAH / EDIT PENGGUNA ══════════ -->
+<div class="modal-overlay" id="modalUser">
+  <div class="modal-card modal-form">
+    <div class="modal-header">
+      <h3 id="userModalTitle"><i class="fa-solid fa-user-plus"></i> Tambah Pengguna Baru</h3>
+      <button class="modal-close" id="btnCloseUserModal">&times;</button>
+    </div>
+    <form id="formUser">
+      <div class="modal-body">
+        <div class="form-error" id="userFormError"></div>
+        <input type="hidden" id="userId">
+        <div class="form-group">
+          <label for="userNama">Nama Lengkap *</label>
+          <input type="text" id="userNama" class="form-input" placeholder="Nama sesuai data sekolah" required>
+        </div>
+        <div class="form-group">
+          <label for="userStatus">Status *</label>
+          <select id="userStatus" class="form-select" required>
+            <option value="siswa">Siswa</option>
+            <option value="guru">Guru</option>
+            <option value="staf">Staf Tata Usaha</option>
+          </select>
+        </div>
+        <div class="form-group" id="groupKelas">
+          <label for="userKelas">Kelas *</label>
+          <input type="text" id="userKelas" class="form-input" placeholder="Contoh: XII IPA 1">
+        </div>
+        <div class="form-group" id="groupJabatan" style="display:none;">
+          <label for="userJabatan">Jabatan</label>
+          <input type="text" id="userJabatan" class="form-input" placeholder="Contoh: Wali Kelas / Staf Perpustakaan">
+        </div>
+        <div class="form-group">
+          <label for="userPassword">Password <span id="passwordRequiredMark">*</span></label>
+          <input type="password" id="userPassword" class="form-input" placeholder="Minimal 4 karakter" autocomplete="new-password">
+          <div class="form-hint" id="passwordHint"><i class="fa-solid fa-circle-info"></i> Digunakan anggota untuk login ke dashboard.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" id="btnCancelUser">Batal</button>
+        <button type="submit" class="btn-submit-form" id="btnSubmitUser"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengguna</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   const API_BASE = '/api';
 
@@ -967,7 +1116,7 @@
   document.getElementById('welcomeText').textContent = `Halo, ${(currentAdmin.nama || currentAdmin.username).split(' ')[0]} 👋`;
 
   // ══════ AMBIL STATISTIK DASHBOARD ══════
-  (async function loadStats() {
+  async function loadStatsRefresh() {
     try {
       const res = await fetch(`${API_BASE}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -979,7 +1128,8 @@
       document.getElementById('statTamu').textContent = data.totalTamuHariIni ?? 0;
       document.getElementById('statKunjungan').textContent = data.kunjunganHariIni ?? 0;
     } catch {}
-  })();
+  }
+  loadStatsRefresh();
 
   // ══════ NAVIGASI SIDEBAR ══════
   const pageMeta = {
@@ -1531,33 +1681,42 @@
   }
 
   // ══════ KELOLA BUKU ══════
+  let cachedBooks = [];
+
   async function loadBooks() {
     try {
       const res = await fetch(`${API_BASE}/books`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      renderBooksTable(data.books || []);
+      cachedBooks = data.books || [];
+      renderBooksTable(cachedBooks);
     } catch (err) {
       const body = document.getElementById('booksTableBody');
-      if (body) body.innerHTML = `<tr><td colspan="7" class="att-empty">${err.message}</td></tr>`;
+      if (body) body.innerHTML = `<tr><td colspan="8" class="att-empty">${err.message}</td></tr>`;
     }
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
   function renderBooksTable(books) {
     const body = document.getElementById('booksTableBody');
     if (!body) return;
     if (!books || books.length === 0) {
-      body.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada buku.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="8" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada buku.</td></tr>`;
       return;
     }
     body.innerHTML = books.map(b => `<tr>
-      <td>${b.judul || '-'}</td>
-      <td>${b.pengarang || '-'}</td>
-      <td>${b.penerbit || '-'}</td>
+      <td>${escapeHtml(b.judul) || '-'}</td>
+      <td>${escapeHtml(b.pengarang) || '-'}</td>
+      <td>${escapeHtml(b.penerbit) || '-'}</td>
       <td>${b.tahun || '-'}</td>
-      <td><span class="tag-small">${b.kategori || 'Umum'}</span></td>
-      <td>${b.isbn || '-'}</td>
-      <td>
+      <td><span class="tag-small">${escapeHtml(b.kategori) || 'Umum'}</span></td>
+      <td>${escapeHtml(b.isbn) || '-'}</td>
+      <td>${b.linkPDF ? '<i class="fa-solid fa-circle-check" style="color:var(--green-600);" title="PDF tersedia"></i>' : '<i class="fa-solid fa-circle-xmark" style="color:var(--gray-500);" title="Belum ada PDF"></i>'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-edit-row btn-edit-book" data-id="${b.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
         <button class="btn-delete-book" data-id="${b.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
       </td>
     </tr>`).join('');
@@ -1579,15 +1738,113 @@
         }
       });
     });
+    document.querySelectorAll('.btn-edit-book').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        const buku = cachedBooks.find(b => b.id === id);
+        if (buku) openBookModal(buku);
+      });
+    });
   }
 
+  // ══════ MODAL TAMBAH / EDIT BUKU ══════
+  const modalBook = document.getElementById('modalBook');
+  const formBook = document.getElementById('formBook');
+  const bookFormError = document.getElementById('bookFormError');
+  const btnSubmitBook = document.getElementById('btnSubmitBook');
+
+  function openBookModal(buku) {
+    formBook.reset();
+    bookFormError.classList.remove('show');
+    if (buku) {
+      document.getElementById('bookModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Buku';
+      document.getElementById('bookId').value = buku.id;
+      document.getElementById('bookJudul').value = buku.judul || '';
+      document.getElementById('bookPengarang').value = buku.pengarang || '';
+      document.getElementById('bookPenerbit').value = buku.penerbit || '';
+      document.getElementById('bookTahun').value = buku.tahun || '';
+      document.getElementById('bookKategori').value = buku.kategori || 'Umum';
+      document.getElementById('bookIsbn').value = buku.isbn || '';
+      document.getElementById('bookDeskripsi').value = buku.deskripsi || '';
+      document.getElementById('bookLinkPDF').value = buku.linkPDF || '';
+    } else {
+      document.getElementById('bookModalTitle').innerHTML = '<i class="fa-solid fa-book-medical"></i> Tambah Buku Baru';
+      document.getElementById('bookId').value = '';
+    }
+    modalBook.classList.add('show');
+  }
+
+  function closeBookModal() {
+    modalBook.classList.remove('show');
+  }
+
+  document.getElementById('btnOpenBookModal').addEventListener('click', () => openBookModal(null));
+  document.getElementById('btnCloseBookModal').addEventListener('click', closeBookModal);
+  document.getElementById('btnCancelBook').addEventListener('click', closeBookModal);
+  modalBook.addEventListener('click', (e) => { if (e.target === modalBook) closeBookModal(); });
+
+  formBook.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    bookFormError.classList.remove('show');
+
+    const id = document.getElementById('bookId').value;
+    const payload = {
+      judul: document.getElementById('bookJudul').value.trim(),
+      pengarang: document.getElementById('bookPengarang').value.trim(),
+      penerbit: document.getElementById('bookPenerbit').value.trim(),
+      tahun: document.getElementById('bookTahun').value ? parseInt(document.getElementById('bookTahun').value, 10) : undefined,
+      kategori: document.getElementById('bookKategori').value,
+      isbn: document.getElementById('bookIsbn').value.trim(),
+      deskripsi: document.getElementById('bookDeskripsi').value.trim(),
+      linkPDF: document.getElementById('bookLinkPDF').value.trim()
+    };
+
+    if (!payload.judul || !payload.pengarang) {
+      bookFormError.textContent = 'Judul dan pengarang wajib diisi.';
+      bookFormError.classList.add('show');
+      return;
+    }
+    if (payload.linkPDF && !/^https?:\/\//i.test(payload.linkPDF)) {
+      bookFormError.textContent = 'Link PDF harus berupa URL valid (diawali http:// atau https://).';
+      bookFormError.classList.add('show');
+      return;
+    }
+
+    btnSubmitBook.disabled = true;
+    btnSubmitBook.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+    try {
+      const url = id ? `${API_BASE}/books/${id}` : `${API_BASE}/books`;
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal menyimpan buku.');
+      closeBookModal();
+      loadBooks();
+      loadStatsRefresh();
+    } catch (err) {
+      bookFormError.textContent = err.message;
+      bookFormError.classList.add('show');
+    } finally {
+      btnSubmitBook.disabled = false;
+      btnSubmitBook.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Buku';
+    }
+  });
+
   // ══════ KELOLA PENGGUNA ══════
+  let cachedUsers = [];
+
   async function loadUsers() {
     try {
       const res = await fetch(`${API_BASE}/users/list`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      renderUsersTable(data.users || []);
+      cachedUsers = data.users || [];
+      renderUsersTable(cachedUsers);
     } catch (err) {
       const body = document.getElementById('usersTableBody');
       if (body) body.innerHTML = `<tr><td colspan="5" class="att-empty">${err.message}</td></tr>`;
@@ -1602,11 +1859,12 @@
       return;
     }
     body.innerHTML = users.map(u => `<tr>
-      <td>${u.nama || '-'}</td>
-      <td><span class="status-chip">${u.status || '-'}</span></td>
-      <td>${u.kelas || u.jabatan || '-'}</td>
-      <td><small>${u.id || '-'}</small></td>
-      <td>
+      <td>${escapeHtml(u.nama) || '-'}</td>
+      <td><span class="status-chip">${escapeHtml(u.status) || '-'}</span></td>
+      <td>${escapeHtml(u.kelas || u.jabatan) || '-'}</td>
+      <td><small>${escapeHtml(u.id) || '-'}</small></td>
+      <td style="white-space:nowrap;">
+        <button class="btn-edit-row btn-edit-user" data-id="${u.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
         <button class="btn-delete-user" data-id="${u.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
       </td>
     </tr>`).join('');
@@ -1628,7 +1886,131 @@
         }
       });
     });
+    document.querySelectorAll('.btn-edit-user').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        const user = cachedUsers.find(u => u.id === id);
+        if (user) openUserModal(user);
+      });
+    });
   }
+
+  // ══════ MODAL TAMBAH / EDIT PENGGUNA ══════
+  const modalUser = document.getElementById('modalUser');
+  const formUser = document.getElementById('formUser');
+  const userFormError = document.getElementById('userFormError');
+  const btnSubmitUser = document.getElementById('btnSubmitUser');
+  const userStatusSelect = document.getElementById('userStatus');
+  const groupKelas = document.getElementById('groupKelas');
+  const groupJabatan = document.getElementById('groupJabatan');
+  const passwordHint = document.getElementById('passwordHint');
+  const passwordRequiredMark = document.getElementById('passwordRequiredMark');
+
+  function toggleUserStatusFields() {
+    if (userStatusSelect.value === 'siswa') {
+      groupKelas.style.display = '';
+      groupJabatan.style.display = 'none';
+    } else {
+      groupKelas.style.display = 'none';
+      groupJabatan.style.display = '';
+    }
+  }
+  userStatusSelect.addEventListener('change', toggleUserStatusFields);
+
+  function openUserModal(user) {
+    formUser.reset();
+    userFormError.classList.remove('show');
+    if (user) {
+      document.getElementById('userModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Pengguna';
+      document.getElementById('userId').value = user.id;
+      document.getElementById('userNama').value = user.nama || '';
+      document.getElementById('userStatus').value = user.status || 'siswa';
+      document.getElementById('userKelas').value = user.kelas || '';
+      document.getElementById('userJabatan').value = user.jabatan || '';
+      document.getElementById('userPassword').value = '';
+      passwordHint.innerHTML = '<i class="fa-solid fa-circle-info"></i> Kosongkan jika tidak ingin mengubah password.';
+      passwordRequiredMark.style.display = 'none';
+    } else {
+      document.getElementById('userModalTitle').innerHTML = '<i class="fa-solid fa-user-plus"></i> Tambah Pengguna Baru';
+      document.getElementById('userId').value = '';
+      document.getElementById('userStatus').value = 'siswa';
+      passwordHint.innerHTML = '<i class="fa-solid fa-circle-info"></i> Digunakan anggota untuk login ke dashboard.';
+      passwordRequiredMark.style.display = '';
+    }
+    toggleUserStatusFields();
+    modalUser.classList.add('show');
+  }
+
+  function closeUserModal() {
+    modalUser.classList.remove('show');
+  }
+
+  document.getElementById('btnOpenUserModal').addEventListener('click', () => openUserModal(null));
+  document.getElementById('btnCloseUserModal').addEventListener('click', closeUserModal);
+  document.getElementById('btnCancelUser').addEventListener('click', closeUserModal);
+  modalUser.addEventListener('click', (e) => { if (e.target === modalUser) closeUserModal(); });
+
+  formUser.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    userFormError.classList.remove('show');
+
+    const id = document.getElementById('userId').value;
+    const status = document.getElementById('userStatus').value;
+    const password = document.getElementById('userPassword').value;
+
+    const payload = {
+      nama: document.getElementById('userNama').value.trim(),
+      status,
+      kelas: status === 'siswa' ? document.getElementById('userKelas').value.trim() : '',
+      jabatan: status !== 'siswa' ? document.getElementById('userJabatan').value.trim() : ''
+    };
+    if (password) payload.password = password;
+
+    if (!payload.nama) {
+      userFormError.textContent = 'Nama wajib diisi.';
+      userFormError.classList.add('show');
+      return;
+    }
+    if (status === 'siswa' && !payload.kelas) {
+      userFormError.textContent = 'Kelas wajib diisi untuk status siswa.';
+      userFormError.classList.add('show');
+      return;
+    }
+    if (!id && !password) {
+      userFormError.textContent = 'Password wajib diisi untuk pengguna baru.';
+      userFormError.classList.add('show');
+      return;
+    }
+    if (password && password.length < 4) {
+      userFormError.textContent = 'Password minimal 4 karakter.';
+      userFormError.classList.add('show');
+      return;
+    }
+
+    btnSubmitUser.disabled = true;
+    btnSubmitUser.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+    try {
+      const url = id ? `${API_BASE}/users/${id}` : `${API_BASE}/users`;
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal menyimpan pengguna.');
+      closeUserModal();
+      loadUsers();
+      loadStatsRefresh();
+    } catch (err) {
+      userFormError.textContent = err.message;
+      userFormError.classList.add('show');
+    } finally {
+      btnSubmitUser.disabled = false;
+      btnSubmitUser.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Pengguna';
+    }
+  });
 
   // ══════ KELOLA TAMU ══════
   async function loadGuests() {
