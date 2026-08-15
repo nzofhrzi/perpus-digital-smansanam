@@ -95,6 +95,27 @@ function getBearerToken(headers) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// HELPER LINK GOOGLE DRIVE → LINK UNDUH LANGSUNG
+// ─────────────────────────────────────────────────────────────────────────
+function extractDriveFileId(link) {
+  if (!link) return null;
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,       // .../file/d/ID/view
+    /[?&]id=([a-zA-Z0-9_-]+)/,           // ...?id=ID atau &id=ID
+    /\/d\/([a-zA-Z0-9_-]+)/              // .../d/ID
+  ];
+  for (const re of patterns) {
+    const m = link.match(re);
+    if (m && m[1]) return m[1];
+  }
+  return null;
+}
+
+function isGoogleDriveLink(link) {
+  return /drive\.google\.com/i.test(link || '');
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // PENYIMPANAN DATA: GITHUB API (PRODUKSI) DENGAN FALLBACK FILESYSTEM LOKAL
 // ─────────────────────────────────────────────────────────────────────────
 const GITHUB_API = 'https://api.github.com';
@@ -573,6 +594,79 @@ export default async function handler(req, res) {
       }
 
       return sendJson(res, 200, { message: 'Catatan absensi berhasil dihapus.' });
+    }
+
+    // ─── PROXY PDF (UNTUK GOOGLE DRIVE / SUMBER TANPA CORS) ─────────────
+    if (method === 'GET' && route === 'pdf-proxy') {
+      const reqUrl = new URL(`http://localhost${url}`);
+      const rawLink = reqUrl.searchParams.get('url');
+      if (!rawLink) {
+        return sendJson(res, 400, { message: 'Parameter url wajib diisi.' });
+      }
+      if (!/^https?:\/\//i.test(rawLink)) {
+        return sendJson(res, 400, { message: 'URL tidak valid.' });
+      }
+
+      // Hanya izinkan buku yang benar-benar terdaftar di books.json (cegah proxy disalahgunakan)
+      let daftarLinkValid = [];
+      try {
+        const booksData = JSON.parse(await readDataFile('books.json'));
+        daftarLinkValid = (booksData.books || []).map((b) => b.linkPDF).filter(Boolean);
+      } catch {}
+      if (!daftarLinkValid.includes(rawLink)) {
+        return sendJson(res, 403, { message: 'Link PDF tidak dikenali dalam koleksi buku.' });
+      }
+
+      // Bangun URL unduh langsung jika link berasal dari Google Drive
+      let targetUrl = rawLink;
+      if (isGoogleDriveLink(rawLink)) {
+        const fileId = extractDriveFileId(rawLink);
+        if (!fileId) {
+          return sendJson(res, 400, { message: 'Link Google Drive tidak valid. Gunakan link berbagi file (bukan folder).' });
+        }
+        targetUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+      }
+
+      try {
+        let upstream = await fetch(targetUrl, { redirect: 'follow' });
+
+        // Google Drive kadang mengembalikan halaman "konfirmasi virus scan" untuk file besar.
+        // Deteksi dan coba ambil ulang dengan token konfirmasi.
+        const contentType = upstream.headers.get('content-type') || '';
+        if (isGoogleDriveLink(rawLink) && contentType.includes('text/html')) {
+          const html = await upstream.text();
+          const confirmMatch = html.match(/confirm=([0-9A-Za-z_-]+)/);
+          const fileId = extractDriveFileId(rawLink);
+          if (confirmMatch && fileId) {
+            targetUrl = `https://drive.google.com/uc?export=download&confirm=${confirmMatch[1]}&id=${fileId}`;
+            upstream = await fetch(targetUrl, { redirect: 'follow' });
+          } else {
+            return sendJson(res, 502, { message: 'Google Drive menolak akses langsung ke file ini. Pastikan file dibagikan sebagai "Semua orang yang memiliki link".' });
+          }
+        }
+
+        if (!upstream.ok) {
+          return sendJson(res, 502, { message: `Gagal mengambil file PDF (status ${upstream.status}).` });
+        }
+
+        const arrayBuffer = await upstream.arrayBuffer();
+        const buf = Buffer.from(arrayBuffer);
+
+        // Validasi ringan: pastikan ini benar-benar file PDF
+        const isPdf = buf.slice(0, 5).toString('utf-8') === '%PDF-';
+        if (!isPdf) {
+          return sendJson(res, 502, { message: 'File yang diambil bukan PDF valid. Periksa kembali link berbagi Google Drive.' });
+        }
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="buku.pdf"');
+        res.setHeader('Cache-Control', 'private, max-age=300');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.status(200).send(buf);
+        return;
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal memuat file PDF dari sumber.' });
+      }
     }
 
     // ─── BUKU: LIST & CRUD ──────────────────────────────────────────
