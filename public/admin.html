@@ -15,7 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
 
 <style>
   :root {
@@ -1252,6 +1252,7 @@
     buku: { title: 'Kelola Buku', sub: 'Manajemen koleksi buku digital' },
     pengguna: { title: 'Kelola Pengguna', sub: 'Manajemen data anggota &amp; tamu' },
     absensi: { title: 'Kelola Absensi', sub: 'Rekap kehadiran pengunjung' },
+    tamu: { title: 'Kelola Tamu', sub: 'Data kunjungan tamu non-anggota' },
     tracking: { title: 'Tracking Pembaca', sub: 'Statistik aktivitas literasi' },
     pengaturan: { title: 'Pengaturan', sub: 'Konfigurasi sistem perpustakaan' }
   };
@@ -1271,7 +1272,9 @@
     btn.addEventListener('click', () => {
       goToSection(btn.dataset.section);
       if (btn.dataset.section === 'absensi') loadAttendanceAdmin();
+      if (btn.dataset.section === 'tamu') loadGuests();
       if (btn.dataset.section === 'tracking') loadTrackingStats();
+      if (btn.dataset.section === 'pengaturan') loadQrAbsen();
     });
   });
 
@@ -1279,7 +1282,9 @@
     btn.addEventListener('click', () => {
       goToSection(btn.dataset.goto);
       if (btn.dataset.goto === 'absensi') loadAttendanceAdmin();
+      if (btn.dataset.goto === 'tamu') loadGuests();
       if (btn.dataset.goto === 'tracking') loadTrackingStats();
+      if (btn.dataset.goto === 'pengaturan') loadQrAbsen();
     });
   });
 
@@ -2389,13 +2394,4 @@
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal membuat kode QR Absen.');
-      renderQrAbsen(data.kodeAbsenQR, data.kodeAbsenQRDiperbarui);
-    } catch (err) {
-      alert('Gagal: ' + err.message);
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  // Initialize nav button untuk load da
+      if (!res.ok) throw new Error(data.messa
