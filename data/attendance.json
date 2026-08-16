@@ -98,6 +98,17 @@
       "alasan": "Membaca Buku",
       "tanggal": "2026-08-16",
       "waktuAbsen": "2026-08-16T09:15:01.473Z"
+    },
+    {
+      "id": "abs_1786871737540_f01872",
+      "userId": "tamu_1786871728736",
+      "nama": "Rizki",
+      "status": "tamu",
+      "kelas": null,
+      "jabatan": "Mahasiswa",
+      "alasan": "Kunjungan Kelas",
+      "tanggal": "2026-08-16",
+      "waktuAbsen": "2026-08-16T09:15:37.540Z"
     }
   ]
 }
