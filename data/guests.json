@@ -55,6 +55,13 @@
       "jabatan": "Mahasiswa",
       "umur": 21,
       "waktuKunjungan": "2026-08-16T09:15:28.736Z"
+    },
+    {
+      "id": "tamu_1786873687919",
+      "nama": "Tuwir",
+      "jabatan": "Publik",
+      "umur": 19,
+      "waktuKunjungan": "2026-08-16T09:48:07.919Z"
     }
   ]
 }
