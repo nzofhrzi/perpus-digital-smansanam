@@ -1,3 +1,18 @@
 {
-  "sessions": []
+  "sessions": [
+    {
+      "id": "read_1786871132029_2a05b1",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-16T09:05:32.029Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-16"
+    }
+  ]
 }
