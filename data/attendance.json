@@ -65,6 +65,17 @@
       "alasan": "Membaca Buku",
       "tanggal": "2026-08-15",
       "waktuAbsen": "2026-08-15T08:58:47.040Z"
+    },
+    {
+      "id": "abs_1786870241168_48a2be",
+      "userId": "tamu_1786870233480",
+      "nama": "Nia",
+      "status": "tamu",
+      "kelas": null,
+      "jabatan": "Mahasiswa",
+      "alasan": "Membaca Buku",
+      "tanggal": "2026-08-16",
+      "waktuAbsen": "2026-08-16T08:50:41.168Z"
     }
   ]
 }
