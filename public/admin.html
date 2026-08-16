@@ -756,7 +756,7 @@
       <div class="placeholder-card">
         <div class="icon-big"><i class="fa-solid fa-hammer"></i></div>
         <h3>Tahap Awal: Login &amp; Navigasi</h3>
-        <p>Sistem otentikasi admin &amp; anggota sudah aktif. Modul pengelolaan buku, pengguna, absensi, dan tracking pembaca akan dikembangkan pada tahap berikutnya.</p>
+        <p>Sistem otentikasi admin &amp; anggota, pengelolaan buku, pengguna, absensi, dan tracking pembaca sudah aktif digunakan.</p>
         <div class="tag"><i class="fa-solid fa-clock"></i> Dalam Pengembangan</div>
       </div>
     </section>
@@ -903,11 +903,66 @@
     <!-- ══════ TRACKING ══════ -->
     <section class="section-view" id="section-tracking">
       <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
-      <div class="placeholder-card">
-        <div class="icon-big"><i class="fa-solid fa-chart-line"></i></div>
-        <h3>Statistik Aktivitas Pembaca</h3>
-        <p>Pantau buku terpopuler, jam sibuk kunjungan, dan tren literasi seluruh anggota sekolah.</p>
-        <div class="tag"><i class="fa-solid fa-clock"></i> Segera Hadir</div>
+
+      <div class="att-mini-stats">
+        <div class="att-mini-card"><div class="v" id="trkTotalSesi">0</div><div class="l">Total Sesi Membaca</div></div>
+        <div class="att-mini-card"><div class="v" id="trkTotalWaktu">0</div><div class="l">Total Waktu Membaca</div></div>
+        <div class="att-mini-card"><div class="v" id="trkSedangBaca">0</div><div class="l">Sedang Membaca Sekarang</div></div>
+        <div class="att-mini-card"><div class="v" id="trkHariIni">0</div><div class="l">Sesi Hari Ini</div></div>
+      </div>
+
+      <button id="btnRefreshTracking" class="btn-primary" style="margin-bottom:8px;"><i class="fa-solid fa-rotate"></i> Muat Ulang Statistik</button>
+
+      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-ranking-star" style="color:var(--green-600);"></i> Buku Terpopuler (Berdasarkan Total Waktu Baca)</h4>
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Judul Buku</th>
+              <th>Jumlah Sesi</th>
+              <th>Total Waktu Baca</th>
+              <th>Rata-rata / Sesi</th>
+            </tr>
+          </thead>
+          <tbody id="trkBukuBody">
+            <tr><td colspan="4" class="att-empty">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-medal" style="color:var(--green-600);"></i> Pembaca Teraktif</h4>
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Status</th>
+              <th>Jumlah Sesi</th>
+              <th>Total Waktu Baca</th>
+            </tr>
+          </thead>
+          <tbody id="trkPembacaBody">
+            <tr><td colspan="4" class="att-empty">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--green-600);"></i> Aktivitas Membaca Terbaru</h4>
+      <div class="att-table-wrap">
+        <table class="att-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Judul Buku</th>
+              <th>Mulai</th>
+              <th>Durasi</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="trkAktivitasBody">
+            <tr><td colspan="5" class="att-empty">Memuat data...</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -1194,6 +1249,7 @@
     btn.addEventListener('click', () => {
       goToSection(btn.dataset.section);
       if (btn.dataset.section === 'absensi') loadAttendanceAdmin();
+      if (btn.dataset.section === 'tracking') loadTrackingStats();
     });
   });
 
@@ -1201,6 +1257,7 @@
     btn.addEventListener('click', () => {
       goToSection(btn.dataset.goto);
       if (btn.dataset.goto === 'absensi') loadAttendanceAdmin();
+      if (btn.dataset.goto === 'tracking') loadTrackingStats();
     });
   });
 
@@ -2074,6 +2131,91 @@
       btnSubmitUser.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Pengguna';
     }
   });
+
+  // ══════ TRACKING PEMBACA ══════
+  function formatDurasi(detik) {
+    detik = Math.max(0, Math.floor(detik || 0));
+    const j = Math.floor(detik / 3600);
+    const m = Math.floor((detik % 3600) / 60);
+    const d = detik % 60;
+    if (j > 0) return `${j}j ${m}m`;
+    if (m > 0) return `${m}m ${d}d`;
+    return `${d} detik`;
+  }
+
+  async function loadTrackingStats() {
+    const bukuBody = document.getElementById('trkBukuBody');
+    const pembacaBody = document.getElementById('trkPembacaBody');
+    const aktivitasBody = document.getElementById('trkAktivitasBody');
+    bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    aktivitasBody.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+
+    try {
+      const res = await fetch(`${API_BASE}/reading/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat statistik tracking.');
+
+      document.getElementById('trkTotalSesi').textContent = data.totalSesi ?? 0;
+      document.getElementById('trkTotalWaktu').textContent = formatDurasi(data.totalDurasiDetik);
+      document.getElementById('trkSedangBaca').textContent = data.sedangMembaca ?? 0;
+      document.getElementById('trkHariIni').textContent = data.aktivitasHariIni ?? 0;
+
+      // Buku terpopuler
+      if (!data.bukuTerpopuler || data.bukuTerpopuler.length === 0) {
+        bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
+      } else {
+        bukuBody.innerHTML = data.bukuTerpopuler.map(b => `
+          <tr>
+            <td><strong>${escapeHtml(b.judul)}</strong></td>
+            <td>${b.totalSesi}</td>
+            <td>${formatDurasi(b.totalDurasiDetik)}</td>
+            <td>${formatDurasi(b.totalSesi > 0 ? b.totalDurasiDetik / b.totalSesi : 0)}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Pembaca teraktif
+      if (!data.pembacaAktif || data.pembacaAktif.length === 0) {
+        pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
+      } else {
+        pembacaBody.innerHTML = data.pembacaAktif.map(p => `
+          <tr>
+            <td><strong>${escapeHtml(p.nama)}</strong></td>
+            <td><span class="att-role-chip">${escapeHtml(p.status)}</span></td>
+            <td>${p.totalSesi}</td>
+            <td>${formatDurasi(p.totalDurasiDetik)}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Aktivitas terbaru
+      if (!data.aktivitasTerbaru || data.aktivitasTerbaru.length === 0) {
+        aktivitasBody.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
+      } else {
+        aktivitasBody.innerHTML = data.aktivitasTerbaru.map(a => `
+          <tr>
+            <td><strong>${escapeHtml(a.nama)}</strong></td>
+            <td>${escapeHtml(a.judulBuku)}</td>
+            <td>${fmtJam(a.mulai)}, ${fmtTanggal(a.mulai.slice(0, 10))}</td>
+            <td>${formatDurasi(a.durasiDetik)}</td>
+            <td>${a.sedangBerlangsung
+              ? `<span class="att-role-chip" style="background:#fef3c7;color:#92400e;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:9px;"></i> Sedang Berlangsung</span>`
+              : `<span class="att-role-chip" style="background:#d1fae5;color:#065f46;">Selesai</span>`}</td>
+          </tr>
+        `).join('');
+      }
+    } catch (err) {
+      const msg = `<tr><td colspan="5" class="att-empty">Gagal memuat statistik tracking.</td></tr>`;
+      bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat data.</td></tr>`;
+      pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat data.</td></tr>`;
+      aktivitasBody.innerHTML = msg;
+    }
+  }
+
+  document.getElementById('btnRefreshTracking').addEventListener('click', loadTrackingStats);
 
   // ══════ KELOLA TAMU ══════
   async function loadGuests() {
