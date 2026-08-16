@@ -27,6 +27,20 @@
       "selesai": "2026-08-16T09:16:04.565Z",
       "durasiDetik": 22,
       "tanggal": "2026-08-16"
+    },
+    {
+      "id": "read_1786877144035_8b8132",
+      "userId": "tamu_1786877133962",
+      "nama": "testing",
+      "status": "tamu",
+      "kelas": null,
+      "jabatan": "testing",
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-16T10:45:44.035Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-16"
     }
   ]
 }
