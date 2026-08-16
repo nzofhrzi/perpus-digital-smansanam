@@ -120,6 +120,17 @@
       "alasan": "Meminjam Buku",
       "tanggal": "2026-08-16",
       "waktuAbsen": "2026-08-16T11:24:39.323Z"
+    },
+    {
+      "id": "abs_1786879633210_9833be",
+      "userId": "tamu_1786879617917",
+      "nama": "Zenin",
+      "status": "tamu",
+      "kelas": null,
+      "jabatan": "Mahasiswa",
+      "alasan": "Membaca Buku",
+      "tanggal": "2026-08-16",
+      "waktuAbsen": "2026-08-16T11:27:13.210Z"
     }
   ]
 }
