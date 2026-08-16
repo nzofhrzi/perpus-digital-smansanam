@@ -87,6 +87,16 @@ function generateAttendanceId() {
   return `abs_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// QR ABSENSI: PREFIX PENANDA KHUSUS (BUKAN URL, TIDAK MENGARAH KE MANA PUN
+// JIKA DIPINDAI APLIKASI KAMERA BIASA — HANYA DIKENALI OLEH SCANNER DI WEBSITE INI)
+// ─────────────────────────────────────────────────────────────────────────
+const QR_ABSEN_PREFIX = 'PERPUS-ABSEN::';
+
+function generateKodeAbsenQR() {
+  return crypto.randomBytes(12).toString('hex');
+}
+
 function generateReadingId() {
   return `read_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
 }
@@ -639,6 +649,20 @@ export default async function handler(req, res) {
       }
       if (!ALASAN_KUNJUNGAN.includes(alasan)) {
         return sendJson(res, 400, { message: 'Alasan kunjungan tidak valid.' });
+      }
+
+      // ─── VALIDASI QR ABSENSI (QR 2 — KHUSUS ABSEN, DIPINDAI FISIK DI PERPUSTAKAAN) ───
+      const kodeQR = String(body.kodeQR || '').trim();
+      let settingsUntukQR = {};
+      try {
+        settingsUntukQR = JSON.parse(await readDataFile('settings.json'));
+      } catch {}
+      const kodeAbsenAktif = settingsUntukQR.kodeAbsenQR || '';
+      if (!kodeAbsenAktif) {
+        return sendJson(res, 400, { message: 'QR Code Absensi belum diatur oleh admin. Silakan hubungi petugas perpustakaan.' });
+      }
+      if (!kodeQR || kodeQR !== `${QR_ABSEN_PREFIX}${kodeAbsenAktif}`) {
+        return sendJson(res, 400, { message: 'QR Code tidak valid. Pastikan Anda memindai QR Code Absensi resmi yang tersedia di perpustakaan.' });
       }
 
       const today = todayJakarta();
@@ -1418,7 +1442,9 @@ export default async function handler(req, res) {
         namaPerpus: 'Perpus Digital Smansanam',
         logo: '📚',
         warna: '#059669',
-        deskripsi: 'Sistem perpustakaan digital untuk sekolah kami'
+        deskripsi: 'Sistem perpustakaan digital untuk sekolah kami',
+        kodeAbsenQR: '',
+        kodeAbsenQRDiperbarui: null
       };
       try {
         const data = JSON.parse(await readDataFile('settings.json'));
@@ -1434,13 +1460,20 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
       }
 
+      // Muat pengaturan yang ada agar field lain (mis. kode QR absen) tidak ikut tertimpa/hilang.
+      let existing = {};
+      try {
+        existing = JSON.parse(await readDataFile('settings.json'));
+      } catch {}
+
       const { namaSekolah, namaPerpus, logo, warna, deskripsi } = body;
       const settingsData = {
-        namaSekolah: namaSekolah || 'SMA Negeri Smansanam',
-        namaPerpus: namaPerpus || 'Perpus Digital Smansanam',
-        logo: logo || '📚',
-        warna: warna || '#059669',
-        deskripsi: deskripsi || 'Sistem perpustakaan digital'
+        ...existing,
+        namaSekolah: namaSekolah || existing.namaSekolah || 'SMA Negeri Smansanam',
+        namaPerpus: namaPerpus || existing.namaPerpus || 'Perpus Digital Smansanam',
+        logo: logo || existing.logo || '📚',
+        warna: warna || existing.warna || '#059669',
+        deskripsi: deskripsi !== undefined ? deskripsi : (existing.deskripsi || 'Sistem perpustakaan digital')
       };
 
       try {
@@ -1448,6 +1481,38 @@ export default async function handler(req, res) {
         return sendJson(res, 200, { message: 'Pengaturan berhasil diperbarui.', settings: settingsData });
       } catch (err) {
         return sendJson(res, 500, { message: 'Gagal memperbarui pengaturan.' });
+      }
+    }
+
+    // ─── QR ABSENSI: BUAT / BUAT ULANG KODE QR 2 (KHUSUS ADMIN) ─────────
+    if (method === 'POST' && route === 'settings/regenerate-qr-absen') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let existing = {};
+      try {
+        existing = JSON.parse(await readDataFile('settings.json'));
+      } catch {}
+
+      const kodeBaru = generateKodeAbsenQR();
+      const settingsData = {
+        ...existing,
+        kodeAbsenQR: kodeBaru,
+        kodeAbsenQRDiperbarui: new Date().toISOString()
+      };
+
+      try {
+        await writeDataFile('settings.json', JSON.stringify(settingsData, null, 2), 'Buat ulang kode QR Absen');
+        return sendJson(res, 200, {
+          message: 'Kode QR Absen berhasil dibuat. Cetak & tempel QR 2 yang baru di perpustakaan.',
+          kodeAbsenQR: settingsData.kodeAbsenQR,
+          kodeAbsenQRDiperbarui: settingsData.kodeAbsenQRDiperbarui
+        });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal membuat kode QR Absen.' });
       }
     }
 
