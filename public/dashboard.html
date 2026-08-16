@@ -1233,6 +1233,16 @@
             <span class="label">Umur</span>
             <span class="value" id="profileUmur">-</span>
           </div>
+          <div class="profile-detail-row" id="rowTotalWaktuBaca">
+            <i class="fa-solid fa-stopwatch"></i>
+            <span class="label">Total Waktu Membaca</span>
+            <span class="value" id="profileTotalWaktuBaca">-</span>
+          </div>
+          <div class="profile-detail-row" id="rowBukuFavorit">
+            <i class="fa-solid fa-heart"></i>
+            <span class="label">Buku Paling Sering Dibaca</span>
+            <span class="value" id="profileBukuFavorit">-</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1599,9 +1609,50 @@
       document.getElementById('pageTitle').textContent = pageMeta[sec].title;
       document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
       if (sec === 'baca') loadBooks();
+      if (sec === 'profil') loadReadingStatsUser();
       closeMobileSidebar();
     });
   });
+
+  // ══════ RINGKASAN TRACKING PEMBACA (PROFIL SAYA) ══════
+  function formatDurasiUser(detik) {
+    detik = Math.max(0, Math.floor(detik || 0));
+    const j = Math.floor(detik / 3600);
+    const m = Math.floor((detik % 3600) / 60);
+    const d = detik % 60;
+    if (j > 0) return `${j} jam ${m} menit`;
+    if (m > 0) return `${m} menit ${d} detik`;
+    return `${d} detik`;
+  }
+
+  async function loadReadingStatsUser() {
+    const isMember = currentUser && currentUser.role !== 'tamu';
+    const rowTotal = document.getElementById('rowTotalWaktuBaca');
+    const rowFavorit = document.getElementById('rowBukuFavorit');
+    if (!isMember) {
+      if (rowTotal) rowTotal.style.display = 'none';
+      if (rowFavorit) rowFavorit.style.display = 'none';
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/reading/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat statistik membaca.');
+
+      document.getElementById('profileTotalWaktuBaca').textContent =
+        data.totalDetik > 0 ? `${formatDurasiUser(data.totalDetik)} (${data.totalSesi} sesi)` : 'Belum ada aktivitas membaca';
+
+      const favorit = (data.perBuku || [])[0];
+      document.getElementById('profileBukuFavorit').textContent = favorit
+        ? `${favorit.judulBuku} — ${formatDurasiUser(favorit.totalDetik)}`
+        : '-';
+    } catch (err) {
+      document.getElementById('profileTotalWaktuBaca').textContent = '-';
+      document.getElementById('profileBukuFavorit').textContent = '-';
+    }
+  }
 
   // ══════ SIDEBAR MOBILE ══════
   const sidebar = document.getElementById('sidebar');
@@ -1855,6 +1906,43 @@
   let pdfRenderTask = null;
   let pdfZoomScale = 1.0;
 
+  // ══════ TRACKING PEMBACA (DURASI OVERLAY BUKU DIBUKA → DITUTUP) ══════
+  let readingSessionId = null;
+
+  async function startReadingTracking(buku) {
+    readingSessionId = null;
+    try {
+      const res = await fetch(`${API_BASE}/reading/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ bookId: buku.id })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.sessionId) readingSessionId = data.sessionId;
+    } catch (err) {
+      // Best-effort: kegagalan tracking tidak boleh menghalangi pengalaman membaca.
+    }
+  }
+
+  function endReadingTracking() {
+    if (!readingSessionId) return;
+    const sessionId = readingSessionId;
+    readingSessionId = null;
+    try {
+      fetch(`${API_BASE}/reading/end`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ sessionId }),
+        keepalive: true // pastikan request tetap terkirim walau tab/overlay langsung ditutup
+      }).catch(() => {});
+    } catch (err) {}
+  }
+
+  // Jaring pengaman: jika pengguna menutup tab/browser atau navigasi keluar
+  // tanpa menekan tombol tutup, sesi tetap diakhiri agar durasi tidak menggantung.
+  window.addEventListener('pagehide', endReadingTracking);
+  window.addEventListener('beforeunload', endReadingTracking);
+
   async function openPdfViewer(buku) {
     document.getElementById('pdfModalTitle').innerHTML = `<i class="fa-solid fa-book-open"></i> ${escapeHtmlUser(buku.judul)}`;
     pdfCanvasContainer.innerHTML = '';
@@ -1865,6 +1953,9 @@
     updateZoomDisplay();
     pdfModal.classList.add('show');
     document.body.style.overflow = 'hidden';
+
+    // Hitungan waktu baca dimulai begitu overlay terbuka, sesuai lama buku ditampilkan ke pengguna.
+    startReadingTracking(buku);
 
     try {
       if (!window['pdfjsLib']) throw new Error('Pustaka PDF tidak dapat dimuat.');
@@ -1967,6 +2058,7 @@
   });
 
   function closePdfViewer() {
+    endReadingTracking();
     pdfModal.classList.remove('show');
     document.body.style.overflow = '';
     pdfCanvasContainer.innerHTML = '';
