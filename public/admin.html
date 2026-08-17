@@ -1111,17 +1111,20 @@
 
       <div class="kmp-section-block">
         <div class="form-hint" style="margin-bottom:14px;"><i class="fa-solid fa-circle-info"></i> Peminjaman &amp; pengembalian kini diajukan &amp; dikonfirmasi mandiri oleh siswa/guru/staf lewat dashboard masing-masing. Admin dapat memantau arus peminjaman dan melihat detailnya di sini.</div>
-        <div class="kmp-loans-filter" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+        <div class="kmp-loans-filter" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center;">
           <select id="kmpLoansStatusFilter" class="form-input" style="max-width:200px;">
             <option value="semua">Semua Status</option>
             <option value="dipinjam">Sedang Dipinjam</option>
             <option value="dikembalikan">Sudah Dikembalikan</option>
           </select>
+          <button type="button" id="btnLoansHapusTerpilih" class="att-btn-reset" style="border-color:var(--danger,#dc2626); color:var(--danger,#dc2626);" disabled><i class="fa-solid fa-trash"></i> Hapus Terpilih (<span id="loansTerpilihCount">0</span>)</button>
+          <button type="button" id="btnLoansResetSemua" class="att-btn-reset" style="border-color:var(--danger,#dc2626); color:var(--danger,#dc2626); margin-left:auto;"><i class="fa-solid fa-triangle-exclamation"></i> Reset Semua Data</button>
         </div>
         <div class="att-table-wrap">
           <table class="att-table">
             <thead>
               <tr>
+                <th><input type="checkbox" id="kmpLoansSelectAll"></th>
                 <th>Peminjam</th>
                 <th>Kelas / Jabatan</th>
                 <th>Judul Buku</th>
@@ -1132,7 +1135,7 @@
               </tr>
             </thead>
             <tbody id="kmpLoansBody">
-              <tr><td colspan="7" class="att-empty">Memuat data peminjaman...</td></tr>
+              <tr><td colspan="8" class="att-empty">Memuat data peminjaman...</td></tr>
             </tbody>
           </table>
         </div>
@@ -2809,9 +2812,24 @@
     return `<span style="background:#fef3c7;color:#92400e;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;"><i class="fa-solid fa-book"></i> Dipinjam</span>`;
   }
 
+  let kmpLoansSelected = new Set();
+
+  function kmpUpdateLoansSelectionUI() {
+    const btn = document.getElementById('btnLoansHapusTerpilih');
+    const countEl = document.getElementById('loansTerpilihCount');
+    if (countEl) countEl.textContent = String(kmpLoansSelected.size);
+    if (btn) btn.disabled = kmpLoansSelected.size === 0;
+    const selectAll = document.getElementById('kmpLoansSelectAll');
+    if (selectAll) {
+      const semuaId = kmpLoansCache.slice(0, 100).map(l => l.id);
+      selectAll.checked = semuaId.length > 0 && semuaId.every(id => kmpLoansSelected.has(id));
+    }
+  }
+
   async function loadKompetisiLoans() {
     const body = document.getElementById('kmpLoansBody');
-    body.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    body.innerHTML = `<tr><td colspan="8" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    kmpLoansSelected = new Set();
     try {
       const qs = kmpLoansStatusFilter !== 'semua' ? `?status=${encodeURIComponent(kmpLoansStatusFilter)}` : '';
       const res = await fetch(`${API_BASE}/loans${qs}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -2819,22 +2837,35 @@
       if (!res.ok) throw new Error(data.message || 'Gagal memuat data peminjaman.');
       kmpLoansCache = data.data || [];
       if (kmpLoansCache.length === 0) {
-        body.innerHTML = `<tr><td colspan="7" class="att-empty">Belum ada pengajuan peminjaman buku.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="8" class="att-empty">Belum ada pengajuan peminjaman buku.</td></tr>`;
+        kmpUpdateLoansSelectionUI();
         return;
       }
       body.innerHTML = kmpLoansCache.slice(0, 100).map(l => `
         <tr>
+          <td><input type="checkbox" class="kmpLoanCheckbox" data-id="${l.id}"></td>
           <td>${escapeHtml(l.nama)}</td>
           <td>${escapeHtml(kmpKelasJabatan(l))}</td>
           <td>${escapeHtml(l.judulBuku)}</td>
           <td>${fmtTanggal(l.tanggalPinjam)}</td>
           <td>${fmtTanggal(l.tanggalRencanaKembali)}</td>
           <td>${kmpLoanStatusBadge(l)}</td>
-          <td><button class="kmp-icon-btn" title="Lihat Detail" onclick="kmpLihatPinjamDetail('${l.id}')"><i class="fa-solid fa-eye"></i></button></td>
+          <td>
+            <button class="kmp-icon-btn" title="Lihat Detail" onclick="kmpLihatPinjamDetail('${l.id}')"><i class="fa-solid fa-eye"></i></button>
+            <button class="kmp-icon-btn danger" title="Hapus" onclick="kmpHapusPinjaman('${l.id}')"><i class="fa-solid fa-trash"></i></button>
+          </td>
         </tr>
       `).join('');
+      document.querySelectorAll('.kmpLoanCheckbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-id');
+          if (e.target.checked) kmpLoansSelected.add(id); else kmpLoansSelected.delete(id);
+          kmpUpdateLoansSelectionUI();
+        });
+      });
+      kmpUpdateLoansSelectionUI();
     } catch (err) {
-      body.innerHTML = `<tr><td colspan="7" class="att-empty">Gagal memuat data peminjaman.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="8" class="att-empty">Gagal memuat data peminjaman.</td></tr>`;
     }
   }
 
@@ -2843,6 +2874,73 @@
     kmpLoansStatusFilterEl.addEventListener('change', (e) => {
       kmpLoansStatusFilter = e.target.value || 'semua';
       loadKompetisiLoans();
+    });
+  }
+
+  const kmpLoansSelectAllEl = document.getElementById('kmpLoansSelectAll');
+  if (kmpLoansSelectAllEl) {
+    kmpLoansSelectAllEl.addEventListener('change', (e) => {
+      const cek = e.target.checked;
+      document.querySelectorAll('.kmpLoanCheckbox').forEach(cb => {
+        cb.checked = cek;
+        const id = cb.getAttribute('data-id');
+        if (cek) kmpLoansSelected.add(id); else kmpLoansSelected.delete(id);
+      });
+      kmpUpdateLoansSelectionUI();
+    });
+  }
+
+  window.kmpHapusPinjaman = async function (id) {
+    if (!confirm('Hapus catatan peminjaman ini? Tindakan ini tidak dapat dibatalkan.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/loans/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal menghapus catatan peminjaman.');
+      loadKompetisiLoans();
+    } catch (err) {
+      alert(err.message || 'Gagal menghapus catatan peminjaman.');
+    }
+  };
+
+  const btnLoansHapusTerpilih = document.getElementById('btnLoansHapusTerpilih');
+  if (btnLoansHapusTerpilih) {
+    btnLoansHapusTerpilih.addEventListener('click', async () => {
+      const ids = Array.from(kmpLoansSelected);
+      if (ids.length === 0) return;
+      if (!confirm(`Hapus ${ids.length} catatan peminjaman terpilih? Tindakan ini tidak dapat dibatalkan.`)) return;
+      btnLoansHapusTerpilih.disabled = true;
+      try {
+        const res = await fetch(`${API_BASE}/loans/bulk-delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ ids })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal menghapus catatan terpilih.');
+        loadKompetisiLoans();
+      } catch (err) {
+        alert(err.message || 'Gagal menghapus catatan terpilih.');
+        btnLoansHapusTerpilih.disabled = false;
+      }
+    });
+  }
+
+  const btnLoansResetSemua = document.getElementById('btnLoansResetSemua');
+  if (btnLoansResetSemua) {
+    btnLoansResetSemua.addEventListener('click', async () => {
+      if (!confirm('Reset SELURUH data peminjaman buku fisik? Semua riwayat peminjaman (termasuk yang sudah dikembalikan) akan dihapus permanen dan tidak dapat dikembalikan.')) return;
+      if (!confirm('Konfirmasi sekali lagi: yakin ingin menghapus SEMUA data peminjaman?')) return;
+      btnLoansResetSemua.disabled = true;
+      try {
+        const res = await fetch(`${API_BASE}/loans/reset`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mereset data peminjaman.');
+        loadKompetisiLoans();
+      } catch (err) {
+        alert(err.message || 'Gagal mereset data peminjaman.');
+      } finally {
+        btnLoansResetSemua.disabled = false;
+      }
     });
   }
 
