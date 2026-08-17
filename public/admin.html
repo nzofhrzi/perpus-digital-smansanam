@@ -1198,6 +1198,21 @@
           <div class="form-hint" style="margin-top:10px; text-align:left;"><i class="fa-solid fa-triangle-exclamation"></i> Membuat ulang kode akan membatalkan QR 2 yang lama — cetak ulang &amp; tempel yang baru di perpustakaan.</div>
         </div>
       </div>
+
+      <!-- ══════ ZONA BERBAHAYA: RESET DATA JSON ══════ -->
+      <div class="section-title" style="margin-top:34px; color:var(--danger,#dc2626);"><i class="fa-solid fa-triangle-exclamation"></i> Zona Berbahaya — Reset Data</div>
+      <p style="font-size:13px;color:var(--gray-500);max-width:600px;margin-bottom:18px;line-height:1.6;">
+        Hapus permanen dataset perpustakaan langsung dari sini. Pilih satu atau beberapa dataset, atau gunakan "Pilih Semua". Tindakan ini tidak dapat dibatalkan — data yang sudah direset tidak bisa dikembalikan. Akun admin &amp; konfigurasi situs tidak termasuk dan tidak akan terhapus.
+      </p>
+      <div style="max-width:600px; border:1px solid var(--danger-bg,#fee2e2); background:var(--danger-bg,#fef2f2); border-radius:14px; padding:18px;">
+        <label style="display:flex; align-items:center; gap:10px; font-weight:700; margin-bottom:12px; cursor:pointer;">
+          <input type="checkbox" id="resetDataSelectAll"> Pilih Semua Dataset
+        </label>
+        <div id="resetDataChecklist" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-left:2px;">
+          <div class="att-empty" style="padding:10px 0;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat daftar dataset...</div>
+        </div>
+        <button type="button" id="btnResetDataTerpilih" class="btn-primary" style="width:100%; background:var(--danger,#dc2626); border-color:var(--danger,#dc2626);" disabled><i class="fa-solid fa-trash"></i> Reset Dataset Terpilih</button>
+      </div>
     </section>
 
   </div>
@@ -1516,7 +1531,7 @@
       if (sec === 'tracking') loadTrackingStats();
       if (sec === 'kompetisi') loadKompetisi();
       if (sec === 'peminjaman') loadKompetisiLoans();
-      if (sec === 'pengaturan') loadQrAbsen();
+      if (sec === 'pengaturan') { loadQrAbsen(); loadResetDataChecklist(); }
     } catch (err) {
       console.error('Gagal memuat data section', sec, err);
     }
@@ -2562,6 +2577,92 @@
   document.getElementById('warna').addEventListener('input', (e) => {
     document.getElementById('warnaText').textContent = e.target.value;
   });
+
+  let resetDataSelected = new Set();
+
+  function updateResetDataButtonState() {
+    const btn = document.getElementById('btnResetDataTerpilih');
+    if (btn) btn.disabled = resetDataSelected.size === 0;
+    const selectAll = document.getElementById('resetDataSelectAll');
+    const semuaCb = document.querySelectorAll('.resetDataCheckbox');
+    if (selectAll) selectAll.checked = semuaCb.length > 0 && Array.from(semuaCb).every(cb => resetDataSelected.has(cb.getAttribute('data-key')));
+  }
+
+  async function loadResetDataChecklist() {
+    const wrap = document.getElementById('resetDataChecklist');
+    if (!wrap) return;
+    try {
+      const res = await fetch(`${API_BASE}/settings/reset-data`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Gagal memuat daftar dataset.');
+      const daftar = data.data || [];
+      resetDataSelected = new Set();
+      wrap.innerHTML = daftar.map(d => `
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+          <input type="checkbox" class="resetDataCheckbox" data-key="${d.key}"> ${escapeHtml(d.label)}
+        </label>
+      `).join('');
+      document.querySelectorAll('.resetDataCheckbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const key = e.target.getAttribute('data-key');
+          if (e.target.checked) resetDataSelected.add(key); else resetDataSelected.delete(key);
+          updateResetDataButtonState();
+        });
+      });
+      updateResetDataButtonState();
+    } catch (err) {
+      wrap.innerHTML = `<div class="att-empty" style="padding:10px 0;">Gagal memuat daftar dataset.</div>`;
+    }
+  }
+
+  const resetDataSelectAllEl = document.getElementById('resetDataSelectAll');
+  if (resetDataSelectAllEl) {
+    resetDataSelectAllEl.addEventListener('change', (e) => {
+      const cek = e.target.checked;
+      document.querySelectorAll('.resetDataCheckbox').forEach(cb => {
+        cb.checked = cek;
+        const key = cb.getAttribute('data-key');
+        if (cek) resetDataSelected.add(key); else resetDataSelected.delete(key);
+      });
+      updateResetDataButtonState();
+    });
+  }
+
+  const btnResetDataTerpilih = document.getElementById('btnResetDataTerpilih');
+  if (btnResetDataTerpilih) {
+    btnResetDataTerpilih.addEventListener('click', async () => {
+      const targets = Array.from(resetDataSelected);
+      if (targets.length === 0) return;
+      const labelTerpilih = Array.from(document.querySelectorAll('.resetDataCheckbox'))
+        .filter(cb => resetDataSelected.has(cb.getAttribute('data-key')))
+        .map(cb => cb.parentElement.textContent.trim())
+        .join(', ');
+      if (!confirm(`Reset dataset berikut secara PERMANEN?\n\n${labelTerpilih}\n\nSemua isi dataset ini akan dikosongkan dan tidak dapat dikembalikan.`)) return;
+      const konfirmasi = prompt('Ketik RESET (huruf besar) untuk konfirmasi akhir:');
+      if (konfirmasi !== 'RESET') {
+        alert('Reset dibatalkan — teks konfirmasi tidak sesuai.');
+        return;
+      }
+      btnResetDataTerpilih.disabled = true;
+      btnResetDataTerpilih.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mereset...';
+      try {
+        const res = await fetch(`${API_BASE}/settings/reset-data`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ targets })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mereset dataset.');
+        alert(data.message || 'Dataset berhasil direset.');
+        loadResetDataChecklist();
+      } catch (err) {
+        alert(err.message || 'Gagal mereset dataset.');
+      } finally {
+        btnResetDataTerpilih.innerHTML = '<i class="fa-solid fa-trash"></i> Reset Dataset Terpilih';
+        updateResetDataButtonState();
+      }
+    });
+  }
 
   document.getElementById('btnSaveSettings').addEventListener('click', async () => {
     const btn = document.getElementById('btnSaveSettings');
