@@ -1,15 +1,6 @@
 {
   "users": [
     {
-      "id": "usr_001",
-      "nama": "Ahmad Fauzan Ramadhan",
-      "status": "siswa",
-      "kelas": "XII IPA 1",
-      "salt": "631eea71083199abdb71f8b824f1943c",
-      "hash": "fd699a209d71a5a148795e20909241871bf775f76659d1235ebf98d6dd4c7d6f02b644f9fdf6fff50f9c0f275c9dc17ba17b4e67a65081f5a8c47c4ab91dfc95",
-      "createdAt": "2026-07-01T00:00:00.000Z"
-    },
-    {
       "id": "usr_002",
       "nama": "Siti Rahma, S.Pd",
       "status": "guru",
