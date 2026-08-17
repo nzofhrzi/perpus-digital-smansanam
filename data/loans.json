@@ -18,6 +18,25 @@
       "dikembalikanPada": "2026-08-17T07:03:47.264Z",
       "catatan": "Test doang",
       "dicatatPada": "2026-08-17T07:02:47.563Z"
+    },
+    {
+      "id": "pjm_1786952001703_3997ce",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "judulBuku": "Teori Albert Einstein",
+      "kategoriBuku": "Pelajaran",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-17",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-20",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Tugas kelompok",
+      "dicatatPada": "2026-08-17T07:33:21.703Z"
     }
   ]
 }
