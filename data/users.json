@@ -1,15 +1,6 @@
 {
   "users": [
     {
-      "id": "user_1786776243708_1f21a0",
-      "nama": "Dimz",
-      "status": "siswa",
-      "kelas": "X 3",
-      "jabatan": null,
-      "salt": "6f593b7ffaea7d8cc3ca392fe44154d8",
-      "hash": "014eefcf89122487acd54e768393c5b7fc0be91fb1aa61790b976a40bb417ee4b077f5b7c7e6fad3a0cc79f32dbb9f6a344080012fd45d0b8a52a0103e43ebd9"
-    },
-    {
       "id": "user_1786777885462_807af1",
       "nama": "Enzo Fahrezi",
       "status": "staf",
