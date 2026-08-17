@@ -321,7 +321,7 @@ export default async function handler(req, res) {
 
       return sendJson(res, 200, {
         token,
-        user: { id: user.id, nama: user.nama, status: user.status, kelas: user.kelas || null, role: user.status }
+        user: { id: user.id, nama: user.nama, status: user.status, kelas: user.kelas || null, jabatan: user.jabatan || null, role: user.status, foto: user.foto || null }
       });
     }
 
@@ -455,6 +455,7 @@ export default async function handler(req, res) {
         status,
         kelas: status === 'siswa' ? String(kelas).trim() : null,
         jabatan: status !== 'siswa' ? (jabatan ? String(jabatan).trim() : '') : null,
+        foto: null,
         salt,
         hash,
         createdAt: new Date().toISOString(),
@@ -481,7 +482,7 @@ export default async function handler(req, res) {
       return sendJson(res, 201, {
         message: 'Pendaftaran berhasil! Selamat datang.',
         token,
-        user: { id: newUser.id, nama: newUser.nama, status: newUser.status, kelas: newUser.kelas, jabatan: newUser.jabatan, role: newUser.status }
+        user: { id: newUser.id, nama: newUser.nama, status: newUser.status, kelas: newUser.kelas, jabatan: newUser.jabatan, role: newUser.status, foto: null }
       });
     }
 
@@ -493,7 +494,7 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Sesi tidak valid atau fitur ini khusus anggota sekolah.' });
       }
 
-      const { nama, kelas, jabatan, currentPassword, newPassword, confirmNewPassword } = body;
+      const { nama, kelas, jabatan, currentPassword, newPassword, confirmNewPassword, foto, hapusFoto } = body;
 
       let usersData = { users: [] };
       try {
@@ -536,6 +537,21 @@ export default async function handler(req, res) {
         updated.jabatan = String(jabatan).trim();
       }
 
+      // ── FOTO PROFIL (BASE64 DATA URL, SISI KLIEN SUDAH DIKOMPRES/DIRESIZE) ──
+      if (hapusFoto === true) {
+        updated.foto = null;
+      } else if (foto !== undefined && foto !== null) {
+        const fotoStr = String(foto);
+        if (!/^data:image\/(png|jpe?g|webp);base64,/.test(fotoStr)) {
+          return sendJson(res, 400, { message: 'Format foto tidak valid. Gunakan gambar PNG, JPG, atau WEBP.' });
+        }
+        // Batas ukuran ± 900KB (data URL base64), aman untuk disimpan di users.json.
+        if (fotoStr.length > 1_200_000) {
+          return sendJson(res, 400, { message: 'Ukuran foto terlalu besar. Gunakan foto yang lebih kecil.' });
+        }
+        updated.foto = fotoStr;
+      }
+
       if (newPassword) {
         if (!currentPassword) {
           return sendJson(res, 400, { message: 'Masukkan password saat ini untuk mengganti password.' });
@@ -574,7 +590,7 @@ export default async function handler(req, res) {
       return sendJson(res, 200, {
         message: 'Profil berhasil diperbarui.',
         token: newToken,
-        user: { id: updated.id, nama: updated.nama, status: updated.status, kelas: updated.kelas, jabatan: updated.jabatan, role: updated.status }
+        user: { id: updated.id, nama: updated.nama, status: updated.status, kelas: updated.kelas, jabatan: updated.jabatan, role: updated.status, foto: updated.foto || null }
       });
     }
 
