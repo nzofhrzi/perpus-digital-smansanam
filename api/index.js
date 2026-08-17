@@ -1975,6 +1975,64 @@ export default async function handler(req, res) {
       }
     }
 
+    // ─── PENGATURAN: RESET DATA JSON (ZONA BERBAHAYA) ───────────────────
+    // Reset satu atau beberapa dataset sekaligus dari halaman Pengaturan admin.
+    // Sengaja TIDAK menyediakan reset untuk admin.json (akun admin) & settings.json
+    // (konfigurasi situs) supaya admin tidak bisa mengunci diri sendiri keluar sistem.
+    const RESET_DATA_TARGETS = {
+      books: { file: 'books.json', empty: { books: [] }, label: 'Koleksi Buku' },
+      users: { file: 'users.json', empty: { users: [] }, label: 'Pengguna (Siswa/Guru/Staf)' },
+      attendance: { file: 'attendance.json', empty: { attendance: [] }, label: 'Absensi Kehadiran' },
+      guests: { file: 'guests.json', empty: { guests: [] }, label: 'Data Tamu' },
+      reading: { file: 'reading.json', empty: { sessions: [] }, label: 'Tracking Pembaca' },
+      loans: { file: 'loans.json', empty: { loans: [] }, label: 'Peminjaman Buku' },
+      competitions: { file: 'competitions.json', empty: { periode: [] }, label: 'Kompetisi Duta Literasi' }
+    };
+
+    if (method === 'GET' && route === 'settings/reset-data') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+      const daftar = Object.entries(RESET_DATA_TARGETS).map(([key, v]) => ({ key, label: v.label }));
+      return sendJson(res, 200, { data: daftar });
+    }
+
+    if (method === 'POST' && route === 'settings/reset-data') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const targets = Array.isArray(body.targets) ? body.targets.filter((t) => typeof t === 'string') : [];
+      const valid = targets.filter((t) => RESET_DATA_TARGETS[t]);
+      if (valid.length === 0) {
+        return sendJson(res, 400, { message: 'Tidak ada dataset valid yang dipilih untuk direset.' });
+      }
+
+      const berhasil = [];
+      const gagal = [];
+      for (const key of valid) {
+        const target = RESET_DATA_TARGETS[key];
+        try {
+          await writeDataFile(target.file, JSON.stringify(target.empty, null, 2), `Admin reset dataset: ${target.label}`);
+          berhasil.push(target.label);
+        } catch (err) {
+          gagal.push(target.label);
+        }
+      }
+
+      if (berhasil.length === 0) {
+        return sendJson(res, 500, { message: 'Gagal mereset dataset yang dipilih.' });
+      }
+      const pesan = gagal.length > 0
+        ? `Berhasil reset: ${berhasil.join(', ')}. Gagal: ${gagal.join(', ')}.`
+        : `Berhasil mereset: ${berhasil.join(', ')}.`;
+      return sendJson(res, 200, { message: pesan, berhasil, gagal });
+    }
+
     // ─── PEMINJAMAN BUKU FISIK: KONFIRMASI PENGEMBALIAN MANDIRI ─────────
     if (method === 'POST' && parts[1] === 'loans' && parts[2] && parts[3] === 'kembalikan') {
       const token = getBearerToken(headers);
