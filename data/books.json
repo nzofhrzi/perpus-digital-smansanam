@@ -39,6 +39,20 @@
       "modeInput": "simpel",
       "dibuat": "2026-08-17T01:29:00.047Z",
       "diperbarui": "2026-08-17T01:29:22.037Z"
+    },
+    {
+      "id": "book_1786930193047_ef40a9",
+      "judul": "Tentang Kamu",
+      "pengarang": "-",
+      "penerbit": "",
+      "tahun": 2026,
+      "kategori": "Fiksi",
+      "isbn": "",
+      "deskripsi": "",
+      "linkPDF": "https://drive.google.com/file/d/1SDX30pl3tWF9nGmxaGRmimuyJPMLFowE/view?usp=drivesdk",
+      "modeInput": "simpel",
+      "dibuat": "2026-08-17T01:29:53.047Z",
+      "diperbarui": "2026-08-17T01:29:53.047Z"
     }
   ]
 }
