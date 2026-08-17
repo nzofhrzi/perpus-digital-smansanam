@@ -123,6 +123,16 @@ function isValidTanggal(str) {
   return typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str);
 }
 
+// Menambahkan sejumlah hari ke tanggal (format YYYY-MM-DD), mengembalikan
+// tanggal baru dalam format yang sama. Dipakai untuk menghitung rencana
+// tanggal pengembalian buku dari tanggal pinjam + jangka waktu (hari).
+function tambahHari(tanggalStr, jumlahHari) {
+  const [y, m, d] = tanggalStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + jumlahHari);
+  return dt.toISOString().slice(0, 10);
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 // TRACKING PEMBACA: BATAS WAJAR DURASI SESI
 // ─────────────────────────────────────────────────────────────────────────
@@ -1709,7 +1719,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // ─── PEMINJAMAN BUKU FISIK: LIST (ADMIN / STAF TU) ──────────────────
+    // ─── PEMINJAMAN BUKU FISIK: LIST — ARUS PEMINJAMAN (ADMIN / STAF TU) ─
     if (method === 'GET' && route === 'loans') {
       const token = getBearerToken(headers);
       const payload = token ? verifyToken(token) : null;
@@ -1726,11 +1736,15 @@ export default async function handler(req, res) {
       const reqUrl = new URL(`http://localhost${url}`);
       const q = (reqUrl.searchParams.get('q') || '').trim().toLowerCase();
       const jenis = reqUrl.searchParams.get('jenis');
+      const statusPinjaman = reqUrl.searchParams.get('status');
       const periodeId = reqUrl.searchParams.get('periodeId');
 
       let hasil = loansData.loans;
       if (q) hasil = hasil.filter((l) => (l.nama || '').toLowerCase().includes(q) || (l.judulBuku || '').toLowerCase().includes(q));
       if (jenis && jenis !== 'semua') hasil = hasil.filter((l) => l.jenisBuku === jenis);
+      if (statusPinjaman && statusPinjaman !== 'semua') {
+        hasil = hasil.filter((l) => (l.statusPinjaman || 'dipinjam') === statusPinjaman);
+      }
 
       if (periodeId) {
         let compData = { periode: [] };
@@ -1744,48 +1758,77 @@ export default async function handler(req, res) {
         }
       }
 
-      hasil = [...hasil].sort((a, b) => new Date(b.dicatatPada) - new Date(a.dicatatPada));
+      const today = todayJakarta();
+      hasil = [...hasil]
+        .sort((a, b) => new Date(b.dicatatPada) - new Date(a.dicatatPada))
+        .map((l) => ({
+          ...l,
+          statusPinjaman: l.statusPinjaman || 'dipinjam',
+          terlambat: (l.statusPinjaman || 'dipinjam') !== 'dikembalikan' && !!l.tanggalRencanaKembali && l.tanggalRencanaKembali < today
+        }));
 
       return sendJson(res, 200, { total: hasil.length, data: hasil.slice(0, 500) });
     }
 
-    // ─── PEMINJAMAN BUKU FISIK: CATAT MANUAL (ADMIN / STAF TU) ──────────
+    // ─── PEMINJAMAN BUKU FISIK: RIWAYAT MILIK SENDIRI (SISWA/GURU/STAF) ─
+    if (method === 'GET' && route === 'loans/mine') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !payload.role || payload.role === 'admin' || payload.role === 'tamu') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali sebagai anggota sekolah.' });
+      }
+
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {}
+
+      const today = todayJakarta();
+      const milik = loansData.loans
+        .filter((l) => l.userId === payload.sub)
+        .map((l) => ({
+          ...l,
+          statusPinjaman: l.statusPinjaman || 'dipinjam',
+          terlambat: (l.statusPinjaman || 'dipinjam') !== 'dikembalikan' && !!l.tanggalRencanaKembali && l.tanggalRencanaKembali < today
+        }))
+        .sort((a, b) => new Date(b.dicatatPada) - new Date(a.dicatatPada));
+
+      return sendJson(res, 200, { data: milik });
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: AJUKAN PEMINJAMAN MANDIRI (SISWA/GURU/STAF) ─
+    // Pengguna sendiri yang mengisi judul buku & jangka waktu peminjaman.
+    // Admin tidak lagi mencatat manual — hanya memantau arus & detailnya.
     if (method === 'POST' && route === 'loans') {
       const token = getBearerToken(headers);
       const payload = token ? verifyToken(token) : null;
-      if (!payload || payload.role !== 'admin') {
-        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      if (!payload || !payload.role || payload.role === 'admin' || payload.role === 'tamu') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali sebagai anggota sekolah.' });
       }
 
-      const { userId, bookId, tanggalPinjam, catatan } = body;
-      if (!userId || !bookId) {
-        return sendJson(res, 400, { message: 'Peminjam dan buku wajib dipilih.' });
-      }
-      const tanggal = tanggalPinjam && isValidTanggal(tanggalPinjam) ? tanggalPinjam : todayJakarta();
+      const judulBuku = String(body.judulBuku || '').trim();
+      const jangkaHari = parseInt(body.jangkaHari, 10);
+      const catatan = body.catatan ? String(body.catatan).trim().slice(0, 200) : '';
 
-      let usersData = { users: [] };
+      if (!judulBuku) {
+        return sendJson(res, 400, { message: 'Judul buku wajib diisi.' });
+      }
+      if (judulBuku.length > 150) {
+        return sendJson(res, 400, { message: 'Judul buku maksimal 150 karakter.' });
+      }
+      if (!Number.isInteger(jangkaHari) || jangkaHari < 1 || jangkaHari > 30) {
+        return sendJson(res, 400, { message: 'Jangka waktu peminjaman harus antara 1–30 hari.' });
+      }
+
+      // Coba cocokkan judul dengan koleksi buku (opsional) untuk klasifikasi kategori.
+      let kategoriBuku = 'Umum';
       try {
-        usersData = JSON.parse(await readDataFile('users.json'));
-        if (!Array.isArray(usersData.users)) usersData.users = [];
-      } catch {
-        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
-      }
-      const peminjam = usersData.users.find((u) => u.id === userId);
-      if (!peminjam) {
-        return sendJson(res, 404, { message: 'Peminjam tidak ditemukan. Pastikan siswa/guru/staf sudah terdaftar sebagai pengguna.' });
-      }
-
-      let booksData = { books: [] };
-      try {
-        booksData = JSON.parse(await readDataFile('books.json'));
-        if (!Array.isArray(booksData.books)) booksData.books = [];
-      } catch {
-        return sendJson(res, 500, { message: 'Data buku tidak dapat dimuat.' });
-      }
-      const buku = booksData.books.find((b) => b.id === bookId);
-      if (!buku) {
-        return sendJson(res, 404, { message: 'Buku tidak ditemukan.' });
-      }
+        const booksData = JSON.parse(await readDataFile('books.json'));
+        const daftarBuku = Array.isArray(booksData.books) ? booksData.books : [];
+        const cocok = daftarBuku.find((b) => (b.judul || '').trim().toLowerCase() === judulBuku.toLowerCase());
+        if (cocok) kategoriBuku = cocok.kategori || 'Umum';
+      } catch {}
 
       let loansData = { loans: [] };
       try {
@@ -1795,38 +1838,52 @@ export default async function handler(req, res) {
         loansData = { loans: [] };
       }
 
+      const sudahDipinjamSerupa = loansData.loans.find(
+        (l) => l.userId === payload.sub && (l.statusPinjaman || 'dipinjam') !== 'dikembalikan' &&
+          l.judulBuku.trim().toLowerCase() === judulBuku.toLowerCase()
+      );
+      if (sudahDipinjamSerupa) {
+        return sendJson(res, 409, { message: 'Kamu masih meminjam buku ini dan belum mengonfirmasi pengembaliannya.' });
+      }
+
+      const tanggalPinjam = todayJakarta();
+      const tanggalRencanaKembali = tambahHari(tanggalPinjam, jangkaHari);
+
       const record = {
         id: generateLoanId(),
-        userId: peminjam.id,
-        nama: peminjam.nama,
-        status: peminjam.status,
-        kelas: peminjam.kelas || null,
-        jabatan: peminjam.jabatan || null,
-        bookId: buku.id,
-        judulBuku: buku.judul,
-        kategoriBuku: buku.kategori || 'Umum',
-        jenisBuku: klasifikasiJenisBuku(buku.kategori),
-        tanggalPinjam: tanggal,
-        dicatatPada: new Date().toISOString(),
-        dicatatOleh: payload.nama || payload.username || 'Admin',
-        catatan: catatan ? String(catatan).trim() : ''
+        userId: payload.sub,
+        nama: payload.nama,
+        status: payload.status || payload.role,
+        kelas: payload.kelas || null,
+        jabatan: payload.jabatan || null,
+        judulBuku,
+        kategoriBuku,
+        jenisBuku: klasifikasiJenisBuku(kategoriBuku),
+        tanggalPinjam,
+        jangkaHari,
+        tanggalRencanaKembali,
+        statusPinjaman: 'dipinjam',
+        tanggalDikembalikan: null,
+        dikembalikanPada: null,
+        catatan,
+        dicatatPada: new Date().toISOString()
       };
 
       loansData.loans.push(record);
       try {
-        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Catat peminjaman buku: ${peminjam.nama} - ${buku.judul}`);
-        return sendJson(res, 201, { message: 'Peminjaman buku berhasil dicatat.', loan: record });
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Peminjaman mandiri: ${payload.nama} - ${judulBuku}`);
+        return sendJson(res, 201, { message: 'Peminjaman buku berhasil dikonfirmasi. Selamat membaca!', loan: record });
       } catch (err) {
         return sendJson(res, 500, { message: 'Gagal mencatat peminjaman buku.' });
       }
     }
 
-    // ─── PEMINJAMAN BUKU FISIK: HAPUS CATATAN (ADMIN) ───────────────────
-    if (method === 'DELETE' && parts[1] === 'loans' && parts[2]) {
+    // ─── PEMINJAMAN BUKU FISIK: KONFIRMASI PENGEMBALIAN MANDIRI ─────────
+    if (method === 'POST' && parts[1] === 'loans' && parts[2] && parts[3] === 'kembalikan') {
       const token = getBearerToken(headers);
       const payload = token ? verifyToken(token) : null;
-      if (!payload || payload.role !== 'admin') {
-        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      if (!payload || !payload.role || payload.role === 'admin' || payload.role === 'tamu') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali sebagai anggota sekolah.' });
       }
 
       const loanId = parts[2];
@@ -1838,17 +1895,27 @@ export default async function handler(req, res) {
         return sendJson(res, 500, { message: 'Data peminjaman tidak dapat dimuat.' });
       }
 
-      const sebelum = loansData.loans.length;
-      loansData.loans = loansData.loans.filter((l) => l.id !== loanId);
-      if (loansData.loans.length === sebelum) {
+      const idx = loansData.loans.findIndex((l) => l.id === loanId && l.userId === payload.sub);
+      if (idx === -1) {
         return sendJson(res, 404, { message: 'Catatan peminjaman tidak ditemukan.' });
       }
+      if ((loansData.loans[idx].statusPinjaman || 'dipinjam') === 'dikembalikan') {
+        return sendJson(res, 200, { message: 'Buku ini sudah tercatat dikembalikan sebelumnya.', loan: loansData.loans[idx] });
+      }
+
+      const now = new Date();
+      loansData.loans[idx] = {
+        ...loansData.loans[idx],
+        statusPinjaman: 'dikembalikan',
+        tanggalDikembalikan: todayJakarta(),
+        dikembalikanPada: now.toISOString()
+      };
 
       try {
-        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Hapus catatan peminjaman: ${loanId}`);
-        return sendJson(res, 200, { message: 'Catatan peminjaman berhasil dihapus.' });
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Pengembalian buku: ${loansData.loans[idx].nama} - ${loansData.loans[idx].judulBuku}`);
+        return sendJson(res, 200, { message: 'Pengembalian buku berhasil dikonfirmasi. Terima kasih!', loan: loansData.loans[idx] });
       } catch (err) {
-        return sendJson(res, 500, { message: 'Gagal menghapus catatan peminjaman.' });
+        return sendJson(res, 500, { message: 'Gagal mencatat pengembalian buku.' });
       }
     }
 
