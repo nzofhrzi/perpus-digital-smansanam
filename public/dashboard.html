@@ -107,7 +107,9 @@
     color: var(--white);
     flex-shrink: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    overflow: hidden;
   }
+  .sidebar-user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 
   .sidebar-user-info { overflow: hidden; }
   .sidebar-user-info .name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -733,6 +735,15 @@
     font-size: 30px; font-weight: 700;
     font-family: 'Poppins', sans-serif;
     box-shadow: 0 10px 22px -6px rgba(5,150,105,0.4);
+    overflow: hidden;
+    position: relative;
+  }
+  .profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+  .profile-avatar-lg.uploading::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(6,78,59,0.55);
+    display: flex; align-items: center; justify-content: center;
   }
 
   .btn-avatar-edit {
@@ -750,6 +761,23 @@
     transition: var(--transition);
   }
   .btn-avatar-edit:hover { background: var(--green-50); transform: scale(1.08); }
+
+  .btn-avatar-remove {
+    position: absolute;
+    bottom: -4px; left: -4px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--danger, #dc2626);
+    color: var(--danger, #dc2626);
+    display: none;
+    align-items: center; justify-content: center;
+    font-size: 10.5px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: var(--transition);
+  }
+  .btn-avatar-remove:hover { background: #fef2f2; transform: scale(1.08); }
 
   .profile-card h2 { font-family: 'Poppins', sans-serif; font-size: 18px; margin-bottom: 4px; color: var(--black); }
   
@@ -1195,6 +1223,8 @@
           <div class="profile-avatar-wrap">
             <div class="profile-avatar-lg" id="profileAvatar">-</div>
             <button class="btn-avatar-edit" id="btnEditAvatar" title="Ubah Foto Profil"><i class="fa-solid fa-camera"></i></button>
+            <button class="btn-avatar-remove" id="btnRemoveAvatar" title="Hapus Foto Profil"><i class="fa-solid fa-trash"></i></button>
+            <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
           </div>
           <h2 id="profileName">-</h2>
           <span class="status-chip" id="profileStatus">-</span>
@@ -1430,12 +1460,25 @@
     return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   }
 
-  document.getElementById('userAvatar').textContent = initials(currentUser.nama);
+  // Menampilkan foto profil (jika ada) atau inisial nama sebagai fallback,
+  // sekaligus menampilkan/menyembunyikan tombol hapus foto.
+  function renderAvatar() {
+    const foto = currentUser.foto || null;
+    const initialText = initials(currentUser.nama);
+    const userAvatarEl = document.getElementById('userAvatar');
+    const profileAvatarEl = document.getElementById('profileAvatar');
+    const btnRemove = document.getElementById('btnRemoveAvatar');
+
+    userAvatarEl.innerHTML = foto ? `<img src="${foto}" alt="Foto profil">` : initialText;
+    profileAvatarEl.innerHTML = foto ? `<img src="${foto}" alt="Foto profil">` : initialText;
+    if (btnRemove) btnRemove.style.display = foto ? 'flex' : 'none';
+  }
+
+  renderAvatar();
   document.getElementById('userName').textContent = currentUser.nama;
   document.getElementById('userRole').textContent = currentUser.status === 'tamu' ? 'Tamu' : currentUser.status;
   document.getElementById('welcomeText').textContent = `Selamat datang, ${currentUser.nama.split(' ')[0]}! 👋`;
 
-  document.getElementById('profileAvatar').textContent = initials(currentUser.nama);
   document.getElementById('profileName').textContent = currentUser.nama;
   document.getElementById('profileStatus').textContent = currentUser.status === 'tamu' ? 'Tamu' : currentUser.status;
   document.getElementById('profileId').textContent = currentUser.id;
@@ -1490,9 +1533,117 @@
     document.getElementById('btnEditProfile').style.display = 'none';
     document.getElementById('btnChangePassword').style.display = 'none';
     document.getElementById('btnEditAvatar').style.display = 'none';
+    document.getElementById('btnRemoveAvatar').style.display = 'none';
     document.getElementById('tamuNotice').style.display = 'flex';
   } else {
-    document.getElementById('btnEditAvatar').addEventListener('click', () => showToast('Fitur ubah foto profil akan segera aktif.'));
+    // ── UBAH / HAPUS FOTO PROFIL ──
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const btnEditAvatar = document.getElementById('btnEditAvatar');
+    const btnRemoveAvatar = document.getElementById('btnRemoveAvatar');
+    const profileAvatarEl = document.getElementById('profileAvatar');
+
+    btnEditAvatar.addEventListener('click', () => avatarFileInput.click());
+
+    // Mengubah ukuran & mengompres gambar di sisi klien (maks 320x320, JPEG)
+    // agar ukurannya kecil sebelum disimpan sebagai data URL di server.
+    function resizeImageToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        if (!file.type.startsWith('image/')) {
+          reject(new Error('Berkas yang dipilih bukan gambar.'));
+          return;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+          reject(new Error('Ukuran file maksimal 8MB.'));
+          return;
+        }
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Gagal membaca berkas gambar.'));
+        reader.onload = () => {
+          img.onerror = () => reject(new Error('Gagal memuat gambar. Coba berkas lain.'));
+          img.onload = () => {
+            const maxSize = 320;
+            let { width, height } = img;
+            if (width > height && width > maxSize) {
+              height = Math.round(height * (maxSize / width));
+              width = maxSize;
+            } else if (height > maxSize) {
+              width = Math.round(width * (maxSize / height));
+              height = maxSize;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadAvatar(fotoDataUrl) {
+      profileAvatarEl.classList.add('uploading');
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ foto: fotoDataUrl })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengunggah foto profil.');
+
+        currentUser = { ...currentUser, ...data.user };
+        localStorage.setItem('perpus_user', JSON.stringify(currentUser));
+        localStorage.setItem('perpus_token', data.token);
+        token = data.token;
+        renderAvatar();
+        showToast('Foto profil berhasil diperbarui.');
+      } catch (err) {
+        showToast(err.message || 'Gagal mengunggah foto profil.');
+      } finally {
+        profileAvatarEl.classList.remove('uploading');
+      }
+    }
+
+    avatarFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      avatarFileInput.value = '';
+      if (!file) return;
+      try {
+        const dataUrl = await resizeImageToDataUrl(file);
+        await uploadAvatar(dataUrl);
+      } catch (err) {
+        showToast(err.message || 'Gagal memproses gambar.');
+      }
+    });
+
+    btnRemoveAvatar.addEventListener('click', async () => {
+      if (!confirm('Hapus foto profil dan kembali ke tampilan inisial nama?')) return;
+      profileAvatarEl.classList.add('uploading');
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ hapusFoto: true })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal menghapus foto profil.');
+
+        currentUser = { ...currentUser, ...data.user };
+        localStorage.setItem('perpus_user', JSON.stringify(currentUser));
+        localStorage.setItem('perpus_token', data.token);
+        token = data.token;
+        renderAvatar();
+        showToast('Foto profil berhasil dihapus.');
+      } catch (err) {
+        showToast(err.message || 'Gagal menghapus foto profil.');
+      } finally {
+        profileAvatarEl.classList.remove('uploading');
+      }
+    });
 
     // ── EDIT PROFIL ──
     const editProfileError = document.getElementById('editProfileError');
@@ -1544,10 +1695,9 @@
         localStorage.setItem('perpus_token', data.token);
         token = data.token;
 
-        document.getElementById('userAvatar').textContent = initials(currentUser.nama);
+        renderAvatar();
         document.getElementById('userName').textContent = currentUser.nama;
         document.getElementById('welcomeText').textContent = `Selamat datang, ${currentUser.nama.split(' ')[0]}! 👋`;
-        document.getElementById('profileAvatar').textContent = initials(currentUser.nama);
         document.getElementById('profileName').textContent = currentUser.nama;
         if (currentUser.status === 'siswa') document.getElementById('profileKelas').textContent = currentUser.kelas || '-';
         else document.getElementById('profileJabatan').textContent = currentUser.jabatan || '-';
@@ -1948,13 +2098,46 @@
     return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  // ── WARNA & IKON PER KATEGORI (MEMPERMUDAH VISUAL LOOK KOLEKSI BUKU) ──
+  const KATEGORI_STYLE = {
+    'Fiksi':      { grad: ['#7c3aed', '#4c1d95'], tag: '#6d28d9', tagBg: '#f5f3ff', tagBorder: '#ddd6fe', icon: 'fa-feather-pointed' },
+    'Non-Fiksi':  { grad: ['#0284c7', '#0c4a6e'], tag: '#0369a1', tagBg: '#f0f9ff', tagBorder: '#bae6fd', icon: 'fa-book' },
+    'Pelajaran':  { grad: ['#059669', '#064e3b'], tag: '#047857', tagBg: '#ecfdf5', tagBorder: '#a7f3d0', icon: 'fa-graduation-cap' },
+    'Sains':      { grad: ['#0891b2', '#164e63'], tag: '#0e7490', tagBg: '#ecfeff', tagBorder: '#a5f3fc', icon: 'fa-flask' },
+    'Sejarah':    { grad: ['#b45309', '#78350f'], tag: '#b45309', tagBg: '#fffbeb', tagBorder: '#fde68a', icon: 'fa-landmark' },
+    'Agama':      { grad: ['#0d9488', '#134e4a'], tag: '#0f766e', tagBg: '#f0fdfa', tagBorder: '#99f6e4', icon: 'fa-mosque' },
+    'Biografi':   { grad: ['#db2777', '#831843'], tag: '#be185d', tagBg: '#fdf2f8', tagBorder: '#fbcfe8', icon: 'fa-user-pen' },
+    'Umum':       { grad: ['#475569', '#0f172a'], tag: '#475569', tagBg: '#f1f5f9', tagBorder: '#cbd5e1', icon: 'fa-book-journal-whills' }
+  };
+  // Palet cadangan untuk kategori kustom di luar daftar di atas, dipilih
+  // secara konsisten (hash nama kategori) agar warnanya tidak berubah-ubah.
+  const KATEGORI_FALLBACK_PALETTE = [
+    { grad: ['#dc2626', '#7f1d1d'], tag: '#b91c1c', tagBg: '#fef2f2', tagBorder: '#fecaca', icon: 'fa-bookmark' },
+    { grad: ['#ca8a04', '#713f12'], tag: '#a16207', tagBg: '#fefce8', tagBorder: '#fde68a', icon: 'fa-bookmark' },
+    { grad: ['#4f46e5', '#312e81'], tag: '#4338ca', tagBg: '#eef2ff', tagBorder: '#c7d2fe', icon: 'fa-bookmark' },
+    { grad: ['#0d9488', '#134e4a'], tag: '#0f766e', tagBg: '#f0fdfa', tagBorder: '#99f6e4', icon: 'fa-bookmark' }
+  ];
+  function getKategoriStyle(kategori) {
+    const key = String(kategori || 'Umum').trim() || 'Umum';
+    if (KATEGORI_STYLE[key]) return KATEGORI_STYLE[key];
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) hash = key.charCodeAt(i) + ((hash << 5) - hash);
+    return KATEGORI_FALLBACK_PALETTE[Math.abs(hash) % KATEGORI_FALLBACK_PALETTE.length];
+  }
+
+  function sortBukuAZ(books) {
+    return [...books].sort((a, b) =>
+      String(a.judul || '').localeCompare(String(b.judul || ''), 'id', { sensitivity: 'base' })
+    );
+  }
+
   async function loadBooks() {
     const grid = document.getElementById('bookGrid');
     try {
       const res = await fetch(`${API_BASE}/books`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Gagal memuat koleksi buku.');
-      cachedBooksUser = data.books || [];
+      cachedBooksUser = sortBukuAZ(data.books || []);
       booksLoadedOnce = true;
       renderBookGrid(cachedBooksUser);
     } catch (err) {
@@ -1968,17 +2151,20 @@
       grid.innerHTML = `<div class="att-empty" style="grid-column:1/-1;padding:40px 0;"><i class="fa-solid fa-inbox"></i> Belum ada buku yang tersedia.</div>`;
       return;
     }
-    grid.innerHTML = books.map(b => `
+    grid.innerHTML = books.map(b => {
+      const kategoriNama = escapeHtmlUser(b.kategori) || 'Umum';
+      const style = getKategoriStyle(b.kategori);
+      return `
       <div class="book-card">
-        <div class="book-cover">
-          <i class="fa-solid fa-book-journal-whills"></i>
+        <div class="book-cover" style="background: linear-gradient(135deg, ${style.grad[0]}, ${style.grad[1]});">
+          <i class="fa-solid ${style.icon}"></i>
           <span class="book-cover-badge">E-Book</span>
         </div>
         <div class="book-info">
           <h4>${escapeHtmlUser(b.judul) || 'Tanpa Judul'}</h4>
           <div class="author"><i class="fa-solid fa-feather-pointed"></i> ${escapeHtmlUser(b.pengarang) || '-'}</div>
           <div class="meta-row">
-            <span class="tag-small">${escapeHtmlUser(b.kategori) || 'Umum'}</span>
+            <span class="tag-small" style="color:${style.tag};background:${style.tagBg};border-color:${style.tagBorder};">${kategoriNama}</span>
             ${b.tahun ? `<span style="font-size:11.5px;color:var(--gray-500);font-weight:600;">${b.tahun}</span>` : ''}
           </div>
           ${b.linkPDF
@@ -1986,7 +2172,8 @@
             : `<button class="btn-read-book" disabled title="PDF belum tersedia"><i class="fa-solid fa-ban"></i> Belum Tersedia</button>`}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     document.querySelectorAll('.btn-read-book[data-id]').forEach(btn => {
       btn.addEventListener('click', (e) => {
