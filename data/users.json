@@ -1,15 +1,6 @@
 {
   "users": [
     {
-      "id": "usr_003",
-      "nama": "Budi Santoso",
-      "status": "staf",
-      "kelas": null,
-      "salt": "2ca6359231746066cf393330b2ba4091",
-      "hash": "e475ced87359f10a440f36b4242abde67feb4d7305724f34c9c5fd483116e5985a1986c193cff97f49895d3d8215828e89e538695e1e7e9c3f7a794b3818b5c7",
-      "createdAt": "2026-07-01T00:00:00.000Z"
-    },
-    {
       "id": "user_1786776243708_1f21a0",
       "nama": "Dimz",
       "status": "siswa",
