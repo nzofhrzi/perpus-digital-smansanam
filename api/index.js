@@ -102,6 +102,28 @@ function generateReadingId() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// GAMIFIKASI LITERASI: KOMPETISI DUTA LITERASI
+// ─────────────────────────────────────────────────────────────────────────
+function generatePeriodeId() {
+  return `prd_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+}
+
+function generateLoanId() {
+  return `pjm_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+}
+
+// Klasifikasi jenis buku hanya menjadi 2 golongan besar untuk kompetisi Duta
+// Buku: "Fiksi" (persis kategori Fiksi) dan "Non-Fiksi" (semua kategori lain,
+// termasuk Non-Fiksi, Umum, Sains, Sejarah, Agama, Pelajaran, Biografi, dst).
+function klasifikasiJenisBuku(kategori) {
+  return String(kategori || '').trim().toLowerCase() === 'fiksi' ? 'Fiksi' : 'Non-Fiksi';
+}
+
+function isValidTanggal(str) {
+  return typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // TRACKING PEMBACA: BATAS WAJAR DURASI SESI
 // ─────────────────────────────────────────────────────────────────────────
 // Jika overlay tidak tertutup normal (mis. tab/browser ditutup paksa, koneksi
@@ -1530,6 +1552,443 @@ export default async function handler(req, res) {
       } catch (err) {
         return sendJson(res, 500, { message: 'Gagal membuat kode QR Absen.' });
       }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // GAMIFIKASI LITERASI: KOMPETISI DUTA LITERASI
+    // ═══════════════════════════════════════════════════════════════════
+
+    // ─── PERIODE KOMPETISI: LIST (PUBLIK) ───────────────────────────────
+    if (method === 'GET' && route === 'competitions/periode') {
+      let data = { periode: [] };
+      try {
+        data = JSON.parse(await readDataFile('competitions.json'));
+        if (!Array.isArray(data.periode)) data.periode = [];
+      } catch {}
+      const daftar = [...data.periode].sort((a, b) => new Date(b.mulai) - new Date(a.mulai));
+      return sendJson(res, 200, { periode: daftar });
+    }
+
+    // ─── PERIODE KOMPETISI: BUAT BARU (ADMIN) ───────────────────────────
+    if (method === 'POST' && route === 'competitions/periode') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const { nama, mulai, selesai, status } = body;
+      if (!nama || !String(nama).trim()) {
+        return sendJson(res, 400, { message: 'Nama periode wajib diisi.' });
+      }
+      if (!isValidTanggal(mulai) || !isValidTanggal(selesai)) {
+        return sendJson(res, 400, { message: 'Tanggal mulai dan selesai wajib diisi dengan format yang benar.' });
+      }
+      if (mulai > selesai) {
+        return sendJson(res, 400, { message: 'Tanggal mulai tidak boleh setelah tanggal selesai.' });
+      }
+
+      let data = { periode: [] };
+      try {
+        data = JSON.parse(await readDataFile('competitions.json'));
+        if (!Array.isArray(data.periode)) data.periode = [];
+      } catch {
+        data = { periode: [] };
+      }
+
+      const statusBaru = status === 'aktif' ? 'aktif' : 'nonaktif';
+      // Hanya 1 periode yang boleh berstatus aktif dalam satu waktu.
+      if (statusBaru === 'aktif') {
+        data.periode = data.periode.map((p) => ({ ...p, status: 'nonaktif' }));
+      }
+
+      const newPeriode = {
+        id: generatePeriodeId(),
+        nama: String(nama).trim(),
+        mulai,
+        selesai,
+        status: statusBaru,
+        dibuat: new Date().toISOString(),
+        diperbarui: new Date().toISOString()
+      };
+
+      data.periode.push(newPeriode);
+      try {
+        await writeDataFile('competitions.json', JSON.stringify(data, null, 2), `Tambah periode kompetisi: ${newPeriode.nama}`);
+        return sendJson(res, 201, { message: 'Periode kompetisi berhasil dibuat.', periode: newPeriode });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal membuat periode kompetisi.' });
+      }
+    }
+
+    // ─── PERIODE KOMPETISI: UPDATE (ADMIN) ──────────────────────────────
+    if (method === 'PUT' && parts[1] === 'competitions' && parts[2] === 'periode' && parts[3]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const periodeId = parts[3];
+      const { nama, mulai, selesai, status } = body;
+      if (mulai && !isValidTanggal(mulai)) {
+        return sendJson(res, 400, { message: 'Format tanggal mulai tidak valid.' });
+      }
+      if (selesai && !isValidTanggal(selesai)) {
+        return sendJson(res, 400, { message: 'Format tanggal selesai tidak valid.' });
+      }
+
+      let data = { periode: [] };
+      try {
+        data = JSON.parse(await readDataFile('competitions.json'));
+        if (!Array.isArray(data.periode)) data.periode = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data periode tidak dapat dimuat.' });
+      }
+
+      const idx = data.periode.findIndex((p) => p.id === periodeId);
+      if (idx === -1) {
+        return sendJson(res, 404, { message: 'Periode kompetisi tidak ditemukan.' });
+      }
+
+      const mulaiBaru = mulai || data.periode[idx].mulai;
+      const selesaiBaru = selesai || data.periode[idx].selesai;
+      if (mulaiBaru > selesaiBaru) {
+        return sendJson(res, 400, { message: 'Tanggal mulai tidak boleh setelah tanggal selesai.' });
+      }
+
+      if (status === 'aktif') {
+        data.periode = data.periode.map((p) => ({ ...p, status: p.id === periodeId ? p.status : 'nonaktif' }));
+      }
+
+      data.periode[idx] = {
+        ...data.periode[idx],
+        nama: nama ? String(nama).trim() : data.periode[idx].nama,
+        mulai: mulaiBaru,
+        selesai: selesaiBaru,
+        status: status === 'aktif' || status === 'nonaktif' ? status : data.periode[idx].status,
+        diperbarui: new Date().toISOString()
+      };
+
+      try {
+        await writeDataFile('competitions.json', JSON.stringify(data, null, 2), `Update periode kompetisi: ${data.periode[idx].nama}`);
+        return sendJson(res, 200, { message: 'Periode kompetisi berhasil diperbarui.', periode: data.periode[idx] });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal memperbarui periode kompetisi.' });
+      }
+    }
+
+    // ─── PERIODE KOMPETISI: HAPUS (ADMIN) ───────────────────────────────
+    if (method === 'DELETE' && parts[1] === 'competitions' && parts[2] === 'periode' && parts[3]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const periodeId = parts[3];
+      let data = { periode: [] };
+      try {
+        data = JSON.parse(await readDataFile('competitions.json'));
+        if (!Array.isArray(data.periode)) data.periode = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data periode tidak dapat dimuat.' });
+      }
+
+      const sebelum = data.periode.length;
+      data.periode = data.periode.filter((p) => p.id !== periodeId);
+      if (data.periode.length === sebelum) {
+        return sendJson(res, 404, { message: 'Periode kompetisi tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('competitions.json', JSON.stringify(data, null, 2), `Hapus periode kompetisi: ${periodeId}`);
+        return sendJson(res, 200, { message: 'Periode kompetisi berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus periode kompetisi.' });
+      }
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: LIST (ADMIN / STAF TU) ──────────────────
+    if (method === 'GET' && route === 'loans') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {}
+
+      const reqUrl = new URL(`http://localhost${url}`);
+      const q = (reqUrl.searchParams.get('q') || '').trim().toLowerCase();
+      const jenis = reqUrl.searchParams.get('jenis');
+      const periodeId = reqUrl.searchParams.get('periodeId');
+
+      let hasil = loansData.loans;
+      if (q) hasil = hasil.filter((l) => (l.nama || '').toLowerCase().includes(q) || (l.judulBuku || '').toLowerCase().includes(q));
+      if (jenis && jenis !== 'semua') hasil = hasil.filter((l) => l.jenisBuku === jenis);
+
+      if (periodeId) {
+        let compData = { periode: [] };
+        try {
+          compData = JSON.parse(await readDataFile('competitions.json'));
+          if (!Array.isArray(compData.periode)) compData.periode = [];
+        } catch {}
+        const periode = compData.periode.find((p) => p.id === periodeId);
+        if (periode) {
+          hasil = hasil.filter((l) => l.tanggalPinjam >= periode.mulai && l.tanggalPinjam <= periode.selesai);
+        }
+      }
+
+      hasil = [...hasil].sort((a, b) => new Date(b.dicatatPada) - new Date(a.dicatatPada));
+
+      return sendJson(res, 200, { total: hasil.length, data: hasil.slice(0, 500) });
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: CATAT MANUAL (ADMIN / STAF TU) ──────────
+    if (method === 'POST' && route === 'loans') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const { userId, bookId, tanggalPinjam, catatan } = body;
+      if (!userId || !bookId) {
+        return sendJson(res, 400, { message: 'Peminjam dan buku wajib dipilih.' });
+      }
+      const tanggal = tanggalPinjam && isValidTanggal(tanggalPinjam) ? tanggalPinjam : todayJakarta();
+
+      let usersData = { users: [] };
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+        if (!Array.isArray(usersData.users)) usersData.users = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
+      }
+      const peminjam = usersData.users.find((u) => u.id === userId);
+      if (!peminjam) {
+        return sendJson(res, 404, { message: 'Peminjam tidak ditemukan. Pastikan siswa/guru/staf sudah terdaftar sebagai pengguna.' });
+      }
+
+      let booksData = { books: [] };
+      try {
+        booksData = JSON.parse(await readDataFile('books.json'));
+        if (!Array.isArray(booksData.books)) booksData.books = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data buku tidak dapat dimuat.' });
+      }
+      const buku = booksData.books.find((b) => b.id === bookId);
+      if (!buku) {
+        return sendJson(res, 404, { message: 'Buku tidak ditemukan.' });
+      }
+
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {
+        loansData = { loans: [] };
+      }
+
+      const record = {
+        id: generateLoanId(),
+        userId: peminjam.id,
+        nama: peminjam.nama,
+        status: peminjam.status,
+        kelas: peminjam.kelas || null,
+        jabatan: peminjam.jabatan || null,
+        bookId: buku.id,
+        judulBuku: buku.judul,
+        kategoriBuku: buku.kategori || 'Umum',
+        jenisBuku: klasifikasiJenisBuku(buku.kategori),
+        tanggalPinjam: tanggal,
+        dicatatPada: new Date().toISOString(),
+        dicatatOleh: payload.nama || payload.username || 'Admin',
+        catatan: catatan ? String(catatan).trim() : ''
+      };
+
+      loansData.loans.push(record);
+      try {
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Catat peminjaman buku: ${peminjam.nama} - ${buku.judul}`);
+        return sendJson(res, 201, { message: 'Peminjaman buku berhasil dicatat.', loan: record });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal mencatat peminjaman buku.' });
+      }
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: HAPUS CATATAN (ADMIN) ───────────────────
+    if (method === 'DELETE' && parts[1] === 'loans' && parts[2]) {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const loanId = parts[2];
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data peminjaman tidak dapat dimuat.' });
+      }
+
+      const sebelum = loansData.loans.length;
+      loansData.loans = loansData.loans.filter((l) => l.id !== loanId);
+      if (loansData.loans.length === sebelum) {
+        return sendJson(res, 404, { message: 'Catatan peminjaman tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Hapus catatan peminjaman: ${loanId}`);
+        return sendJson(res, 200, { message: 'Catatan peminjaman berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus catatan peminjaman.' });
+      }
+    }
+
+    // ─── PERINGKAT KOMPETISI: DUTA LITERASI, DUTA KUNJUNGAN, DUTA BUKU ──
+    if (method === 'GET' && route === 'competitions/ranking') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || !payload.role || payload.role === 'tamu') {
+        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali sebagai anggota sekolah.' });
+      }
+
+      let compData = { periode: [] };
+      try {
+        compData = JSON.parse(await readDataFile('competitions.json'));
+        if (!Array.isArray(compData.periode)) compData.periode = [];
+      } catch {}
+
+      const reqUrl = new URL(`http://localhost${url}`);
+      const periodeIdParam = reqUrl.searchParams.get('periodeId');
+      const daftarPeriode = [...compData.periode].sort((a, b) => new Date(b.mulai) - new Date(a.mulai));
+
+      let periodeAktif = null;
+      if (periodeIdParam) {
+        periodeAktif = daftarPeriode.find((p) => p.id === periodeIdParam) || null;
+      }
+      if (!periodeAktif) {
+        const today = todayJakarta();
+        periodeAktif =
+          daftarPeriode.find((p) => p.status === 'aktif' && today >= p.mulai && today <= p.selesai) ||
+          daftarPeriode.find((p) => p.status === 'aktif') ||
+          daftarPeriode[0] ||
+          null;
+      }
+
+      if (!periodeAktif) {
+        return sendJson(res, 200, {
+          periode: null,
+          daftarPeriode: [],
+          message: 'Belum ada periode kompetisi yang diatur oleh admin.',
+          dutaLiterasi: { leaderboard: [], totalPeserta: 0 },
+          dutaKunjungan: { leaderboard: [], totalPeserta: 0 },
+          dutaBuku: {
+            semua: { leaderboard: [], totalPeserta: 0 },
+            fiksi: { leaderboard: [], totalPeserta: 0 },
+            nonFiksi: { leaderboard: [], totalPeserta: 0 }
+          },
+          saya: { literasi: null, kunjungan: null, bukuSemua: null, bukuFiksi: null, bukuNonFiksi: null }
+        });
+      }
+
+      const { mulai, selesai } = periodeAktif;
+
+      function bangunPeringkat(map, valueKey) {
+        const arr = Object.values(map).sort((a, b) => b[valueKey] - a[valueKey]);
+        arr.forEach((item, i) => { item.rank = i + 1; });
+        return arr;
+      }
+      function ambilMilikSaya(arr) {
+        const found = arr.find((item) => item.userId === payload.sub);
+        return found ? { rank: found.rank, nilai: found[Object.keys(found).find(k => k.startsWith('total'))] } : null;
+      }
+
+      // ── Duta Literasi (total durasi membaca) ──
+      let literasiMap = {};
+      try {
+        const readingData = JSON.parse(await readDataFile('reading.json'));
+        const sessions = Array.isArray(readingData.sessions) ? readingData.sessions : [];
+        const now = Date.now();
+        sessions.forEach((s) => {
+          if (!s.tanggal || s.tanggal < mulai || s.tanggal > selesai) return;
+          if (!s.status || s.status === 'tamu') return;
+          const durasi = hitungDurasiEfektif(s, now);
+          if (!literasiMap[s.userId]) {
+            literasiMap[s.userId] = { userId: s.userId, nama: s.nama, status: s.status, kelas: s.kelas || null, jabatan: s.jabatan || null, totalDetik: 0 };
+          }
+          literasiMap[s.userId].totalDetik += durasi;
+        });
+      } catch {}
+      const literasiLeaderboard = bangunPeringkat(literasiMap, 'totalDetik');
+
+      // ── Duta Kunjungan (jumlah kunjungan / absensi) ──
+      let kunjunganMap = {};
+      try {
+        const attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        const list = Array.isArray(attendanceData.attendance) ? attendanceData.attendance : [];
+        list.forEach((a) => {
+          if (!a.tanggal || a.tanggal < mulai || a.tanggal > selesai) return;
+          if (!a.status || a.status === 'tamu') return;
+          if (!kunjunganMap[a.userId]) {
+            kunjunganMap[a.userId] = { userId: a.userId, nama: a.nama, status: a.status, kelas: a.kelas || null, jabatan: a.jabatan || null, totalKunjungan: 0 };
+          }
+          kunjunganMap[a.userId].totalKunjungan += 1;
+        });
+      } catch {}
+      const kunjunganLeaderboard = bangunPeringkat(kunjunganMap, 'totalKunjungan');
+
+      // ── Duta Buku (jumlah peminjaman buku fisik, per kategori) ──
+      let bukuSemuaMap = {}, bukuFiksiMap = {}, bukuNonFiksiMap = {};
+      try {
+        const loansData = JSON.parse(await readDataFile('loans.json'));
+        const loans = Array.isArray(loansData.loans) ? loansData.loans : [];
+        loans.forEach((l) => {
+          if (!l.tanggalPinjam || l.tanggalPinjam < mulai || l.tanggalPinjam > selesai) return;
+          const base = { userId: l.userId, nama: l.nama, status: l.status, kelas: l.kelas || null, jabatan: l.jabatan || null };
+
+          if (!bukuSemuaMap[l.userId]) bukuSemuaMap[l.userId] = { ...base, totalPinjam: 0 };
+          bukuSemuaMap[l.userId].totalPinjam += 1;
+
+          const jenis = l.jenisBuku === 'Fiksi' ? 'Fiksi' : 'Non-Fiksi';
+          if (jenis === 'Fiksi') {
+            if (!bukuFiksiMap[l.userId]) bukuFiksiMap[l.userId] = { ...base, totalPinjam: 0 };
+            bukuFiksiMap[l.userId].totalPinjam += 1;
+          } else {
+            if (!bukuNonFiksiMap[l.userId]) bukuNonFiksiMap[l.userId] = { ...base, totalPinjam: 0 };
+            bukuNonFiksiMap[l.userId].totalPinjam += 1;
+          }
+        });
+      } catch {}
+      const bukuSemuaLeaderboard = bangunPeringkat(bukuSemuaMap, 'totalPinjam');
+      const bukuFiksiLeaderboard = bangunPeringkat(bukuFiksiMap, 'totalPinjam');
+      const bukuNonFiksiLeaderboard = bangunPeringkat(bukuNonFiksiMap, 'totalPinjam');
+
+      return sendJson(res, 200, {
+        periode: periodeAktif,
+        daftarPeriode,
+        dutaLiterasi: { leaderboard: literasiLeaderboard.slice(0, 20), totalPeserta: literasiLeaderboard.length },
+        dutaKunjungan: { leaderboard: kunjunganLeaderboard.slice(0, 20), totalPeserta: kunjunganLeaderboard.length },
+        dutaBuku: {
+          semua: { leaderboard: bukuSemuaLeaderboard.slice(0, 20), totalPeserta: bukuSemuaLeaderboard.length },
+          fiksi: { leaderboard: bukuFiksiLeaderboard.slice(0, 20), totalPeserta: bukuFiksiLeaderboard.length },
+          nonFiksi: { leaderboard: bukuNonFiksiLeaderboard.slice(0, 20), totalPeserta: bukuNonFiksiLeaderboard.length }
+        },
+        saya: {
+          literasi: ambilMilikSaya(literasiLeaderboard),
+          kunjungan: ambilMilikSaya(kunjunganLeaderboard),
+          bukuSemua: ambilMilikSaya(bukuSemuaLeaderboard),
+          bukuFiksi: ambilMilikSaya(bukuFiksiLeaderboard),
+          bukuNonFiksi: ambilMilikSaya(bukuNonFiksiLeaderboard)
+        }
+      });
     }
 
     // ─── 404 ────────────────────────────────────────────────────────────
