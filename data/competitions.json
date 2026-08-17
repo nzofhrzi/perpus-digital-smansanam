@@ -1,22 +1,3 @@
 {
-  "periode": [
-    {
-      "id": "prd_1786936286872_dac34b",
-      "nama": "Semester Genap 2026/2027",
-      "mulai": "2026-08-17",
-      "selesai": "2026-12-12",
-      "status": "aktif",
-      "dibuat": "2026-08-17T03:11:26.872Z",
-      "diperbarui": "2026-08-17T03:11:26.872Z"
-    },
-    {
-      "id": "prd_1786936389214_f43a96",
-      "nama": "Semester Ganjil 2027/2028",
-      "mulai": "2027-01-04",
-      "selesai": "2027-06-12",
-      "status": "nonaktif",
-      "dibuat": "2026-08-17T03:13:09.214Z",
-      "diperbarui": "2026-08-17T03:13:09.214Z"
-    }
-  ]
+  "periode": []
 }
