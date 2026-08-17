@@ -1,15 +1,6 @@
 {
   "users": [
     {
-      "id": "usr_002",
-      "nama": "Siti Rahma, S.Pd",
-      "status": "guru",
-      "kelas": null,
-      "salt": "57ad1f742ae54b5f71c3dc7b65fe3f8c",
-      "hash": "2ca9fb58c467934ed491244f2494f48b1b0fe6680c5940f233a3a4f19051ae42575bbc274bba042dbb579d1db2ad8aa69a6a72ca5a023e80b2f3ca8afc2c5372",
-      "createdAt": "2026-07-01T00:00:00.000Z"
-    },
-    {
       "id": "usr_003",
       "nama": "Budi Santoso",
       "status": "staf",
