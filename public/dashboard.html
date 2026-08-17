@@ -1292,6 +1292,7 @@
           <thead>
             <tr>
               <th>Judul Buku</th>
+              <th>Kategori</th>
               <th>Tanggal Pinjam</th>
               <th>Rencana Kembali</th>
               <th>Status</th>
@@ -1299,7 +1300,7 @@
             </tr>
           </thead>
           <tbody id="pinjamRiwayatBody">
-            <tr class="att-row-empty"><td colspan="5" class="att-empty">Memuat riwayat peminjaman...</td></tr>
+            <tr class="att-row-empty"><td colspan="6" class="att-empty">Memuat riwayat peminjaman...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1591,14 +1592,27 @@
           <input type="text" id="pinjamBukuJudul" placeholder="Ketik judul buku yang dipinjam..." required maxlength="150">
         </div>
         <div class="p-field">
+          <label for="pinjamBukuKategori">Kategori Buku</label>
+          <select id="pinjamBukuKategori" required>
+            <option value="" selected disabled>Pilih kategori buku...</option>
+            <option value="Fiksi">Fiksi</option>
+            <option value="Non-Fiksi">Non-Fiksi</option>
+            <option value="Novel">Novel</option>
+            <option value="Pelajaran">Pelajaran</option>
+            <option value="Kamus">Kamus</option>
+            <option value="Referensi">Referensi</option>
+            <option value="Umum">Umum</option>
+          </select>
+        </div>
+        <div class="p-field">
           <label for="pinjamBukuLama">Lama Peminjaman</label>
           <select id="pinjamBukuLama">
-            <option value="3">3 hari</option>
-            <option value="7" selected>7 hari</option>
-            <option value="14">14 hari</option>
-            <option value="30">30 hari</option>
+            <option value="1">1 hari</option>
+            <option value="2">2 hari</option>
+            <option value="3" selected>3 hari</option>
           </select>
           <div class="hint-small" id="pinjamBukuRencanaHint">Rencana kembali: -</div>
+          <div class="hint-small">Maksimal peminjaman buku fisik adalah 3 hari.</div>
         </div>
         <div class="p-field">
           <label for="pinjamBukuCatatan">Catatan (opsional)</label>
@@ -2786,19 +2800,20 @@
   async function loadPeminjamanSaya() {
     const body = document.getElementById('pinjamRiwayatBody');
     if (!body) return;
-    body.innerHTML = `<tr class="att-row-empty"><td colspan="5" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat riwayat...</td></tr>`;
+    body.innerHTML = `<tr class="att-row-empty"><td colspan="6" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat riwayat...</td></tr>`;
     try {
       const res = await fetch(`${API_BASE}/loans/mine`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Gagal memuat riwayat peminjaman.');
       const loans = data.data || [];
       if (loans.length === 0) {
-        body.innerHTML = `<tr class="att-row-empty"><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada peminjaman buku.</td></tr>`;
+        body.innerHTML = `<tr class="att-row-empty"><td colspan="6" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada peminjaman buku.</td></tr>`;
         return;
       }
       body.innerHTML = loans.map(l => `
         <tr>
           <td data-label="Judul Buku">${escapeHtmlUser(l.judulBuku)}</td>
+          <td data-label="Kategori"><span style="background:#eef2ff;color:#4338ca;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;">${escapeHtmlUser(l.kategoriBuku || 'Umum')}</span></td>
           <td data-label="Tanggal Pinjam">${fmtTanggal(l.tanggalPinjam)}</td>
           <td data-label="Rencana Kembali">${fmtTanggal(l.tanggalRencanaKembali)}</td>
           <td data-label="Status">${pinjamStatusBadge(l)}</td>
@@ -2865,6 +2880,7 @@
       pinjamBukuError.classList.remove('show');
 
       const judulBuku = document.getElementById('pinjamBukuJudul').value.trim();
+      const kategoriBuku = document.getElementById('pinjamBukuKategori').value;
       const jangkaHari = parseInt(pinjamBukuLamaSelect.value, 10);
       const catatan = document.getElementById('pinjamBukuCatatan').value.trim();
 
@@ -2873,9 +2889,14 @@
         pinjamBukuError.classList.add('show');
         return;
       }
+      if (!kategoriBuku) {
+        pinjamBukuErrorText.textContent = 'Kategori buku wajib dipilih.';
+        pinjamBukuError.classList.add('show');
+        return;
+      }
 
       const rencana = hitungRencanaKembaliUser(jangkaHari);
-      const yakin = confirm(`Konfirmasi peminjaman buku:\n\nJudul: ${judulBuku}\nLama peminjaman: ${jangkaHari} hari\nRencana kembali: ${rencana}\n\nAjukan peminjaman ini?`);
+      const yakin = confirm(`Konfirmasi peminjaman buku:\n\nJudul: ${judulBuku}\nKategori: ${kategoriBuku}\nLama peminjaman: ${jangkaHari} hari\nRencana kembali: ${rencana}\n\nAjukan peminjaman ini?`);
       if (!yakin) return;
 
       btnSubmitPinjamBuku.disabled = true;
@@ -2884,7 +2905,7 @@
         const res = await fetch(`${API_BASE}/loans`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ judulBuku, jangkaHari, catatan })
+          body: JSON.stringify({ judulBuku, kategoriBuku, jangkaHari, catatan })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengajukan peminjaman.');
