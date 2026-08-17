@@ -1890,6 +1890,91 @@ export default async function handler(req, res) {
       }
     }
 
+    // ─── PEMINJAMAN BUKU FISIK: ADMIN HAPUS SATU CATATAN ────────────────
+    if (method === 'DELETE' && parts[1] === 'loans' && parts[2] && parts[2] !== 'reset') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const loanId = parts[2];
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data peminjaman tidak dapat dimuat.' });
+      }
+
+      const sebelum = loansData.loans.length;
+      loansData.loans = loansData.loans.filter((l) => l.id !== loanId);
+      if (loansData.loans.length === sebelum) {
+        return sendJson(res, 404, { message: 'Catatan peminjaman tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Admin hapus catatan peminjaman: ${loanId}`);
+        return sendJson(res, 200, { message: 'Catatan peminjaman berhasil dihapus.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus catatan peminjaman.' });
+      }
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: ADMIN HAPUS BEBERAPA CATATAN TERPILIH ───
+    if (method === 'POST' && route === 'loans/bulk-delete') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      const ids = Array.isArray(body.ids) ? body.ids.filter((id) => typeof id === 'string') : [];
+      if (ids.length === 0) {
+        return sendJson(res, 400, { message: 'Tidak ada catatan yang dipilih untuk dihapus.' });
+      }
+
+      let loansData = { loans: [] };
+      try {
+        loansData = JSON.parse(await readDataFile('loans.json'));
+        if (!Array.isArray(loansData.loans)) loansData.loans = [];
+      } catch {
+        return sendJson(res, 500, { message: 'Data peminjaman tidak dapat dimuat.' });
+      }
+
+      const idSet = new Set(ids);
+      const sebelum = loansData.loans.length;
+      loansData.loans = loansData.loans.filter((l) => !idSet.has(l.id));
+      const dihapus = sebelum - loansData.loans.length;
+
+      if (dihapus === 0) {
+        return sendJson(res, 404, { message: 'Catatan peminjaman yang dipilih tidak ditemukan.' });
+      }
+
+      try {
+        await writeDataFile('loans.json', JSON.stringify(loansData, null, 2), `Admin hapus ${dihapus} catatan peminjaman terpilih`);
+        return sendJson(res, 200, { message: `${dihapus} catatan peminjaman berhasil dihapus.` });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menghapus catatan peminjaman terpilih.' });
+      }
+    }
+
+    // ─── PEMINJAMAN BUKU FISIK: ADMIN RESET SELURUH DATA ────────────────
+    if (method === 'POST' && route === 'loans/reset') {
+      const token = getBearerToken(headers);
+      const payload = token ? verifyToken(token) : null;
+      if (!payload || payload.role !== 'admin') {
+        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
+      }
+
+      try {
+        await writeDataFile('loans.json', JSON.stringify({ loans: [] }, null, 2), `Admin reset seluruh data peminjaman`);
+        return sendJson(res, 200, { message: 'Seluruh data peminjaman berhasil direset.' });
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal mereset data peminjaman.' });
+      }
+    }
+
     // ─── PEMINJAMAN BUKU FISIK: KONFIRMASI PENGEMBALIAN MANDIRI ─────────
     if (method === 'POST' && parts[1] === 'loans' && parts[2] && parts[3] === 'kembalikan') {
       const token = getBearerToken(headers);
