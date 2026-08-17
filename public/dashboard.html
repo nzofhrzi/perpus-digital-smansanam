@@ -1123,6 +1123,7 @@
     <button class="nav-item active" data-section="beranda"><i class="fa-solid fa-house"></i> Beranda</button>
     <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Absensi Kehadiran</button>
     <button class="nav-item" data-section="baca"><i class="fa-solid fa-book-open"></i> Baca Buku Online</button>
+    <button class="nav-item" data-section="peminjaman"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku</button>
     <button class="nav-item" data-section="kompetisi"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</button>
 
     <div class="nav-label">Akun</div>
@@ -1272,19 +1273,8 @@
       </div>
     </section>
 
-    <!-- ══════ KOMPETISI DUTA LITERASI ══════ -->
-    <section class="section-view" id="section-kompetisi">
-      <div class="kmp-hero">
-        <h2><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</h2>
-        <p>Kumpulkan poin dengan membaca lebih lama, rajin berkunjung, &amp; rajin meminjam buku fisik — buktikan kamu layak jadi Duta Literasi, Duta Kunjungan, dan Duta Buku perpustakaan!</p>
-        <div class="periode-tag" id="kmpHeroPeriode"><i class="fa-solid fa-calendar"></i> Memuat periode...</div>
-      </div>
-
-      <div class="kmp-periode-bar">
-        <label for="kmpPeriodeSelect"><i class="fa-solid fa-calendar-days"></i></label>
-        <select id="kmpPeriodeSelect"></select>
-      </div>
-
+    <!-- ══════ PEMINJAMAN BUKU FISIK ══════ -->
+    <section class="section-view" id="section-peminjaman">
       <div class="section-title"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku Fisik</div>
       <div class="att-status-card">
         <div class="att-status-left">
@@ -1296,6 +1286,7 @@
         </div>
       </div>
 
+      <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Peminjaman</div>
       <div class="att-table-wrap">
         <table class="att-table">
           <thead>
@@ -1311,6 +1302,20 @@
             <tr class="att-row-empty"><td colspan="5" class="att-empty">Memuat riwayat peminjaman...</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- ══════ KOMPETISI DUTA LITERASI ══════ -->
+    <section class="section-view" id="section-kompetisi">
+      <div class="kmp-hero">
+        <h2><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</h2>
+        <p>Kumpulkan poin dengan membaca lebih lama, rajin berkunjung, &amp; rajin meminjam buku fisik — buktikan kamu layak jadi Duta Literasi, Duta Kunjungan, dan Duta Buku perpustakaan!</p>
+        <div class="periode-tag" id="kmpHeroPeriode"><i class="fa-solid fa-calendar"></i> Memuat periode...</div>
+      </div>
+
+      <div class="kmp-periode-bar">
+        <label for="kmpPeriodeSelect"><i class="fa-solid fa-calendar-days"></i></label>
+        <select id="kmpPeriodeSelect"></select>
       </div>
 
       <div class="section-title"><i class="fa-solid fa-star"></i> Peringkat Saya</div>
@@ -1737,6 +1742,8 @@
     // Kompetisi Duta Literasi khusus anggota sekolah terdaftar (bukan tamu)
     const navKompetisi = document.querySelector('.nav-item[data-section="kompetisi"]');
     if (navKompetisi) navKompetisi.style.display = 'none';
+    const navPeminjaman = document.querySelector('.nav-item[data-section="peminjaman"]');
+    if (navPeminjaman) navPeminjaman.style.display = 'none';
   } else {
     // ── UBAH / HAPUS FOTO PROFIL ──
     const avatarFileInput = document.getElementById('avatarFileInput');
@@ -1972,6 +1979,7 @@
     beranda: { title: 'Beranda', sub: 'Ringkasan aktivitas perpustakaan Anda' },
     absensi: { title: 'Absensi Kehadiran', sub: 'Catat kehadiran kunjungan perpustakaan' },
     baca: { title: 'Baca Buku Online', sub: 'Koleksi buku &amp; e-modul digital sekolah' },
+    peminjaman: { title: 'Peminjaman Buku', sub: 'Ajukan &amp; konfirmasi peminjaman buku fisik' },
     kompetisi: { title: 'Kompetisi Duta Literasi', sub: 'Papan peringkat Duta Literasi, Duta Kunjungan &amp; Duta Buku' },
     profil: { title: 'Profil Saya', sub: 'Informasi akun Anda' }
   };
@@ -1986,7 +1994,8 @@
       document.getElementById('pageTitle').textContent = pageMeta[sec].title;
       document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
       if (sec === 'baca') loadBooks();
-      if (sec === 'kompetisi') { loadKompetisi(); loadPeminjamanSaya(); }
+      if (sec === 'peminjaman') loadPeminjamanSaya();
+      if (sec === 'kompetisi') loadKompetisi();
       if (sec === 'profil') loadReadingStatsUser();
       closeMobileSidebar();
     });

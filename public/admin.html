@@ -759,6 +759,7 @@
     <button class="nav-item" data-section="tamu"><i class="fa-solid fa-person-booth"></i> Kelola Tamu</button>
     <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
     <button class="nav-item" data-section="kompetisi"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</button>
+    <button class="nav-item" data-section="peminjaman"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku</button>
 
     <div class="nav-label">Sistem</div>
     <button class="nav-item" data-section="pengaturan"><i class="fa-solid fa-gear"></i> Pengaturan</button>
@@ -1054,39 +1055,6 @@
         </div>
       </div>
 
-      <!-- ── ARUS PEMINJAMAN BUKU FISIK ── -->
-      <div class="kmp-section-block">
-        <div class="kmp-block-header">
-          <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-hand-holding-hand" style="color:var(--green-600);"></i> Arus Peminjaman Buku Fisik</h4>
-        </div>
-        <div class="form-hint" style="margin-bottom:14px;"><i class="fa-solid fa-circle-info"></i> Peminjaman &amp; pengembalian kini diajukan &amp; dikonfirmasi mandiri oleh siswa/guru/staf lewat dashboard masing-masing. Admin dapat memantau arus peminjaman dan melihat detailnya di sini.</div>
-        <div class="kmp-loans-filter" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
-          <select id="kmpLoansStatusFilter" class="form-input" style="max-width:200px;">
-            <option value="semua">Semua Status</option>
-            <option value="dipinjam">Sedang Dipinjam</option>
-            <option value="dikembalikan">Sudah Dikembalikan</option>
-          </select>
-        </div>
-        <div class="att-table-wrap">
-          <table class="att-table">
-            <thead>
-              <tr>
-                <th>Peminjam</th>
-                <th>Kelas / Jabatan</th>
-                <th>Judul Buku</th>
-                <th>Tanggal Pinjam</th>
-                <th>Rencana Kembali</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="kmpLoansBody">
-              <tr><td colspan="7" class="att-empty">Memuat data peminjaman...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <!-- ── PAPAN PERINGKAT ── -->
       <div class="kmp-section-block">
         <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-ranking-star" style="color:var(--green-600);"></i> Papan Peringkat</h4>
@@ -1133,6 +1101,40 @@
               <tbody id="kmpBukuBody"><tr><td colspan="4" class="att-empty">Memuat data...</td></tr></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════ PEMINJAMAN BUKU FISIK ══════ -->
+    <section class="section-view" id="section-peminjaman">
+      <div class="section-title"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku Fisik</div>
+
+      <div class="kmp-section-block">
+        <div class="form-hint" style="margin-bottom:14px;"><i class="fa-solid fa-circle-info"></i> Peminjaman &amp; pengembalian kini diajukan &amp; dikonfirmasi mandiri oleh siswa/guru/staf lewat dashboard masing-masing. Admin dapat memantau arus peminjaman dan melihat detailnya di sini.</div>
+        <div class="kmp-loans-filter" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+          <select id="kmpLoansStatusFilter" class="form-input" style="max-width:200px;">
+            <option value="semua">Semua Status</option>
+            <option value="dipinjam">Sedang Dipinjam</option>
+            <option value="dikembalikan">Sudah Dikembalikan</option>
+          </select>
+        </div>
+        <div class="att-table-wrap">
+          <table class="att-table">
+            <thead>
+              <tr>
+                <th>Peminjam</th>
+                <th>Kelas / Jabatan</th>
+                <th>Judul Buku</th>
+                <th>Tanggal Pinjam</th>
+                <th>Rencana Kembali</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="kmpLoansBody">
+              <tr><td colspan="7" class="att-empty">Memuat data peminjaman...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -1485,6 +1487,7 @@
     tamu: { title: 'Kelola Tamu', sub: 'Data kunjungan tamu non-anggota' },
     tracking: { title: 'Tracking Pembaca', sub: 'Statistik aktivitas literasi' },
     kompetisi: { title: 'Kompetisi Duta Literasi', sub: 'Gamifikasi literasi: Duta Literasi, Duta Kunjungan &amp; Duta Buku' },
+    peminjaman: { title: 'Peminjaman Buku', sub: 'Pantau arus peminjaman &amp; pengembalian buku fisik' },
     pengaturan: { title: 'Pengaturan', sub: 'Konfigurasi sistem perpustakaan' }
   };
 
@@ -1509,6 +1512,7 @@
       if (sec === 'tamu') loadGuests();
       if (sec === 'tracking') loadTrackingStats();
       if (sec === 'kompetisi') loadKompetisi();
+      if (sec === 'peminjaman') loadKompetisiLoans();
       if (sec === 'pengaturan') loadQrAbsen();
     } catch (err) {
       console.error('Gagal memuat data section', sec, err);
@@ -2671,7 +2675,6 @@
   // ── MEMUAT SEMUA DATA AWAL SECTION KOMPETISI ──
   async function loadKompetisi() {
     await loadPeriodeList();
-    await loadKompetisiLoans();
     await loadKompetisiRanking();
   }
 
