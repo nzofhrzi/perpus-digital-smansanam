@@ -119,6 +119,13 @@ function klasifikasiJenisBuku(kategori) {
   return String(kategori || '').trim().toLowerCase() === 'fiksi' ? 'Fiksi' : 'Non-Fiksi';
 }
 
+// Daftar kategori buku fisik yang boleh dipilih pengguna saat mengajukan
+// peminjaman mandiri (dropdown di dashboard user).
+const KATEGORI_BUKU_VALID = ['Fiksi', 'Non-Fiksi', 'Novel', 'Pelajaran', 'Kamus', 'Referensi', 'Umum'];
+
+// Batas maksimal jangka waktu peminjaman buku fisik oleh pengguna (hari).
+const MAX_JANGKA_HARI_PEMINJAMAN = 3;
+
 function isValidTanggal(str) {
   return typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str);
 }
@@ -1810,6 +1817,7 @@ export default async function handler(req, res) {
       const judulBuku = String(body.judulBuku || '').trim();
       const jangkaHari = parseInt(body.jangkaHari, 10);
       const catatan = body.catatan ? String(body.catatan).trim().slice(0, 200) : '';
+      const kategoriInput = String(body.kategoriBuku || '').trim();
 
       if (!judulBuku) {
         return sendJson(res, 400, { message: 'Judul buku wajib diisi.' });
@@ -1817,17 +1825,21 @@ export default async function handler(req, res) {
       if (judulBuku.length > 150) {
         return sendJson(res, 400, { message: 'Judul buku maksimal 150 karakter.' });
       }
-      if (!Number.isInteger(jangkaHari) || jangkaHari < 1 || jangkaHari > 30) {
-        return sendJson(res, 400, { message: 'Jangka waktu peminjaman harus antara 1–30 hari.' });
+      if (!kategoriInput || !KATEGORI_BUKU_VALID.includes(kategoriInput)) {
+        return sendJson(res, 400, { message: 'Kategori buku wajib dipilih dari daftar yang tersedia.' });
+      }
+      if (!Number.isInteger(jangkaHari) || jangkaHari < 1 || jangkaHari > MAX_JANGKA_HARI_PEMINJAMAN) {
+        return sendJson(res, 400, { message: `Jangka waktu peminjaman maksimal ${MAX_JANGKA_HARI_PEMINJAMAN} hari.` });
       }
 
-      // Coba cocokkan judul dengan koleksi buku (opsional) untuk klasifikasi kategori.
-      let kategoriBuku = 'Umum';
+      // Kategori dipilih langsung oleh pengguna lewat dropdown. Jika judul buku
+      // cocok dengan koleksi perpustakaan, gunakan kategori resmi koleksi tsb.
+      let kategoriBuku = kategoriInput;
       try {
         const booksData = JSON.parse(await readDataFile('books.json'));
         const daftarBuku = Array.isArray(booksData.books) ? booksData.books : [];
         const cocok = daftarBuku.find((b) => (b.judul || '').trim().toLowerCase() === judulBuku.toLowerCase());
-        if (cocok) kategoriBuku = cocok.kategori || 'Umum';
+        if (cocok && cocok.kategori) kategoriBuku = cocok.kategori;
       } catch {}
 
       let loansData = { loans: [] };
