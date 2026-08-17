@@ -111,6 +111,20 @@
       "selesai": "2026-08-17T01:34:29.329Z",
       "durasiDetik": 44,
       "tanggal": "2026-08-17"
+    },
+    {
+      "id": "read_1786932530427_c33bd2",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "bookId": "book_1786930378798_0f45c2",
+      "judulBuku": "Bank Soal FISIKA",
+      "mulai": "2026-08-17T02:08:50.427Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-17"
     }
   ]
 }
