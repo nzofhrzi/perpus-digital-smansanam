@@ -1,0 +1,23 @@
+{
+  "loans": [
+    {
+      "id": "pjm_1786950167563_c15081",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "judulBuku": "Teori Fisika",
+      "kategoriBuku": "Umum",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-17",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-20",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Test doang",
+      "dicatatPada": "2026-08-17T07:02:47.563Z"
+    }
+  ]
+}
