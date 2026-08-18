@@ -1,3 +1,23 @@
 {
-  "loans": []
+  "loans": [
+    {
+      "id": "pjm_1787017448063_db5489",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "judulBuku": "Teori Albert Einstein",
+      "kategoriBuku": "Pelajaran",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-18",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-19",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "membaca",
+      "dicatatPada": "2026-08-18T01:44:08.063Z"
+    }
+  ]
 }
