@@ -5,5 +5,61 @@
   "warna": "#059669",
   "deskripsi": "Perpustakaan Berbasis Digital dapat diakses dimana saja dan kapan saja! ",
   "kodeAbsenQR": "084d264dd64ba43285696b98",
-  "kodeAbsenQRDiperbarui": "2026-08-16T11:15:41.604Z"
+  "kodeAbsenQRDiperbarui": "2026-08-16T11:15:41.604Z",
+  "sosmed": [
+    {
+      "id": "sosmed_instagram",
+      "platform": "Instagram",
+      "icon": "fa-brands fa-instagram",
+      "iconBg": "linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4)",
+      "handle": "@smansa.namang",
+      "desc": "Kegiatan & info harian sekolah",
+      "url": "https://instagram.com/smansa.namang"
+    },
+    {
+      "id": "sosmed_tiktok",
+      "platform": "TikTok",
+      "icon": "fa-brands fa-tiktok",
+      "iconBg": "#000000",
+      "handle": "@-",
+      "desc": "Konten kreatif seputar sekolah",
+      "url": "-"
+    },
+    {
+      "id": "sosmed_youtube",
+      "platform": "YouTube",
+      "icon": "fa-brands fa-youtube",
+      "iconBg": "linear-gradient(135deg,#ff0000,#b30000)",
+      "handle": "SMA Negeri 1 Namang",
+      "desc": "Dokumentasi & liputan acara",
+      "url": "https://youtube.com/@sman1namang"
+    },
+    {
+      "id": "sosmed_facebook",
+      "platform": "Facebook",
+      "icon": "fa-brands fa-facebook-f",
+      "iconBg": "linear-gradient(135deg,#1877f2,#0a58c2)",
+      "handle": "SMAN 1 NAMANG",
+      "desc": "Pengumuman resmi sekolah",
+      "url": "https://facebook.com/smansanam.smansanam"
+    },
+    {
+      "id": "sosmed_whatsapp",
+      "platform": "WhatsApp",
+      "icon": "fa-brands fa-whatsapp",
+      "iconBg": "linear-gradient(135deg,#25d366,#128c7e)",
+      "handle": "Kontak Tata Usaha",
+      "desc": "Layanan informasi & administrasi",
+      "url": "-"
+    },
+    {
+      "id": "sosmed_website",
+      "platform": "Website",
+      "icon": "fa-solid fa-globe",
+      "iconBg": "linear-gradient(135deg,#059669,#065f46)",
+      "handle": "smansatunamang.sch.id",
+      "desc": "Portal resmi sekolah",
+      "url": "https://smansatunamang.sch.id/"
+    }
+  ]
 }
