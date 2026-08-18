@@ -41,6 +41,20 @@
       "selesai": "2026-08-18T03:24:29.861Z",
       "durasiDetik": 13,
       "tanggal": "2026-08-18"
+    },
+    {
+      "id": "read_1787023573355_8db512",
+      "userId": "usr_1787023544971_4a519c",
+      "nama": "Ferdiansyah",
+      "status": "siswa",
+      "kelas": "10.3",
+      "jabatan": null,
+      "bookId": "book_1786930140047_f362e1",
+      "judulBuku": "Secangkir Kopi dan pencakar langit",
+      "mulai": "2026-08-18T03:26:13.355Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-18"
     }
   ]
 }
