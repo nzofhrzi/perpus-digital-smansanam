@@ -3380,6 +3380,30 @@
   // fetchRaw()   : mengambil data mentah dari API (tanpa diolah untuk tampilan)
   // getDate(item): mengambil objek Date dari satu data mentah (untuk filter rentang waktu). undefined = tidak difilter.
   // build(ctx)   : mengolah data (yang sudah difilter rentang waktu bila berlaku) menjadi struktur tabel siap ekspor
+  // ── HELPER: Mengelompokkan & menghitung frekuensi otomatis per nama ──
+  // Dipakai untuk menghasilkan tabel rekap terorganisir (mis. "Enzo Fahrezi - 5x Kunjungan")
+  function eksporKelompokkanFrekuensi(list, namaFn, labelFn) {
+    const map = new Map();
+    list.forEach(item => {
+      const nama = (namaFn(item) || '-').trim() || '-';
+      if (!map.has(nama)) {
+        map.set(nama, { nama, label: labelFn ? (labelFn(item) || '-') : '-', total: 0 });
+      }
+      map.get(nama).total += 1;
+    });
+    return Array.from(map.values()).sort((a, b) => b.total - a.total || a.nama.localeCompare(b.nama));
+  }
+
+  // Dipakai untuk menghasilkan tabel rekap berdasarkan kategori/status (mis. "Siswa - 32x")
+  function eksporHitungPerKategori(list, kategoriFn) {
+    const map = new Map();
+    list.forEach(item => {
+      const k = kategoriFn(item) || 'Lainnya';
+      map.set(k, (map.get(k) || 0) + 1);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  }
+
   const eksporKategoriConfig = {
     buku: {
       label: 'Data Buku',
@@ -3391,6 +3415,7 @@
       },
       build(ctx) {
         const list = ctx.list;
+        const rekapKategori = eksporHitungPerKategori(list, b => b.kategori || 'Umum');
         return {
           total: list.length,
           columns: ['No', 'Judul Buku', 'Pengarang', 'Penerbit', 'Tahun', 'Kategori', 'ISBN', 'Status PDF'],
@@ -3403,7 +3428,20 @@
             b.kategori || 'Umum',
             b.isbn || '-',
             b.linkPDF ? 'Tersedia' : 'Tidak Tersedia'
-          ])
+          ]),
+          ringkasan: [
+            ['Total Buku', String(list.length)],
+            ['Jumlah Kategori', String(rekapKategori.length)],
+            ['Kategori Terbanyak', rekapKategori[0] ? `${rekapKategori[0][0]} (${rekapKategori[0][1]} Buku)` : '-'],
+            ['Buku Tersedia PDF', String(list.filter(b => b.linkPDF).length)]
+          ],
+          extraTables: [
+            {
+              title: 'Rekapitulasi Buku per Kategori',
+              columns: ['No', 'Kategori', 'Total Buku'],
+              rows: rekapKategori.map((k, i) => [i + 1, k[0], `${k[1]} Buku`])
+            }
+          ]
         };
       }
     },
@@ -3417,6 +3455,7 @@
       },
       build(ctx) {
         const list = ctx.list;
+        const rekapStatus = eksporHitungPerKategori(list, u => u.status || 'Lainnya');
         return {
           total: list.length,
           columns: ['No', 'Nama', 'Status', 'Kelas / Jabatan', 'ID Pengguna'],
@@ -3426,7 +3465,19 @@
             u.status || '-',
             u.kelas || u.jabatan || '-',
             u.id || '-'
-          ])
+          ]),
+          ringkasan: [
+            ['Total Pengguna Terdaftar', String(list.length)],
+            ['Jumlah Status/Peran', String(rekapStatus.length)],
+            ['Status Terbanyak', rekapStatus[0] ? `${rekapStatus[0][0]} (${rekapStatus[0][1]} Orang)` : '-']
+          ],
+          extraTables: [
+            {
+              title: 'Rekapitulasi Pengguna per Status',
+              columns: ['No', 'Status', 'Total Pengguna'],
+              rows: rekapStatus.map((s, i) => [i + 1, s[0], `${s[1]} Orang`])
+            }
+          ]
         };
       }
     },
@@ -3441,6 +3492,9 @@
       },
       build(ctx) {
         const list = ctx.list;
+        const rekapOrang = eksporKelompokkanFrekuensi(list, r => r.nama, r => `${r.status || '-'} • ${r.kelas || r.jabatan || '-'}`);
+        const rekapStatus = eksporHitungPerKategori(list, r => r.status || 'Lainnya');
+        const rataRata = rekapOrang.length > 0 ? (list.length / rekapOrang.length) : 0;
         return {
           total: list.length,
           columns: ['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal', 'Waktu Absen', 'Alasan Kunjungan'],
@@ -3452,7 +3506,25 @@
             fmtTanggal(r.tanggal),
             fmtJam(r.waktuAbsen),
             r.alasan || '-'
-          ])
+          ]),
+          ringkasan: [
+            ['Total Kunjungan', String(list.length)],
+            ['Total Pengunjung Unik', String(rekapOrang.length)],
+            ['Rata-rata Kunjungan per Pengunjung', `${rataRata.toFixed(1)}x`],
+            ['Pengunjung Paling Aktif', rekapOrang[0] ? `${rekapOrang[0].nama} (${rekapOrang[0].total}x)` : '-']
+          ],
+          extraTables: [
+            {
+              title: 'Rekapitulasi Kunjungan per Pengunjung (Otomatis)',
+              columns: ['No', 'Nama Pengunjung', 'Status • Kelas / Jabatan', 'Total Kunjungan'],
+              rows: rekapOrang.map((r, i) => [i + 1, r.nama, r.label, `${r.total}x`])
+            },
+            {
+              title: 'Rekapitulasi Kunjungan Berdasarkan Status',
+              columns: ['No', 'Status', 'Total Kunjungan'],
+              rows: rekapStatus.map((s, i) => [i + 1, s[0], `${s[1]}x`])
+            }
+          ]
         };
       }
     },
@@ -3467,6 +3539,7 @@
       },
       build(ctx) {
         const list = ctx.list;
+        const rekapTamu = eksporKelompokkanFrekuensi(list, g => g.nama, g => g.jabatan || g.keperluan || '-');
         return {
           total: list.length,
           columns: ['No', 'Nama Tamu', 'Keperluan / Jabatan', 'Umur', 'Tanggal Kunjungan'],
@@ -3476,7 +3549,19 @@
             g.jabatan || g.keperluan || '-',
             g.umur ? `${g.umur} Tahun` : '-',
             fmtTanggal(g.waktuKunjungan ? g.waktuKunjungan.slice(0, 10) : '')
-          ])
+          ]),
+          ringkasan: [
+            ['Total Kunjungan Tamu', String(list.length)],
+            ['Total Tamu Unik', String(rekapTamu.length)],
+            ['Tamu Paling Sering Berkunjung', rekapTamu[0] ? `${rekapTamu[0].nama} (${rekapTamu[0].total}x)` : '-']
+          ],
+          extraTables: [
+            {
+              title: 'Rekapitulasi Kunjungan per Tamu (Otomatis)',
+              columns: ['No', 'Nama Tamu', 'Keperluan / Jabatan', 'Total Kunjungan'],
+              rows: rekapTamu.map((r, i) => [i + 1, r.nama, r.label, `${r.total}x`])
+            }
+          ]
         };
       }
     },
@@ -3556,6 +3641,9 @@
       },
       build(ctx) {
         const list = ctx.list;
+        const statusLabelFn = l => (l.statusPinjaman || 'dipinjam') === 'dikembalikan' ? 'Dikembalikan' : (l.terlambat ? 'Terlambat' : 'Dipinjam');
+        const rekapPeminjam = eksporKelompokkanFrekuensi(list, l => l.nama, l => kmpKelasJabatan(l));
+        const rekapStatus = eksporHitungPerKategori(list, statusLabelFn);
         return {
           total: list.length,
           columns: ['No', 'Peminjam', 'Kelas / Jabatan', 'Judul Buku', 'Tanggal Pinjam', 'Rencana Kembali', 'Tanggal Dikembalikan', 'Status'],
@@ -3567,8 +3655,25 @@
             fmtTanggal(l.tanggalPinjam),
             fmtTanggal(l.tanggalRencanaKembali),
             l.tanggalDikembalikan ? fmtTanggal(l.tanggalDikembalikan) : '-',
-            (l.statusPinjaman || 'dipinjam') === 'dikembalikan' ? 'Dikembalikan' : (l.terlambat ? 'Terlambat' : 'Dipinjam')
-          ])
+            statusLabelFn(l)
+          ]),
+          ringkasan: [
+            ['Total Transaksi Peminjaman', String(list.length)],
+            ['Total Peminjam Unik', String(rekapPeminjam.length)],
+            ['Peminjam Paling Aktif', rekapPeminjam[0] ? `${rekapPeminjam[0].nama} (${rekapPeminjam[0].total} Buku)` : '-']
+          ],
+          extraTables: [
+            {
+              title: 'Rekapitulasi Peminjaman per Peminjam (Otomatis)',
+              columns: ['No', 'Nama Peminjam', 'Kelas / Jabatan', 'Total Buku Dipinjam'],
+              rows: rekapPeminjam.map((r, i) => [i + 1, r.nama, r.label, `${r.total} Buku`])
+            },
+            {
+              title: 'Rekapitulasi Berdasarkan Status Peminjaman',
+              columns: ['No', 'Status', 'Total'],
+              rows: rekapStatus.map((s, i) => [i + 1, s[0], `${s[1]}x`])
+            }
+          ]
         };
       }
     },
