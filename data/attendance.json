@@ -1,3 +1,15 @@
 {
-  "attendance": []
+  "attendance": [
+    {
+      "id": "abs_1787017478168_443b06",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "tanggal": "2026-08-18",
+      "waktuAbsen": "2026-08-18T01:44:38.168Z"
+    }
+  ]
 }
