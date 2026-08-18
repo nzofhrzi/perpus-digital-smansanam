@@ -499,6 +499,59 @@
   }
   .btn-submit-export:hover { opacity: 0.95; }
 
+  /* ══════════ EKSPOR DATA (HUB) ══════════ */
+  .ekspor-intro {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    color: var(--gray-700);
+    font-size: 13px;
+    line-height: 1.6;
+    box-shadow: var(--shadow-sm);
+  }
+  .ekspor-intro strong { color: var(--black); }
+  .ekspor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .ekspor-card {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: var(--transition);
+  }
+  .ekspor-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .ekspor-card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--green-50);
+    color: var(--green-800);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .ekspor-card-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--black); }
+  .ekspor-card-desc { font-size: 12px; color: var(--gray-500); line-height: 1.55; flex: 1; }
+  .btn-ekspor-kategori {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 14px; border-radius: 9px; border: 1.5px solid var(--green-700);
+    background: var(--white); color: var(--green-800); font-family: inherit;
+    font-size: 12.5px; font-weight: 700; cursor: pointer; transition: var(--transition);
+  }
+  .btn-ekspor-kategori:hover { background: var(--green-700); color: var(--white); }
+  .eksporModalKategoriNama {
+    font-size: 13px; font-weight: 700; color: var(--black);
+    background: var(--gray-100); border-radius: 9px; padding: 10px 12px;
+    border: 1px solid var(--gray-300);
+  }
+
   /* ══════════ MODAL FORM (BUKU / PENGGUNA) ══════════ */
   .modal-card.modal-form { max-width: 520px; }
   .form-input, .form-select, .form-textarea {
@@ -760,6 +813,9 @@
     <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
     <button class="nav-item" data-section="kompetisi"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</button>
     <button class="nav-item" data-section="peminjaman"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku</button>
+
+    <div class="nav-label">Laporan</div>
+    <button class="nav-item" data-section="ekspor"><i class="fa-solid fa-file-export"></i> Ekspor Data</button>
 
     <div class="nav-label">Sistem</div>
     <button class="nav-item" data-section="pengaturan"><i class="fa-solid fa-gear"></i> Pengaturan</button>
@@ -1142,6 +1198,68 @@
       </div>
     </section>
 
+    <!-- ══════ EKSPOR DATA ══════ -->
+    <section class="section-view" id="section-ekspor">
+      <div class="section-title"><i class="fa-solid fa-file-export"></i> Ekspor Data</div>
+
+      <div class="ekspor-intro">
+        <strong>Pusat Ekspor Data.</strong> Pilih salah satu jenis data yang ingin diunduh, lalu tentukan format berkas
+        (Excel, PDF, atau PNG). Proses ekspor dilakukan satu jenis data pada satu waktu agar hasil laporan tetap rapi,
+        formal, dan mudah diperiksa.
+      </div>
+
+      <div class="ekspor-grid">
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-books"></i></div>
+          <div class="ekspor-card-title">Data Buku</div>
+          <div class="ekspor-card-desc">Seluruh koleksi buku digital beserta pengarang, penerbit, tahun terbit, kategori, dan ISBN.</div>
+          <button class="btn-ekspor-kategori" data-kategori="buku"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="ekspor-card-title">Data Pengguna</div>
+          <div class="ekspor-card-desc">Daftar anggota perpustakaan digital: siswa, guru, dan staf beserta status dan kelas/jabatan.</div>
+          <button class="btn-ekspor-kategori" data-kategori="pengguna"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-fingerprint"></i></div>
+          <div class="ekspor-card-title">Data Absensi</div>
+          <div class="ekspor-card-desc">Rekapitulasi seluruh kehadiran pengunjung perpustakaan beserta tanggal, waktu, dan alasan kunjungan.</div>
+          <button class="btn-ekspor-kategori" data-kategori="absensi"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-person-booth"></i></div>
+          <div class="ekspor-card-title">Data Tamu</div>
+          <div class="ekspor-card-desc">Catatan kunjungan tamu non-anggota beserta keperluan, usia, dan tanggal kunjungan.</div>
+          <button class="btn-ekspor-kategori" data-kategori="tamu"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="ekspor-card-title">Tracking Pembaca</div>
+          <div class="ekspor-card-desc">Statistik aktivitas membaca: ringkasan, buku terpopuler, pembaca teraktif, dan aktivitas terbaru.</div>
+          <button class="btn-ekspor-kategori" data-kategori="tracking"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-hand-holding-hand"></i></div>
+          <div class="ekspor-card-title">Peminjaman Buku</div>
+          <div class="ekspor-card-desc">Arus peminjaman buku fisik beserta tanggal pinjam, rencana kembali, dan status pengembalian.</div>
+          <button class="btn-ekspor-kategori" data-kategori="peminjaman"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+
+        <div class="ekspor-card">
+          <div class="ekspor-card-icon"><i class="fa-solid fa-trophy"></i></div>
+          <div class="ekspor-card-title">Papan Peringkat Kompetisi</div>
+          <div class="ekspor-card-desc">Peringkat Duta Literasi, Duta Kunjungan, dan Duta Buku pada periode kompetisi yang sedang berjalan.</div>
+          <button class="btn-ekspor-kategori" data-kategori="peringkat"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ══════ PENGATURAN ══════ -->
     <section class="section-view" id="section-pengaturan">
       <div class="section-title"><i class="fa-solid fa-gear"></i> Pengaturan</div>
@@ -1258,6 +1376,46 @@
     <div class="modal-footer">
       <button class="btn-cancel" id="btnCancelExport">Batal</button>
       <button class="btn-submit-export" id="btnDoExport"><i class="fa-solid fa-download"></i> Unduh File</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL DIALOG EKSPOR DATA (HUB UNIVERSAL) ══════════ -->
+<div class="modal-overlay" id="modalEksporUniversal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-file-export"></i> Ekspor Data</h3>
+      <button class="modal-close" id="btnCloseEksporModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Jenis Data Terpilih</label>
+        <div class="eksporModalKategoriNama" id="eksporModalKategoriNama">-</div>
+      </div>
+      <div class="form-group">
+        <label>Pilih Format File</label>
+        <div class="export-options-grid">
+          <label class="export-radio-card">
+            <input type="radio" name="eksporFormatUniversal" value="excel" checked>
+            <i class="fa-solid fa-file-excel icon-excel"></i>
+            <span>Excel (.xlsx)</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="eksporFormatUniversal" value="pdf">
+            <i class="fa-solid fa-file-pdf icon-pdf"></i>
+            <span>PDF (.pdf)</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="eksporFormatUniversal" value="png">
+            <i class="fa-solid fa-file-image icon-png"></i>
+            <span>Gambar (.png)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="btnCancelEksporUniversal">Batal</button>
+      <button class="btn-submit-export" id="btnDoEksporUniversal"><i class="fa-solid fa-download"></i> Unduh File</button>
     </div>
   </div>
 </div>
@@ -1506,6 +1664,7 @@
     tracking: { title: 'Tracking Pembaca', sub: 'Statistik aktivitas literasi' },
     kompetisi: { title: 'Kompetisi Duta Literasi', sub: 'Gamifikasi literasi: Duta Literasi, Duta Kunjungan &amp; Duta Buku' },
     peminjaman: { title: 'Peminjaman Buku', sub: 'Pantau arus peminjaman &amp; pengembalian buku fisik' },
+    ekspor: { title: 'Ekspor Data', sub: 'Unduh data sistem dalam format Excel, PDF, atau PNG' },
     pengaturan: { title: 'Pengaturan', sub: 'Konfigurasi sistem perpustakaan' }
   };
 
@@ -1532,6 +1691,7 @@
       if (sec === 'kompetisi') loadKompetisi();
       if (sec === 'peminjaman') loadKompetisiLoans();
       if (sec === 'pengaturan') { loadQrAbsen(); loadResetDataChecklist(); }
+      if (sec === 'ekspor') { /* konten statis, tidak memerlukan pemuatan data awal */ }
     } catch (err) {
       console.error('Gagal memuat data section', sec, err);
     }
@@ -3162,6 +3322,468 @@
       bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
     }
   }
+
+  // ══════════════════════════════════════════════════════════
+  // ══════ EKSPOR DATA (HUB UNIVERSAL: EXCEL / PDF / PNG) ══════
+  // ══════════════════════════════════════════════════════════
+
+  const NAMA_INSTANSI = 'PERPUSTAKAAN DIGITAL SMANSANAM';
+
+  // ── Konfigurasi tiap kategori data: label, ikon, dan cara pengambilan data ──
+  const eksporKategoriConfig = {
+    buku: {
+      label: 'Data Buku',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/books`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data buku.');
+        const list = data.books || [];
+        return {
+          total: list.length,
+          columns: ['No', 'Judul Buku', 'Pengarang', 'Penerbit', 'Tahun', 'Kategori', 'ISBN', 'Status PDF'],
+          rows: list.map((b, i) => [
+            i + 1,
+            b.judul || '-',
+            b.pengarang || '-',
+            b.penerbit || '-',
+            b.tahun || '-',
+            b.kategori || 'Umum',
+            b.isbn || '-',
+            b.linkPDF ? 'Tersedia' : 'Tidak Tersedia'
+          ])
+        };
+      }
+    },
+    pengguna: {
+      label: 'Data Pengguna',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/users/list`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data pengguna.');
+        const list = data.users || [];
+        return {
+          total: list.length,
+          columns: ['No', 'Nama', 'Status', 'Kelas / Jabatan', 'ID Pengguna'],
+          rows: list.map((u, i) => [
+            i + 1,
+            u.nama || '-',
+            u.status || '-',
+            u.kelas || u.jabatan || '-',
+            u.id || '-'
+          ])
+        };
+      }
+    },
+    absensi: {
+      label: 'Data Absensi',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/attendance`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data absensi.');
+        const list = data.data || [];
+        return {
+          total: list.length,
+          columns: ['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal', 'Waktu Absen', 'Alasan Kunjungan'],
+          rows: list.map((r, i) => [
+            i + 1,
+            r.nama || '-',
+            r.status || '-',
+            r.kelas || r.jabatan || '-',
+            fmtTanggal(r.tanggal),
+            fmtJam(r.waktuAbsen),
+            r.alasan || '-'
+          ])
+        };
+      }
+    },
+    tamu: {
+      label: 'Data Tamu',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/guests`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data tamu.');
+        const list = data.data || [];
+        return {
+          total: list.length,
+          columns: ['No', 'Nama Tamu', 'Keperluan / Jabatan', 'Umur', 'Tanggal Kunjungan'],
+          rows: list.map((g, i) => [
+            i + 1,
+            g.nama || '-',
+            g.jabatan || g.keperluan || '-',
+            g.umur ? `${g.umur} Tahun` : '-',
+            fmtTanggal(g.waktuKunjungan ? g.waktuKunjungan.slice(0, 10) : '')
+          ])
+        };
+      }
+    },
+    tracking: {
+      label: 'Statistik Tracking Pembaca',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/reading/stats`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data tracking pembaca.');
+        const bukuPopuler = data.bukuTerpopuler || [];
+        const pembacaAktif = data.pembacaAktif || [];
+        const aktivitas = data.aktivitasTerbaru || [];
+        return {
+          total: aktivitas.length,
+          columns: ['No', 'Nama Pembaca', 'Judul Buku', 'Waktu Mulai', 'Durasi', 'Status'],
+          rows: aktivitas.map((a, i) => [
+            i + 1,
+            a.nama || '-',
+            a.judulBuku || '-',
+            `${fmtJam(a.mulai)}, ${fmtTanggal(a.mulai.slice(0, 10))}`,
+            formatDurasi(a.durasiDetik),
+            a.sedangBerlangsung ? 'Sedang Berlangsung' : 'Selesai'
+          ]),
+          judulUtama: 'Aktivitas Membaca Terbaru',
+          ringkasan: [
+            ['Total Sesi Membaca', String(data.totalSesi ?? 0)],
+            ['Total Waktu Membaca', formatDurasi(data.totalDurasiDetik)],
+            ['Sedang Membaca Saat Ini', String(data.sedangMembaca ?? 0)],
+            ['Aktivitas Hari Ini', String(data.aktivitasHariIni ?? 0)]
+          ],
+          extraTables: [
+            {
+              title: 'Buku Terpopuler',
+              columns: ['No', 'Judul Buku', 'Total Sesi', 'Total Durasi', 'Rata-rata Durasi'],
+              rows: bukuPopuler.map((b, i) => [
+                i + 1,
+                b.judul || '-',
+                b.totalSesi,
+                formatDurasi(b.totalDurasiDetik),
+                formatDurasi(b.totalSesi > 0 ? b.totalDurasiDetik / b.totalSesi : 0)
+              ])
+            },
+            {
+              title: 'Pembaca Teraktif',
+              columns: ['No', 'Nama', 'Status', 'Total Sesi', 'Total Durasi'],
+              rows: pembacaAktif.map((p, i) => [
+                i + 1,
+                p.nama || '-',
+                p.status || '-',
+                p.totalSesi,
+                formatDurasi(p.totalDurasiDetik)
+              ])
+            }
+          ]
+        };
+      }
+    },
+    peminjaman: {
+      label: 'Data Peminjaman Buku',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/loans`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data peminjaman.');
+        const list = data.data || [];
+        return {
+          total: list.length,
+          columns: ['No', 'Peminjam', 'Kelas / Jabatan', 'Judul Buku', 'Tanggal Pinjam', 'Rencana Kembali', 'Tanggal Dikembalikan', 'Status'],
+          rows: list.map((l, i) => [
+            i + 1,
+            l.nama || '-',
+            kmpKelasJabatan(l),
+            l.judulBuku || '-',
+            fmtTanggal(l.tanggalPinjam),
+            fmtTanggal(l.tanggalRencanaKembali),
+            l.tanggalDikembalikan ? fmtTanggal(l.tanggalDikembalikan) : '-',
+            (l.statusPinjaman || 'dipinjam') === 'dikembalikan' ? 'Dikembalikan' : (l.terlambat ? 'Terlambat' : 'Dipinjam')
+          ])
+        };
+      }
+    },
+    peringkat: {
+      label: 'Papan Peringkat Kompetisi',
+      async fetch() {
+        const res = await fetch(`${API_BASE}/competitions/ranking`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data papan peringkat.');
+        const literasi = (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [];
+        const kunjungan = (data.dutaKunjungan && data.dutaKunjungan.leaderboard) || [];
+        const bukuLb = (data.dutaBuku && data.dutaBuku.semua && data.dutaBuku.semua.leaderboard) || [];
+        return {
+          total: literasi.length,
+          judulUtama: 'Papan Peringkat Duta Literasi',
+          columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Waktu Membaca'],
+          rows: literasi.map((item, i) => [
+            item.rank || i + 1,
+            item.nama || '-',
+            kmpKelasJabatan(item),
+            formatDurasi(item.totalDetik)
+          ]),
+          extraTables: [
+            {
+              title: 'Papan Peringkat Duta Kunjungan',
+              columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Kunjungan'],
+              rows: kunjungan.map((item, i) => [
+                item.rank || i + 1,
+                item.nama || '-',
+                kmpKelasJabatan(item),
+                `${item.totalKunjungan}x`
+              ])
+            },
+            {
+              title: 'Papan Peringkat Duta Buku',
+              columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Buku Dipinjam'],
+              rows: bukuLb.map((item, i) => [
+                item.rank || i + 1,
+                item.nama || '-',
+                kmpKelasJabatan(item),
+                `${item.totalPinjam} Buku`
+              ])
+            }
+          ]
+        };
+      }
+    }
+  };
+
+  // ── 1. EKSPOR EXCEL (MONOKROM, FORMAL) ──
+  function eksporToExcelUniversal(kategoriLabel, hasil, datePrinted) {
+    const sheetData = [
+      [NAMA_INSTANSI],
+      [`LAPORAN ${kategoriLabel.toUpperCase()}`],
+      [`Tanggal Cetak: ${datePrinted}     Total Data: ${hasil.total}`],
+      []
+    ];
+
+    if (hasil.judulUtama) {
+      sheetData.push([hasil.judulUtama.toUpperCase()]);
+      sheetData.push([]);
+    }
+
+    sheetData.push(hasil.columns);
+    hasil.rows.forEach(r => sheetData.push(r));
+
+    if (hasil.ringkasan && hasil.ringkasan.length) {
+      sheetData.push([]);
+      sheetData.push(['RINGKASAN']);
+      hasil.ringkasan.forEach(r => sheetData.push(r));
+    }
+
+    if (hasil.extraTables && hasil.extraTables.length) {
+      hasil.extraTables.forEach(t => {
+        sheetData.push([]);
+        sheetData.push([t.title.toUpperCase()]);
+        sheetData.push(t.columns);
+        t.rows.forEach(r => sheetData.push(r));
+      });
+    }
+
+    sheetData.push([]);
+    sheetData.push(['Dokumen ini dihasilkan secara otomatis oleh Sistem Perpustakaan Digital Smansanam.']);
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    ws['!cols'] = hasil.columns.map((c, idx) => ({ wch: idx === 0 ? 8 : 24 }));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, kategoriLabel.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 28) || 'Data');
+    XLSX.writeFile(wb, `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.xlsx`);
+  }
+
+  // ── 2. EKSPOR PDF (MONOKROM, FORMAL) ──
+  function eksporToPDFUniversal(kategoriLabel, hasil, datePrinted) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    function cetakKop() {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.setTextColor(0, 0, 0);
+      doc.text(NAMA_INSTANSI, 14, 15);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.text(`Laporan ${kategoriLabel}`, 14, 22);
+
+      doc.setFontSize(9);
+      doc.text(`Dicetak pada: ${datePrinted}     Total Data: ${hasil.total}`, 14, 27);
+
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.3);
+      doc.line(14, 30, pageWidth - 14, 30);
+    }
+
+    cetakKop();
+    let y = 36;
+
+    if (hasil.judulUtama) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10.5);
+      doc.setTextColor(0, 0, 0);
+      doc.text(hasil.judulUtama, 14, y);
+      y += 4;
+    }
+
+    const tabelStyleUmum = {
+      theme: 'grid',
+      styles: { fontSize: 8.5, cellPadding: 2.5, textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.15 },
+      headStyles: { fillColor: [235, 235, 235], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.2 },
+      alternateRowStyles: { fillColor: [248, 248, 248] }
+    };
+
+    doc.autoTable({ startY: y, head: [hasil.columns], body: hasil.rows, margin: { left: 14, right: 14 }, ...tabelStyleUmum });
+    let finalY = doc.lastAutoTable.finalY + 8;
+
+    if (hasil.ringkasan && hasil.ringkasan.length) {
+      if (finalY > 165) { doc.addPage(); cetakKop(); finalY = 36; }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      doc.text('RINGKASAN', 14, finalY);
+      doc.autoTable({
+        startY: finalY + 3,
+        body: hasil.ringkasan,
+        tableWidth: 130,
+        margin: { left: 14 },
+        ...tabelStyleUmum,
+        headStyles: undefined
+      });
+      finalY = doc.lastAutoTable.finalY + 8;
+    }
+
+    if (hasil.extraTables && hasil.extraTables.length) {
+      hasil.extraTables.forEach(t => {
+        if (finalY > 160) { doc.addPage(); cetakKop(); finalY = 36; }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        doc.text(t.title, 14, finalY);
+        doc.autoTable({ startY: finalY + 3, head: [t.columns], body: t.rows, margin: { left: 14, right: 14 }, ...tabelStyleUmum });
+        finalY = doc.lastAutoTable.finalY + 8;
+      });
+    }
+
+    if (finalY > 180) { doc.addPage(); finalY = 20; }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Dokumen ini dihasilkan secara otomatis oleh Sistem Perpustakaan Digital Smansanam.', 14, finalY);
+
+    doc.save(`Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.pdf`);
+  }
+
+  // ── 3. EKSPOR PNG (MONOKROM, FORMAL) ──
+  async function eksporToPNGUniversal(kategoriLabel, hasil, datePrinted) {
+    function buatTabelHtml(columns, rows) {
+      const head = columns.map(c => `<th style="padding:9px 10px; border:1px solid #000000; background:#f0f0f0; color:#000000; font-weight:700; text-align:left; white-space:nowrap;">${escapeHtml(c)}</th>`).join('');
+      const body = rows.length
+        ? rows.map(r => `<tr>${r.map(c => `<td style="padding:8px 10px; border:1px solid #000000; color:#000000;">${escapeHtml(String(c ?? '-'))}</td>`).join('')}</tr>`).join('')
+        : `<tr><td colspan="${columns.length}" style="padding:14px; border:1px solid #000000; color:#000000; text-align:center;">Tidak ada data.</td></tr>`;
+      return `<table style="width:100%; border-collapse:collapse; font-size:12px; color:#000000; margin-bottom:22px;">
+        <thead><tr>${head}</tr></thead>
+        <tbody>${body}</tbody>
+      </table>`;
+    }
+
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.top = '-9999px';
+    container.style.left = '-9999px';
+    container.style.width = '1080px';
+    container.style.background = '#ffffff';
+    container.style.padding = '32px';
+    container.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+    container.style.color = '#000000';
+
+    let html = `
+      <div style="margin-bottom:20px; border-bottom:2px solid #000000; padding-bottom:12px;">
+        <h2 style="color:#000000; font-size:20px; font-weight:800; margin-bottom:4px;">${NAMA_INSTANSI}</h2>
+        <p style="color:#000000; font-size:14px; font-weight:700; margin:0;">LAPORAN ${escapeHtml(kategoriLabel.toUpperCase())}</p>
+        <p style="color:#000000; font-size:11px; margin-top:4px;">Tanggal Cetak: ${escapeHtml(datePrinted)} &nbsp;|&nbsp; Total Data: ${hasil.total}</p>
+      </div>
+    `;
+
+    if (hasil.judulUtama) {
+      html += `<h3 style="font-size:13px; font-weight:800; color:#000000; margin-bottom:8px; text-transform:uppercase;">${escapeHtml(hasil.judulUtama)}</h3>`;
+    }
+
+    html += buatTabelHtml(hasil.columns, hasil.rows);
+
+    if (hasil.ringkasan && hasil.ringkasan.length) {
+      html += `<div style="border:1px solid #000000; padding:14px; margin-bottom:22px;">
+        <h4 style="font-size:12.5px; font-weight:800; color:#000000; margin-bottom:10px; text-transform:uppercase;">Ringkasan</h4>
+        ${hasil.ringkasan.map(r => `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #000000; font-size:11.5px; color:#000000;"><span>${escapeHtml(r[0])}</span><span style="font-weight:700;">${escapeHtml(r[1])}</span></div>`).join('')}
+      </div>`;
+    }
+
+    if (hasil.extraTables && hasil.extraTables.length) {
+      hasil.extraTables.forEach(t => {
+        html += `<h3 style="font-size:13px; font-weight:800; color:#000000; margin-bottom:8px; text-transform:uppercase;">${escapeHtml(t.title)}</h3>`;
+        html += buatTabelHtml(t.columns, t.rows);
+      });
+    }
+
+    html += `<p style="font-size:10px; color:#000000; margin-top:6px;">Dokumen ini dihasilkan secara otomatis oleh Sistem Perpustakaan Digital Smansanam pada ${escapeHtml(datePrinted)}.</p>`;
+
+    container.innerHTML = html;
+    document.body.appendChild(container);
+    const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
+    document.body.removeChild(container);
+
+    const link = document.createElement('a');
+    link.download = `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  // ── PENGENDALI MODAL & TOMBOL EKSPOR UNIVERSAL ──
+  const modalEksporUniversal = document.getElementById('modalEksporUniversal');
+  const eksporModalKategoriNama = document.getElementById('eksporModalKategoriNama');
+  const btnDoEksporUniversal = document.getElementById('btnDoEksporUniversal');
+  let eksporKategoriAktif = null;
+
+  document.querySelectorAll('.btn-ekspor-kategori').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const kunci = btn.dataset.kategori;
+      if (!eksporKategoriConfig[kunci]) return;
+      eksporKategoriAktif = kunci;
+      eksporModalKategoriNama.textContent = eksporKategoriConfig[kunci].label;
+      modalEksporUniversal.classList.add('show');
+    });
+  });
+
+  document.getElementById('btnCloseEksporModal').addEventListener('click', () => modalEksporUniversal.classList.remove('show'));
+  document.getElementById('btnCancelEksporUniversal').addEventListener('click', () => modalEksporUniversal.classList.remove('show'));
+  modalEksporUniversal.addEventListener('click', (e) => {
+    if (e.target === modalEksporUniversal) modalEksporUniversal.classList.remove('show');
+  });
+
+  btnDoEksporUniversal.addEventListener('click', async () => {
+    if (!eksporKategoriAktif) return;
+    const cfg = eksporKategoriConfig[eksporKategoriAktif];
+    const format = document.querySelector('input[name="eksporFormatUniversal"]:checked')?.value || 'excel';
+
+    btnDoEksporUniversal.disabled = true;
+    btnDoEksporUniversal.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+
+    try {
+      const hasil = await cfg.fetch();
+      if (!hasil.total || hasil.total === 0) {
+        alert(`Belum ada data pada kategori "${cfg.label}" untuk diekspor.`);
+        return;
+      }
+
+      const datePrinted = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      if (format === 'excel') {
+        eksporToExcelUniversal(cfg.label, hasil, datePrinted);
+      } else if (format === 'pdf') {
+        eksporToPDFUniversal(cfg.label, hasil, datePrinted);
+      } else if (format === 'png') {
+        await eksporToPNGUniversal(cfg.label, hasil, datePrinted);
+      }
+
+      modalEksporUniversal.classList.remove('show');
+    } catch (err) {
+      alert('Gagal melakukan ekspor data: ' + err.message);
+    } finally {
+      btnDoEksporUniversal.disabled = false;
+      btnDoEksporUniversal.innerHTML = '<i class="fa-solid fa-download"></i> Unduh File';
+    }
+  });
 
   // ══════ INISIALISASI DATA AWAL ══════
   loadQrAbsen();
