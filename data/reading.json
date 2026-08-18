@@ -1,3 +1,18 @@
 {
-  "sessions": []
+  "sessions": [
+    {
+      "id": "read_1787017362468_c1a097",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "bookId": "book_1786930140047_f362e1",
+      "judulBuku": "Secangkir Kopi dan pencakar langit",
+      "mulai": "2026-08-18T01:42:42.468Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-18"
+    }
+  ]
 }
