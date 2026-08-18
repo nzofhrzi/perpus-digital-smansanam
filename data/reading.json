@@ -27,6 +27,20 @@
       "selesai": "2026-08-18T01:43:45.078Z",
       "durasiDetik": 3,
       "tanggal": "2026-08-18"
+    },
+    {
+      "id": "read_1787023456181_2b12af",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-18T03:24:16.181Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-18"
     }
   ]
 }
