@@ -1392,6 +1392,53 @@
         <label>Jenis Data Terpilih</label>
         <div class="eksporModalKategoriNama" id="eksporModalKategoriNama">-</div>
       </div>
+
+      <div class="form-group" id="eksporRentangGroup">
+        <label>Rentang Waktu Data</label>
+        <div class="export-options-grid">
+          <label class="export-radio-card">
+            <input type="radio" name="eksporRentangJenis" value="custom">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Rentang Sendiri</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="eksporRentangJenis" value="preset">
+            <i class="fa-solid fa-calendar-week"></i>
+            <span>Periode Cepat</span>
+          </label>
+          <label class="export-radio-card">
+            <input type="radio" name="eksporRentangJenis" value="semua" checked>
+            <i class="fa-solid fa-infinity"></i>
+            <span>Seluruh Data</span>
+          </label>
+        </div>
+
+        <div id="eksporRentangCustomWrap" style="display:none; margin-top:12px;">
+          <div class="form-row-2">
+            <div>
+              <label style="font-size:11px; font-weight:600; text-transform:none; letter-spacing:0; margin-bottom:6px;">Tanggal Mulai</label>
+              <input type="date" id="eksporTanggalMulai" class="form-input">
+            </div>
+            <div>
+              <label style="font-size:11px; font-weight:600; text-transform:none; letter-spacing:0; margin-bottom:6px;">Tanggal Selesai</label>
+              <input type="date" id="eksporTanggalSelesai" class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div id="eksporRentangPresetWrap" style="display:none; margin-top:12px;">
+          <select id="eksporRentangPreset" class="modal-select">
+            <option value="1bulan">1 Bulan Terakhir</option>
+            <option value="3bulan">3 Bulan Terakhir</option>
+            <option value="6bulan">6 Bulan Terakhir (1 Semester)</option>
+          </select>
+        </div>
+
+        <div class="form-hint" id="eksporRentangHint" style="display:none;">
+          <i class="fa-solid fa-circle-info"></i> Kategori data ini tidak memiliki keterangan tanggal per data, sehingga seluruh data akan diekspor tanpa filter rentang waktu.
+        </div>
+      </div>
+
       <div class="form-group">
         <label>Pilih Format File</label>
         <div class="export-options-grid">
@@ -3329,15 +3376,21 @@
 
   const NAMA_INSTANSI = 'PERPUSTAKAAN DIGITAL SMANSANAM';
 
-  // ── Konfigurasi tiap kategori data: label, ikon, dan cara pengambilan data ──
+  // ── Konfigurasi tiap kategori data ──
+  // fetchRaw()   : mengambil data mentah dari API (tanpa diolah untuk tampilan)
+  // getDate(item): mengambil objek Date dari satu data mentah (untuk filter rentang waktu). undefined = tidak difilter.
+  // build(ctx)   : mengolah data (yang sudah difilter rentang waktu bila berlaku) menjadi struktur tabel siap ekspor
   const eksporKategoriConfig = {
     buku: {
       label: 'Data Buku',
-      async fetch() {
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/books`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data buku.');
-        const list = data.books || [];
+        return { list: data.books || [] };
+      },
+      build(ctx) {
+        const list = ctx.list;
         return {
           total: list.length,
           columns: ['No', 'Judul Buku', 'Pengarang', 'Penerbit', 'Tahun', 'Kategori', 'ISBN', 'Status PDF'],
@@ -3356,11 +3409,14 @@
     },
     pengguna: {
       label: 'Data Pengguna',
-      async fetch() {
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/users/list`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data pengguna.');
-        const list = data.users || [];
+        return { list: data.users || [] };
+      },
+      build(ctx) {
+        const list = ctx.list;
         return {
           total: list.length,
           columns: ['No', 'Nama', 'Status', 'Kelas / Jabatan', 'ID Pengguna'],
@@ -3376,11 +3432,15 @@
     },
     absensi: {
       label: 'Data Absensi',
-      async fetch() {
+      getDate(r) { return r.tanggal ? new Date(`${r.tanggal}T00:00:00+07:00`) : null; },
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/attendance`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data absensi.');
-        const list = data.data || [];
+        return { list: data.data || [] };
+      },
+      build(ctx) {
+        const list = ctx.list;
         return {
           total: list.length,
           columns: ['No', 'Nama Pengunjung', 'Status', 'Kelas / Jabatan', 'Tanggal', 'Waktu Absen', 'Alasan Kunjungan'],
@@ -3398,11 +3458,15 @@
     },
     tamu: {
       label: 'Data Tamu',
-      async fetch() {
+      getDate(g) { return g.waktuKunjungan ? new Date(g.waktuKunjungan) : null; },
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/guests`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data tamu.');
-        const list = data.data || [];
+        return { list: data.data || [] };
+      },
+      build(ctx) {
+        const list = ctx.list;
         return {
           total: list.length,
           columns: ['No', 'Nama Tamu', 'Keperluan / Jabatan', 'Umur', 'Tanggal Kunjungan'],
@@ -3418,13 +3482,24 @@
     },
     tracking: {
       label: 'Statistik Tracking Pembaca',
-      async fetch() {
+      getDate(a) { return a.mulai ? new Date(a.mulai) : null; },
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/reading/stats`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data tracking pembaca.');
-        const bukuPopuler = data.bukuTerpopuler || [];
-        const pembacaAktif = data.pembacaAktif || [];
-        const aktivitas = data.aktivitasTerbaru || [];
+        // "list" adalah data yang dapat difilter berdasarkan rentang waktu (aktivitas terbaru).
+        // "bukuTerpopuler" & "pembacaAktif" adalah rekap agregat dari server (selalu seluruh waktu).
+        return {
+          list: data.aktivitasTerbaru || [],
+          bukuTerpopuler: data.bukuTerpopuler || [],
+          pembacaAktif: data.pembacaAktif || [],
+          sedangMembaca: data.sedangMembaca ?? 0,
+          aktivitasHariIni: data.aktivitasHariIni ?? 0
+        };
+      },
+      build(ctx) {
+        const aktivitas = ctx.list;
+        const totalDurasiTerfilter = aktivitas.reduce((sum, a) => sum + (a.durasiDetik || 0), 0);
         return {
           total: aktivitas.length,
           columns: ['No', 'Nama Pembaca', 'Judul Buku', 'Waktu Mulai', 'Durasi', 'Status'],
@@ -3436,18 +3511,18 @@
             formatDurasi(a.durasiDetik),
             a.sedangBerlangsung ? 'Sedang Berlangsung' : 'Selesai'
           ]),
-          judulUtama: 'Aktivitas Membaca Terbaru',
+          judulUtama: 'Aktivitas Membaca (Sesuai Rentang Waktu Terpilih)',
           ringkasan: [
-            ['Total Sesi Membaca', String(data.totalSesi ?? 0)],
-            ['Total Waktu Membaca', formatDurasi(data.totalDurasiDetik)],
-            ['Sedang Membaca Saat Ini', String(data.sedangMembaca ?? 0)],
-            ['Aktivitas Hari Ini', String(data.aktivitasHariIni ?? 0)]
+            ['Total Sesi (Rentang Terpilih)', String(aktivitas.length)],
+            ['Total Waktu Membaca (Rentang Terpilih)', formatDurasi(totalDurasiTerfilter)],
+            ['Sedang Membaca Saat Ini', String(ctx.sedangMembaca)],
+            ['Aktivitas Hari Ini', String(ctx.aktivitasHariIni)]
           ],
           extraTables: [
             {
-              title: 'Buku Terpopuler',
+              title: 'Buku Terpopuler (Rekap Seluruh Waktu)',
               columns: ['No', 'Judul Buku', 'Total Sesi', 'Total Durasi', 'Rata-rata Durasi'],
-              rows: bukuPopuler.map((b, i) => [
+              rows: ctx.bukuTerpopuler.map((b, i) => [
                 i + 1,
                 b.judul || '-',
                 b.totalSesi,
@@ -3456,9 +3531,9 @@
               ])
             },
             {
-              title: 'Pembaca Teraktif',
+              title: 'Pembaca Teraktif (Rekap Seluruh Waktu)',
               columns: ['No', 'Nama', 'Status', 'Total Sesi', 'Total Durasi'],
-              rows: pembacaAktif.map((p, i) => [
+              rows: ctx.pembacaAktif.map((p, i) => [
                 i + 1,
                 p.nama || '-',
                 p.status || '-',
@@ -3472,11 +3547,15 @@
     },
     peminjaman: {
       label: 'Data Peminjaman Buku',
-      async fetch() {
+      getDate(l) { return l.tanggalPinjam ? new Date(`${l.tanggalPinjam}T00:00:00+07:00`) : null; },
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/loans`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data peminjaman.');
-        const list = data.data || [];
+        return { list: data.data || [] };
+      },
+      build(ctx) {
+        const list = ctx.list;
         return {
           total: list.length,
           columns: ['No', 'Peminjam', 'Kelas / Jabatan', 'Judul Buku', 'Tanggal Pinjam', 'Rencana Kembali', 'Tanggal Dikembalikan', 'Status'],
@@ -3495,18 +3574,22 @@
     },
     peringkat: {
       label: 'Papan Peringkat Kompetisi',
-      async fetch() {
+      async fetchRaw() {
         const res = await fetch(`${API_BASE}/competitions/ranking`, { headers: { Authorization: `Bearer ${token}` } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengambil data papan peringkat.');
-        const literasi = (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [];
-        const kunjungan = (data.dutaKunjungan && data.dutaKunjungan.leaderboard) || [];
-        const bukuLb = (data.dutaBuku && data.dutaBuku.semua && data.dutaBuku.semua.leaderboard) || [];
         return {
-          total: literasi.length,
+          literasi: (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [],
+          kunjungan: (data.dutaKunjungan && data.dutaKunjungan.leaderboard) || [],
+          bukuLb: (data.dutaBuku && data.dutaBuku.semua && data.dutaBuku.semua.leaderboard) || []
+        };
+      },
+      build(ctx) {
+        return {
+          total: ctx.literasi.length,
           judulUtama: 'Papan Peringkat Duta Literasi',
           columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Waktu Membaca'],
-          rows: literasi.map((item, i) => [
+          rows: ctx.literasi.map((item, i) => [
             item.rank || i + 1,
             item.nama || '-',
             kmpKelasJabatan(item),
@@ -3516,7 +3599,7 @@
             {
               title: 'Papan Peringkat Duta Kunjungan',
               columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Kunjungan'],
-              rows: kunjungan.map((item, i) => [
+              rows: ctx.kunjungan.map((item, i) => [
                 item.rank || i + 1,
                 item.nama || '-',
                 kmpKelasJabatan(item),
@@ -3526,7 +3609,7 @@
             {
               title: 'Papan Peringkat Duta Buku',
               columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Buku Dipinjam'],
-              rows: bukuLb.map((item, i) => [
+              rows: ctx.bukuLb.map((item, i) => [
                 item.rank || i + 1,
                 item.nama || '-',
                 kmpKelasJabatan(item),
@@ -3540,11 +3623,11 @@
   };
 
   // ── 1. EKSPOR EXCEL (MONOKROM, FORMAL) ──
-  function eksporToExcelUniversal(kategoriLabel, hasil, datePrinted) {
+  function eksporToExcelUniversal(kategoriLabel, hasil, datePrinted, rangeText) {
     const sheetData = [
       [NAMA_INSTANSI],
       [`LAPORAN ${kategoriLabel.toUpperCase()}`],
-      [`Tanggal Cetak: ${datePrinted}     Total Data: ${hasil.total}`],
+      [`Rentang Waktu: ${rangeText} | Tanggal Cetak: ${datePrinted} | Total Data: ${hasil.total}`],
       []
     ];
 
@@ -3579,11 +3662,11 @@
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, kategoriLabel.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 28) || 'Data');
-    XLSX.writeFile(wb, `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.xlsx`);
+    XLSX.writeFile(wb, `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_${rangeText.replace(/[^a-zA-Z0-9]+/g, '_')}_Smansanam.xlsx`);
   }
 
   // ── 2. EKSPOR PDF (MONOKROM, FORMAL) ──
-  function eksporToPDFUniversal(kategoriLabel, hasil, datePrinted) {
+  function eksporToPDFUniversal(kategoriLabel, hasil, datePrinted, rangeText) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -3596,7 +3679,7 @@
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
-      doc.text(`Laporan ${kategoriLabel}`, 14, 22);
+      doc.text(`Laporan ${kategoriLabel} (${rangeText})`, 14, 22);
 
       doc.setFontSize(9);
       doc.text(`Dicetak pada: ${datePrinted}     Total Data: ${hasil.total}`, 14, 27);
@@ -3662,11 +3745,11 @@
     doc.setTextColor(0, 0, 0);
     doc.text('Dokumen ini dihasilkan secara otomatis oleh Sistem Perpustakaan Digital Smansanam.', 14, finalY);
 
-    doc.save(`Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.pdf`);
+    doc.save(`Laporan_${kategoriLabel.replace(/\s+/g, '_')}_${rangeText.replace(/[^a-zA-Z0-9]+/g, '_')}_Smansanam.pdf`);
   }
 
   // ── 3. EKSPOR PNG (MONOKROM, FORMAL) ──
-  async function eksporToPNGUniversal(kategoriLabel, hasil, datePrinted) {
+  async function eksporToPNGUniversal(kategoriLabel, hasil, datePrinted, rangeText) {
     function buatTabelHtml(columns, rows) {
       const head = columns.map(c => `<th style="padding:9px 10px; border:1px solid #000000; background:#f0f0f0; color:#000000; font-weight:700; text-align:left; white-space:nowrap;">${escapeHtml(c)}</th>`).join('');
       const body = rows.length
@@ -3692,7 +3775,7 @@
       <div style="margin-bottom:20px; border-bottom:2px solid #000000; padding-bottom:12px;">
         <h2 style="color:#000000; font-size:20px; font-weight:800; margin-bottom:4px;">${NAMA_INSTANSI}</h2>
         <p style="color:#000000; font-size:14px; font-weight:700; margin:0;">LAPORAN ${escapeHtml(kategoriLabel.toUpperCase())}</p>
-        <p style="color:#000000; font-size:11px; margin-top:4px;">Tanggal Cetak: ${escapeHtml(datePrinted)} &nbsp;|&nbsp; Total Data: ${hasil.total}</p>
+        <p style="color:#000000; font-size:11px; margin-top:4px;">Rentang Waktu: ${escapeHtml(rangeText)} &nbsp;|&nbsp; Tanggal Cetak: ${escapeHtml(datePrinted)} &nbsp;|&nbsp; Total Data: ${hasil.total}</p>
       </div>
     `;
 
@@ -3724,7 +3807,7 @@
     document.body.removeChild(container);
 
     const link = document.createElement('a');
-    link.download = `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_Smansanam.png`;
+    link.download = `Laporan_${kategoriLabel.replace(/\s+/g, '_')}_${rangeText.replace(/[^a-zA-Z0-9]+/g, '_')}_Smansanam.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   }
@@ -3733,14 +3816,42 @@
   const modalEksporUniversal = document.getElementById('modalEksporUniversal');
   const eksporModalKategoriNama = document.getElementById('eksporModalKategoriNama');
   const btnDoEksporUniversal = document.getElementById('btnDoEksporUniversal');
+  const eksporRentangGroup = document.getElementById('eksporRentangGroup');
+  const eksporRentangPilihanEl = eksporRentangGroup.querySelector('.export-options-grid');
+  const eksporRentangCustomWrap = document.getElementById('eksporRentangCustomWrap');
+  const eksporRentangPresetWrap = document.getElementById('eksporRentangPresetWrap');
+  const eksporRentangHint = document.getElementById('eksporRentangHint');
   let eksporKategoriAktif = null;
+
+  function eksporTampilkanSubRentang(jenis) {
+    eksporRentangCustomWrap.style.display = jenis === 'custom' ? 'block' : 'none';
+    eksporRentangPresetWrap.style.display = jenis === 'preset' ? 'block' : 'none';
+  }
+
+  document.querySelectorAll('input[name="eksporRentangJenis"]').forEach(radio => {
+    radio.addEventListener('change', (e) => eksporTampilkanSubRentang(e.target.value));
+  });
 
   document.querySelectorAll('.btn-ekspor-kategori').forEach(btn => {
     btn.addEventListener('click', () => {
       const kunci = btn.dataset.kategori;
-      if (!eksporKategoriConfig[kunci]) return;
+      const cfg = eksporKategoriConfig[kunci];
+      if (!cfg) return;
       eksporKategoriAktif = kunci;
-      eksporModalKategoriNama.textContent = eksporKategoriConfig[kunci].label;
+      eksporModalKategoriNama.textContent = cfg.label;
+
+      const dukungRentang = typeof cfg.getDate === 'function';
+      if (dukungRentang) {
+        eksporRentangPilihanEl.style.display = 'grid';
+        eksporRentangHint.style.display = 'none';
+        document.querySelector('input[name="eksporRentangJenis"][value="semua"]').checked = true;
+        eksporTampilkanSubRentang('semua');
+      } else {
+        eksporRentangPilihanEl.style.display = 'none';
+        eksporTampilkanSubRentang('none');
+        eksporRentangHint.style.display = 'block';
+      }
+
       modalEksporUniversal.classList.add('show');
     });
   });
@@ -3755,25 +3866,72 @@
     if (!eksporKategoriAktif) return;
     const cfg = eksporKategoriConfig[eksporKategoriAktif];
     const format = document.querySelector('input[name="eksporFormatUniversal"]:checked')?.value || 'excel';
+    const dukungRentang = typeof cfg.getDate === 'function';
+
+    let mulai = null;
+    let selesai = null;
+    let rangeText = 'Seluruh Data';
+
+    if (dukungRentang) {
+      const jenisRentang = document.querySelector('input[name="eksporRentangJenis"]:checked')?.value || 'semua';
+
+      if (jenisRentang === 'custom') {
+        const valMulai = document.getElementById('eksporTanggalMulai').value;
+        const valSelesai = document.getElementById('eksporTanggalSelesai').value;
+        if (!valMulai || !valSelesai) {
+          alert('Silakan pilih tanggal mulai dan tanggal selesai terlebih dahulu.');
+          return;
+        }
+        mulai = new Date(`${valMulai}T00:00:00+07:00`);
+        selesai = new Date(`${valSelesai}T23:59:59+07:00`);
+        if (mulai > selesai) {
+          alert('Tanggal mulai tidak boleh melebihi tanggal selesai.');
+          return;
+        }
+        rangeText = `${fmtTanggal(valMulai)} — ${fmtTanggal(valSelesai)}`;
+      } else if (jenisRentang === 'preset') {
+        const preset = document.getElementById('eksporRentangPreset').value;
+        const jumlahBulan = preset === '3bulan' ? 3 : preset === '6bulan' ? 6 : 1;
+        selesai = new Date();
+        mulai = new Date();
+        mulai.setMonth(mulai.getMonth() - jumlahBulan);
+        rangeText = jumlahBulan === 1 ? '1 Bulan Terakhir' : jumlahBulan === 3 ? '3 Bulan Terakhir' : '6 Bulan Terakhir (1 Semester)';
+      } else {
+        rangeText = 'Seluruh Data';
+      }
+    }
 
     btnDoEksporUniversal.disabled = true;
     btnDoEksporUniversal.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
     try {
-      const hasil = await cfg.fetch();
+      const ctx = await cfg.fetchRaw();
+
+      if (dukungRentang && (mulai || selesai) && Array.isArray(ctx.list)) {
+        ctx.list = ctx.list.filter(item => {
+          const d = cfg.getDate(item);
+          if (!d) return false;
+          if (mulai && d < mulai) return false;
+          if (selesai && d > selesai) return false;
+          return true;
+        });
+      }
+
+      const hasil = cfg.build(ctx);
+
       if (!hasil.total || hasil.total === 0) {
-        alert(`Belum ada data pada kategori "${cfg.label}" untuk diekspor.`);
+        alert(`Tidak ada data pada kategori "${cfg.label}" untuk rentang waktu yang dipilih.`);
         return;
       }
 
       const datePrinted = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
 
       if (format === 'excel') {
-        eksporToExcelUniversal(cfg.label, hasil, datePrinted);
+        eksporToExcelUniversal(cfg.label, hasil, datePrinted, rangeText);
       } else if (format === 'pdf') {
-        eksporToPDFUniversal(cfg.label, hasil, datePrinted);
+        eksporToPDFUniversal(cfg.label, hasil, datePrinted, rangeText);
       } else if (format === 'png') {
-        await eksporToPNGUniversal(cfg.label, hasil, datePrinted);
+        await eksporToPNGUniversal(cfg.label, hasil, datePrinted, rangeText);
       }
 
       modalEksporUniversal.classList.remove('show');
