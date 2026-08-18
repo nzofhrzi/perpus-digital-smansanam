@@ -1296,6 +1296,21 @@
         <button type="button" id="btnSaveSettings" class="btn-primary" style="width:100%;"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
       </form>
 
+      <div class="section-title" style="margin-top:34px;"><i class="fa-solid fa-hashtag"></i> Sosmed Sekolah</div>
+      <p style="font-size:13px;color:var(--gray-500);max-width:640px;margin-bottom:18px;line-height:1.6;">
+        Kelola tautan media sosial resmi sekolah yang tampil di laman "Sosmed Sekolah" pada dashboard pengguna. Ubah tautan, username, ikon, atau deskripsi kapan pun akun aktif berubah.
+      </p>
+
+      <div id="sosmedList" style="max-width:640px;display:flex;flex-direction:column;gap:14px;margin-bottom:14px;"></div>
+
+      <button type="button" id="btnAddSosmed" class="btn-edit-row" style="max-width:640px;width:100%;padding:10px;font-size:13px;font-weight:700;">
+        <i class="fa-solid fa-plus"></i> Tambah Kanal Sosmed
+      </button>
+
+      <button type="button" id="btnSaveSosmed" class="btn-primary" style="max-width:640px;width:100%;margin-top:14px;">
+        <i class="fa-solid fa-floppy-disk"></i> Simpan Tautan Sosmed
+      </button>
+
       <div class="section-title" style="margin-top:34px;"><i class="fa-solid fa-qrcode"></i> QR Code Absensi Perpustakaan</div>
       <p style="font-size:13px;color:var(--gray-500);max-width:600px;margin-bottom:18px;line-height:1.6;">
         Cetak &amp; tempel kedua QR Code ini di pintu masuk perpustakaan. <strong>QR 1</strong> mengarahkan pengunjung ke website perpustakaan online. <strong>QR 2</strong> khusus untuk absensi kehadiran — hanya berfungsi saat dipindai lewat kamera absen di dalam website, tidak mengarah ke tautan apa pun jika dipindai aplikasi kamera biasa.
@@ -2785,6 +2800,143 @@
     document.getElementById('warnaText').textContent = e.target.value;
   });
 
+  // ══════ SOSMED SEKOLAH (TAUTAN DAPAT DIUBAH ADMIN) ══════
+  const IKON_SOSMED_PRESET = {
+    'Instagram': { icon: 'fa-brands fa-instagram', iconBg: 'linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4)' },
+    'TikTok': { icon: 'fa-brands fa-tiktok', iconBg: '#000000' },
+    'YouTube': { icon: 'fa-brands fa-youtube', iconBg: 'linear-gradient(135deg,#ff0000,#b30000)' },
+    'Facebook': { icon: 'fa-brands fa-facebook-f', iconBg: 'linear-gradient(135deg,#1877f2,#0a58c2)' },
+    'WhatsApp': { icon: 'fa-brands fa-whatsapp', iconBg: 'linear-gradient(135deg,#25d366,#128c7e)' },
+    'Website': { icon: 'fa-solid fa-globe', iconBg: 'linear-gradient(135deg,#059669,#065f46)' },
+    'X (Twitter)': { icon: 'fa-brands fa-x-twitter', iconBg: '#000000' },
+    'Threads': { icon: 'fa-brands fa-threads', iconBg: '#000000' },
+    'Telegram': { icon: 'fa-brands fa-telegram', iconBg: 'linear-gradient(135deg,#2aabee,#229ed9)' },
+    'Lainnya': { icon: 'fa-solid fa-link', iconBg: 'linear-gradient(135deg,#059669,#065f46)' }
+  };
+
+  let sosmedItems = [];
+
+  function renderSosmedList() {
+    const wrap = document.getElementById('sosmedList');
+    if (!wrap) return;
+    if (sosmedItems.length === 0) {
+      wrap.innerHTML = `<div class="att-empty" style="padding:14px 0;">Belum ada kanal sosmed. Klik "Tambah Kanal Sosmed" untuk menambahkan.</div>`;
+      return;
+    }
+    wrap.innerHTML = sosmedItems.map((item, idx) => `
+      <div class="sosmed-admin-item" data-idx="${idx}" style="border:1px solid var(--gray-300);border-radius:10px;padding:14px;">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;background:${escapeHtml(item.iconBg || '#059669')};">
+            <i class="${escapeHtml(item.icon || 'fa-solid fa-link')}"></i>
+          </div>
+          <select class="sosmed-platform-select" style="flex:1;padding:8px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:13px;">
+            ${Object.keys(IKON_SOSMED_PRESET).map(p => `<option value="${escapeHtml(p)}" ${item.platform === p ? 'selected' : ''}>${escapeHtml(p)}</option>`).join('')}
+          </select>
+          <button type="button" class="btn-sosmed-remove" title="Hapus kanal" style="background:var(--danger-bg,#fee2e2);color:var(--danger,#dc2626);border:none;width:34px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:4px;">Nama Platform (tampil di kartu)</label>
+          <input type="text" class="sosmed-platform-label" value="${escapeHtml(item.platform || '')}" placeholder="Contoh: Instagram" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:13px;">
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:4px;">Username / Nama Akun</label>
+          <input type="text" class="sosmed-handle" value="${escapeHtml(item.handle || '')}" placeholder="Contoh: @smansanam.official" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:13px;">
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:4px;">Deskripsi Singkat</label>
+          <input type="text" class="sosmed-desc" value="${escapeHtml(item.desc || '')}" placeholder="Contoh: Kegiatan & info harian sekolah" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:4px;">Tautan (URL) <span style="color:var(--danger,#dc2626);">*</span></label>
+          <input type="url" class="sosmed-url" value="${escapeHtml(item.url || '')}" placeholder="https://instagram.com/akun-sekolah" required style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:13px;">
+        </div>
+      </div>
+    `).join('');
+
+    wrap.querySelectorAll('.sosmed-admin-item').forEach(card => {
+      const idx = parseInt(card.getAttribute('data-idx'), 10);
+
+      card.querySelector('.sosmed-platform-select').addEventListener('change', (e) => {
+        const preset = IKON_SOSMED_PRESET[e.target.value] || IKON_SOSMED_PRESET['Lainnya'];
+        sosmedItems[idx].icon = preset.icon;
+        sosmedItems[idx].iconBg = preset.iconBg;
+        if (!sosmedItems[idx].platform || Object.keys(IKON_SOSMED_PRESET).includes(sosmedItems[idx].platform)) {
+          sosmedItems[idx].platform = e.target.value;
+        }
+        renderSosmedList();
+      });
+      card.querySelector('.sosmed-platform-label').addEventListener('input', (e) => { sosmedItems[idx].platform = e.target.value; });
+      card.querySelector('.sosmed-handle').addEventListener('input', (e) => { sosmedItems[idx].handle = e.target.value; });
+      card.querySelector('.sosmed-desc').addEventListener('input', (e) => { sosmedItems[idx].desc = e.target.value; });
+      card.querySelector('.sosmed-url').addEventListener('input', (e) => { sosmedItems[idx].url = e.target.value; });
+      card.querySelector('.btn-sosmed-remove').addEventListener('click', () => {
+        sosmedItems.splice(idx, 1);
+        renderSosmedList();
+      });
+    });
+  }
+
+  async function loadSosmed() {
+    try {
+      const res = await fetch(`${API_BASE}/settings`);
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      sosmedItems = Array.isArray(data.sosmed) ? data.sosmed.map(it => ({ ...it })) : [];
+      renderSosmedList();
+    } catch (err) {
+      console.error('Gagal load sosmed:', err);
+    }
+  }
+
+  const btnAddSosmed = document.getElementById('btnAddSosmed');
+  if (btnAddSosmed) {
+    btnAddSosmed.addEventListener('click', () => {
+      const preset = IKON_SOSMED_PRESET['Lainnya'];
+      sosmedItems.push({
+        id: `sosmed_${Date.now()}`,
+        platform: 'Lainnya',
+        icon: preset.icon,
+        iconBg: preset.iconBg,
+        handle: '',
+        desc: '',
+        url: ''
+      });
+      renderSosmedList();
+    });
+  }
+
+  const btnSaveSosmed = document.getElementById('btnSaveSosmed');
+  if (btnSaveSosmed) {
+    btnSaveSosmed.addEventListener('click', async () => {
+      const kosong = sosmedItems.find(it => !it.platform.trim() || !it.url.trim());
+      if (kosong) {
+        alert('Setiap kanal sosmed wajib memiliki Nama Platform dan Tautan (URL).');
+        return;
+      }
+      btnSaveSosmed.disabled = true;
+      btnSaveSosmed.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      try {
+        const res = await fetch(`${API_BASE}/settings`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ sosmed: sosmedItems })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        sosmedItems = Array.isArray(data.settings?.sosmed) ? data.settings.sosmed.map(it => ({ ...it })) : sosmedItems;
+        renderSosmedList();
+        alert('Tautan sosmed berhasil disimpan!');
+      } catch (err) {
+        alert('Gagal: ' + err.message);
+      } finally {
+        btnSaveSosmed.disabled = false;
+        btnSaveSosmed.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Tautan Sosmed';
+      }
+    });
+  }
+
   let resetDataSelected = new Set();
 
   function updateResetDataButtonState() {
@@ -4050,6 +4202,8 @@
 
   // ══════ INISIALISASI DATA AWAL ══════
   loadQrAbsen();
+  loadSettings();
+  loadSosmed();
 </script>
 </body>
 </html>
