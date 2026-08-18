@@ -184,6 +184,42 @@ function isGoogleDriveLink(link) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// SOSMED SEKOLAH: DAFTAR DEFAULT (DIPAKAI JIKA settings.json BELUM PUNYA sosmed)
+// ─────────────────────────────────────────────────────────────────────────
+const DEFAULT_SOSMED = [
+  { id: 'sosmed_instagram', platform: 'Instagram', icon: 'fa-brands fa-instagram', iconBg: 'linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4)', handle: '@smansanam.official', desc: 'Kegiatan & info harian sekolah', url: 'https://instagram.com/smansanam.official' },
+  { id: 'sosmed_tiktok', platform: 'TikTok', icon: 'fa-brands fa-tiktok', iconBg: '#000000', handle: '@smansanam.official', desc: 'Konten kreatif seputar sekolah', url: 'https://tiktok.com/@smansanam.official' },
+  { id: 'sosmed_youtube', platform: 'YouTube', icon: 'fa-brands fa-youtube', iconBg: 'linear-gradient(135deg,#ff0000,#b30000)', handle: 'SMA Negeri Sanam', desc: 'Dokumentasi & liputan acara', url: 'https://youtube.com/@smansanam' },
+  { id: 'sosmed_facebook', platform: 'Facebook', icon: 'fa-brands fa-facebook-f', iconBg: 'linear-gradient(135deg,#1877f2,#0a58c2)', handle: 'SMA Negeri Sanam', desc: 'Pengumuman resmi sekolah', url: 'https://facebook.com/smansanam.official' },
+  { id: 'sosmed_whatsapp', platform: 'WhatsApp', icon: 'fa-brands fa-whatsapp', iconBg: 'linear-gradient(135deg,#25d366,#128c7e)', handle: 'Kontak Tata Usaha', desc: 'Layanan informasi & administrasi', url: 'https://wa.me/6280000000000' },
+  { id: 'sosmed_website', platform: 'Website', icon: 'fa-solid fa-globe', iconBg: 'linear-gradient(135deg,#059669,#065f46)', handle: 'smansanam.sch.id', desc: 'Portal resmi sekolah', url: '#' }
+];
+
+// Membersihkan & membatasi data sosmed yang dikirim admin agar aman disimpan.
+function sanitizeSosmedList(rawList) {
+  if (!Array.isArray(rawList)) return null;
+  const bersih = rawList
+    .slice(0, 20) // batas wajar jumlah kartu sosmed
+    .map((item, idx) => {
+      if (!item || typeof item !== 'object') return null;
+      const platform = String(item.platform || '').trim().slice(0, 40);
+      const url = String(item.url || '').trim().slice(0, 500);
+      if (!platform || !url) return null;
+      return {
+        id: String(item.id || `sosmed_${Date.now()}_${idx}_${crypto.randomBytes(2).toString('hex')}`).slice(0, 60),
+        platform,
+        icon: String(item.icon || 'fa-solid fa-link').trim().slice(0, 60),
+        iconBg: String(item.iconBg || '#059669').trim().slice(0, 120),
+        handle: String(item.handle || '').trim().slice(0, 80),
+        desc: String(item.desc || '').trim().slice(0, 140),
+        url
+      };
+    })
+    .filter(Boolean);
+  return bersih;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // PENYIMPANAN DATA: GITHUB API (PRODUKSI) DENGAN FALLBACK FILESYSTEM LOKAL
 // ─────────────────────────────────────────────────────────────────────────
 const GITHUB_API = 'https://api.github.com';
@@ -1499,11 +1535,15 @@ export default async function handler(req, res) {
         warna: '#059669',
         deskripsi: 'Sistem perpustakaan digital untuk sekolah kami',
         kodeAbsenQR: '',
-        kodeAbsenQRDiperbarui: null
+        kodeAbsenQRDiperbarui: null,
+        sosmed: DEFAULT_SOSMED
       };
       try {
         const data = JSON.parse(await readDataFile('settings.json'));
         settingsData = { ...settingsData, ...data };
+        if (!Array.isArray(settingsData.sosmed) || settingsData.sosmed.length === 0) {
+          settingsData.sosmed = DEFAULT_SOSMED;
+        }
       } catch {}
       return sendJson(res, 200, settingsData);
     }
@@ -1521,14 +1561,16 @@ export default async function handler(req, res) {
         existing = JSON.parse(await readDataFile('settings.json'));
       } catch {}
 
-      const { namaSekolah, namaPerpus, logo, warna, deskripsi } = body;
+      const { namaSekolah, namaPerpus, logo, warna, deskripsi, sosmed } = body;
+      const sosmedBersih = sanitizeSosmedList(sosmed);
       const settingsData = {
         ...existing,
         namaSekolah: namaSekolah || existing.namaSekolah || 'SMA Negeri Smansanam',
         namaPerpus: namaPerpus || existing.namaPerpus || 'Perpus Digital Smansanam',
         logo: logo || existing.logo || '📚',
         warna: warna || existing.warna || '#059669',
-        deskripsi: deskripsi !== undefined ? deskripsi : (existing.deskripsi || 'Sistem perpustakaan digital')
+        deskripsi: deskripsi !== undefined ? deskripsi : (existing.deskripsi || 'Sistem perpustakaan digital'),
+        sosmed: sosmedBersih !== null ? sosmedBersih : (Array.isArray(existing.sosmed) ? existing.sosmed : DEFAULT_SOSMED)
       };
 
       try {
