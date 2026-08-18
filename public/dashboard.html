@@ -1099,6 +1099,202 @@
   @media (max-width: 640px) {
     .kmp-mystats { grid-template-columns: 1fr; }
   }
+
+  /* ══════════ SOSMED SEKOLAH ══════════ */
+  .sosmed-hero {
+    background: linear-gradient(135deg, var(--green-700), var(--green-950));
+    border-radius: var(--radius-lg); padding: 24px 22px; color: var(--white); margin-bottom: 22px;
+    box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+  }
+  .sosmed-hero::after {
+    content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px;
+    background: rgba(255,255,255,0.07); border-radius: 50%;
+  }
+  .sosmed-hero h2 { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+  .sosmed-hero p { font-size: 12.5px; color: var(--green-100); line-height: 1.55; max-width: 560px; position: relative; z-index: 1; }
+
+  .sosmed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .sosmed-card {
+    background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    padding: 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;
+    transition: var(--transition); box-shadow: var(--shadow-sm);
+  }
+  .sosmed-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--green-500); }
+  .sosmed-icon {
+    width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--white);
+  }
+  .sosmed-card .info { min-width: 0; }
+  .sosmed-card .platform { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; }
+  .sosmed-card .handle { font-size: 14px; font-weight: 700; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sosmed-card .desc { font-size: 11.5px; color: var(--gray-500); margin-top: 1px; }
+  .sosmed-card .go-icon { margin-left: auto; color: var(--gray-300); font-size: 13px; flex-shrink: 0; }
+  .sosmed-card:hover .go-icon { color: var(--green-600); }
+
+  .sosmed-note {
+    margin-top: 20px; background: var(--amber-bg); border: 1px solid #fde68a; border-radius: var(--radius-md);
+    padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; font-size: 12px; color: var(--amber); line-height: 1.55;
+  }
+  .sosmed-note i { font-size: 14px; margin-top: 1px; }
+
+  /* ══════════ TENTANG APLIKASI ══════════ */
+  .about-hero {
+    background: linear-gradient(135deg, var(--green-700), var(--green-950));
+    border-radius: var(--radius-lg); padding: 28px 24px; color: var(--white); margin-bottom: 22px;
+    display: flex; align-items: center; gap: 18px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+  }
+  .about-hero::after { content: ''; position: absolute; bottom: -50px; right: -30px; width: 180px; height: 180px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+  .about-hero-icon {
+    width: 68px; height: 68px; border-radius: 18px; background: rgba(255,255,255,0.14); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 30px; position: relative; z-index: 1;
+  }
+  .about-hero-text { position: relative; z-index: 1; }
+  .about-hero-text h2 { font-family: 'Poppins', sans-serif; font-size: 19px; font-weight: 800; margin-bottom: 4px; }
+  .about-hero-text p { font-size: 12.5px; color: var(--green-100); }
+  .about-hero-badge {
+    display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 4px 12px;
+    border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 8px;
+  }
+
+  .about-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 22px; }
+  .about-card {
+    background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    padding: 18px; box-shadow: var(--shadow-sm);
+  }
+  .about-card .about-card-title { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+  .about-card .about-card-title i { color: var(--green-600); }
+  .about-card .about-card-value { font-size: 14.5px; font-weight: 700; color: var(--black); }
+  .about-card .about-card-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 3px; line-height: 1.5; }
+
+  .about-list-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 20px; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
+  .about-list-card h3 { font-family: 'Poppins', sans-serif; font-size: 14.5px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 9px; color: var(--black); }
+  .about-list-card h3 i { color: var(--green-600); }
+  .about-tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .about-tech-tag {
+    background: var(--green-50); color: var(--green-800); font-size: 11.5px; font-weight: 700;
+    padding: 6px 13px; border-radius: 20px; border: 1px solid var(--green-100);
+  }
+
+  .about-contact-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--gray-100); }
+  .about-contact-row:last-child { border-bottom: none; }
+  .about-contact-icon {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--green-50); color: var(--green-700);
+    display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+  }
+  .about-contact-row .label { font-size: 10.5px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .about-contact-row .value { font-size: 13px; font-weight: 700; color: var(--black); }
+  .about-contact-row a.value { color: var(--green-700); text-decoration: none; }
+  .about-contact-row a.value:hover { text-decoration: underline; }
+
+  .about-cta-card {
+    background: linear-gradient(135deg, var(--green-50), var(--white)); border: 1px solid var(--green-100);
+    border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .about-cta-card .txt h4 { font-family: 'Poppins', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--black); margin-bottom: 3px; }
+  .about-cta-card .txt p { font-size: 12px; color: var(--gray-500); }
+  .btn-ik {
+    display: inline-flex; align-items: center; gap: 9px; background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white); border: none; padding: 12px 20px; border-radius: 12px; font-family: inherit; font-weight: 700;
+    font-size: 13px; cursor: pointer; transition: var(--transition); box-shadow: 0 8px 20px -8px rgba(6,78,59,0.4); white-space: nowrap;
+  }
+  .btn-ik:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -8px rgba(6,78,59,0.5); }
+
+  .about-footnote { text-align: center; font-size: 11px; color: var(--gray-300); margin-top: 24px; line-height: 1.7; }
+
+  /* ══════════ TENTANG ILMU KETAK ══════════ */
+  .ik-back-btn {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--gray-200);
+    color: var(--gray-700); font-family: inherit; font-weight: 700; font-size: 12.5px; padding: 9px 16px;
+    border-radius: 10px; cursor: pointer; margin-bottom: 18px; transition: var(--transition);
+  }
+  .ik-back-btn:hover { background: var(--gray-100); color: var(--black); }
+
+  .ik-hero {
+    background: linear-gradient(135deg, var(--green-950) 0%, var(--green-800) 55%, var(--green-600) 130%);
+    border-radius: var(--radius-lg); padding: 40px 30px; color: var(--white); text-align: center; margin-bottom: 26px;
+    box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+  }
+  .ik-hero::before, .ik-hero::after {
+    content: ''; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.06);
+  }
+  .ik-hero::before { width: 220px; height: 220px; top: -90px; left: -70px; }
+  .ik-hero::after { width: 260px; height: 260px; bottom: -110px; right: -80px; }
+  .ik-logo {
+    width: 88px; height: 88px; border-radius: 24px; background: rgba(255,255,255,0.14); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; position: relative; z-index: 1;
+    border: 1px solid rgba(255,255,255,0.2); overflow: hidden;
+  }
+  .ik-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+  .ik-logo span { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 1px; }
+  .ik-hero h1 { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; position: relative; z-index: 1; }
+  .ik-hero .tagline { font-size: 13px; color: var(--green-100); max-width: 480px; margin: 0 auto; line-height: 1.6; position: relative; z-index: 1; }
+  .ik-hero-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+  .ik-hero-tags span {
+    background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); padding: 5px 13px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+  }
+
+  .ik-about-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 26px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
+  .ik-about-card p { font-size: 13px; color: var(--gray-700); line-height: 1.75; margin-bottom: 12px; }
+  .ik-about-card p:last-child { margin-bottom: 0; }
+  .ik-about-card strong { color: var(--green-800); }
+
+  .ik-focus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+  .ik-focus-card {
+    background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 20px;
+    text-align: center; box-shadow: var(--shadow-sm); transition: var(--transition);
+  }
+  .ik-focus-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .ik-focus-icon {
+    width: 52px; height: 52px; border-radius: 15px; background: linear-gradient(135deg, var(--green-500), var(--green-800));
+    color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 21px; margin: 0 auto 12px;
+  }
+  .ik-focus-card h4 { font-family: 'Poppins', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+  .ik-focus-card p { font-size: 11.5px; color: var(--gray-500); line-height: 1.55; }
+
+  .ik-section-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 800; color: var(--black); text-align: center; margin-bottom: 6px; }
+  .ik-section-sub { font-size: 12.5px; color: var(--gray-500); text-align: center; max-width: 480px; margin: 0 auto 26px; line-height: 1.6; }
+
+  .ik-founder-card {
+    display: flex; align-items: stretch; background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; box-shadow: var(--shadow-sm); transition: var(--transition);
+  }
+  .ik-founder-card:hover { box-shadow: var(--shadow-md); }
+  .ik-founder-info { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+  .ik-founder-role { display: inline-flex; align-self: flex-start; background: var(--green-50); color: var(--green-700); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; padding: 4px 11px; border-radius: 20px; margin-bottom: 9px; }
+  .ik-founder-info h4 { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 800; color: var(--black); margin-bottom: 8px; }
+  .ik-founder-info p { font-size: 12.5px; color: var(--gray-500); line-height: 1.65; margin-bottom: 12px; }
+  .ik-founder-socials { display: flex; gap: 8px; }
+  .ik-founder-socials a {
+    width: 32px; height: 32px; border-radius: 9px; background: var(--gray-100); color: var(--gray-500);
+    display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 13px; transition: var(--transition);
+  }
+  .ik-founder-socials a:hover { background: var(--green-600); color: var(--white); }
+  .ik-founder-photo {
+    width: 190px; flex-shrink: 0; background: linear-gradient(135deg, var(--green-100), var(--green-50));
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .ik-founder-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .ik-founder-photo .placeholder-icon { font-size: 46px; color: var(--green-300, #6ee7b7); opacity: 0.7; }
+  .ik-founders-wrap .ik-founder-card:nth-child(even) { flex-direction: row-reverse; }
+
+  .ik-cta { text-align: center; background: linear-gradient(135deg, var(--green-900), var(--green-950)); border-radius: var(--radius-lg); padding: 30px 24px; color: var(--white); margin-top: 10px; }
+  .ik-cta h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .ik-cta p { font-size: 12.5px; color: var(--green-100); margin-bottom: 18px; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .ik-focus-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .kmp-mystats { grid-template-columns: 1fr; }
+    .sosmed-grid { grid-template-columns: 1fr; }
+    .about-hero { flex-direction: column; text-align: center; }
+    .about-cta-card { flex-direction: column; text-align: center; }
+    .ik-founders-wrap .ik-founder-card, .ik-founders-wrap .ik-founder-card:nth-child(even) { flex-direction: column; }
+    .ik-founder-photo { width: 100%; height: 180px; }
+  }
 </style>
 </head>
 <body>
@@ -1125,9 +1321,13 @@
     <button class="nav-item" data-section="baca"><i class="fa-solid fa-book-open"></i> Baca Buku Online</button>
     <button class="nav-item" data-section="peminjaman"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku</button>
     <button class="nav-item" data-section="kompetisi"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</button>
+    <button class="nav-item" data-section="sosmed"><i class="fa-solid fa-hashtag"></i> Sosmed Sekolah</button>
 
     <div class="nav-label">Akun</div>
     <button class="nav-item" data-section="profil"><i class="fa-solid fa-user"></i> Profil Saya</button>
+
+    <div class="nav-label">Lainnya</div>
+    <button class="nav-item" data-section="tentang"><i class="fa-solid fa-circle-info"></i> Tentang Aplikasi</button>
   </nav>
 
   <div class="sidebar-footer">
@@ -1381,6 +1581,81 @@
       </div>
     </section>
 
+    <!-- ══════ SOSMED SEKOLAH ══════ -->
+    <section class="section-view" id="section-sosmed">
+      <div class="sosmed-hero">
+        <h2><i class="fa-solid fa-hashtag"></i> Sosmed Sekolah</h2>
+        <p>Ikuti kanal resmi sekolah untuk mendapatkan informasi terbaru seputar kegiatan sekolah, prestasi siswa, pengumuman, hingga dokumentasi kegiatan perpustakaan.</p>
+      </div>
+
+      <div class="sosmed-grid">
+        <a class="sosmed-card" href="https://instagram.com/smansanam.official" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);"><i class="fa-brands fa-instagram"></i></div>
+          <div class="info">
+            <div class="platform">Instagram</div>
+            <div class="handle">@smansanam.official</div>
+            <div class="desc">Kegiatan &amp; info harian sekolah</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+
+        <a class="sosmed-card" href="https://tiktok.com/@smansanam.official" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:#000000;"><i class="fa-brands fa-tiktok"></i></div>
+          <div class="info">
+            <div class="platform">TikTok</div>
+            <div class="handle">@smansanam.official</div>
+            <div class="desc">Konten kreatif seputar sekolah</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+
+        <a class="sosmed-card" href="https://youtube.com/@smansanam" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:linear-gradient(135deg,#ff0000,#b30000);"><i class="fa-brands fa-youtube"></i></div>
+          <div class="info">
+            <div class="platform">YouTube</div>
+            <div class="handle">SMA Negeri Sanam</div>
+            <div class="desc">Dokumentasi &amp; liputan acara</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+
+        <a class="sosmed-card" href="https://facebook.com/smansanam.official" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:linear-gradient(135deg,#1877f2,#0a58c2);"><i class="fa-brands fa-facebook-f"></i></div>
+          <div class="info">
+            <div class="platform">Facebook</div>
+            <div class="handle">SMA Negeri Sanam</div>
+            <div class="desc">Pengumuman resmi sekolah</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+
+        <a class="sosmed-card" href="https://wa.me/6280000000000" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:linear-gradient(135deg,#25d366,#128c7e);"><i class="fa-brands fa-whatsapp"></i></div>
+          <div class="info">
+            <div class="platform">WhatsApp</div>
+            <div class="handle">Kontak Tata Usaha</div>
+            <div class="desc">Layanan informasi &amp; administrasi</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+
+        <a class="sosmed-card" href="#" target="_blank" rel="noopener">
+          <div class="sosmed-icon" style="background:linear-gradient(135deg,#059669,#065f46);"><i class="fa-solid fa-globe"></i></div>
+          <div class="info">
+            <div class="platform">Website</div>
+            <div class="handle">smansanam.sch.id</div>
+            <div class="desc">Portal resmi sekolah</div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square go-icon"></i>
+        </a>
+      </div>
+
+      <div class="sosmed-note">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Tautan &amp; username di atas adalah contoh tampilan. Admin sekolah dapat memperbarui username, tautan, dan platform sosial media resmi melalui pengaturan pada panel admin agar selalu sesuai dengan akun aktif sekolah.</span>
+      </div>
+    </section>
+
     <!-- ══════ PROFIL SAYA ══════ -->
     <section class="section-view" id="section-profil">
       <div class="section-title"><i class="fa-solid fa-user"></i> Profil Saya</div>
@@ -1442,6 +1717,203 @@
             <span class="value" id="profileBukuFavorit">-</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ══════ TENTANG APLIKASI ══════ -->
+    <section class="section-view" id="section-tentang">
+      <div class="about-hero">
+        <div class="about-hero-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+        <div class="about-hero-text">
+          <h2>Perpus Digital Smansanam</h2>
+          <p>Sistem manajemen perpustakaan digital untuk mendukung budaya literasi di lingkungan sekolah.</p>
+          <div class="about-hero-badge"><i class="fa-solid fa-code-branch"></i> Versi 2.0.0 — Kompetisi Duta Literasi</div>
+        </div>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-card-title"><i class="fa-solid fa-tag"></i> Versi Aplikasi</div>
+          <div class="about-card-value">v2.0.0</div>
+          <div class="about-card-sub">Pembaruan terakhir menghadirkan fitur gamifikasi Kompetisi Duta Literasi dengan tiga kategori papan peringkat.</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-title"><i class="fa-solid fa-people-group"></i> Dikembangkan Oleh</div>
+          <div class="about-card-value">Komunitas ILMU KETAK</div>
+          <div class="about-card-sub">Komunitas mahasiswa yang mengabdi melalui pemanfaatan teknologi digital untuk masyarakat.</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-title"><i class="fa-solid fa-shield-halved"></i> Keamanan Sistem</div>
+          <div class="about-card-value">Autentikasi JWT</div>
+          <div class="about-card-sub">Sesi pengguna terenkripsi dengan token, seluruh data tersimpan aman melalui akses privat (PAT).</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-title"><i class="fa-solid fa-server"></i> Infrastruktur</div>
+          <div class="about-card-value">Vercel Serverless</div>
+          <div class="about-card-sub">Dijalankan dengan arsitektur serverless modern untuk performa cepat &amp; andal.</div>
+        </div>
+      </div>
+
+      <div class="about-list-card">
+        <h3><i class="fa-solid fa-layer-group"></i> Teknologi yang Digunakan</h3>
+        <div class="about-tech-tags">
+          <span class="about-tech-tag">Node.js</span>
+          <span class="about-tech-tag">Express-style API</span>
+          <span class="about-tech-tag">GitHub Contents API</span>
+          <span class="about-tech-tag">Vercel Serverless Functions</span>
+          <span class="about-tech-tag">JWT Authentication</span>
+          <span class="about-tech-tag">HTML5 &amp; CSS3</span>
+          <span class="about-tech-tag">Vanilla JavaScript</span>
+        </div>
+      </div>
+
+      <div class="about-list-card">
+        <h3><i class="fa-solid fa-address-card"></i> Kontak Pengembangan &amp; Dukungan Teknis</h3>
+        <div class="about-contact-row">
+          <div class="about-contact-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div>
+            <div class="label">Email</div>
+            <a class="value" href="mailto:ilmuketak@gmail.com">ilmuketak@gmail.com</a>
+          </div>
+        </div>
+        <div class="about-contact-row">
+          <div class="about-contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+          <div>
+            <div class="label">WhatsApp</div>
+            <a class="value" href="https://wa.me/6280000000000" target="_blank" rel="noopener">+62 800-0000-000</a>
+          </div>
+        </div>
+        <div class="about-contact-row">
+          <div class="about-contact-icon"><i class="fa-brands fa-instagram"></i></div>
+          <div>
+            <div class="label">Instagram</div>
+            <a class="value" href="https://instagram.com/ilmuketak" target="_blank" rel="noopener">@ilmuketak</a>
+          </div>
+        </div>
+        <div class="about-contact-row">
+          <div class="about-contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div>
+            <div class="label">Basis Komunitas</div>
+            <div class="value">Bangka Belitung, Indonesia</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-cta-card">
+        <div class="txt">
+          <h4>Ingin tahu lebih lanjut tentang kami?</h4>
+          <p>Kenali lebih dekat komunitas di balik pengembangan aplikasi ini beserta para pencetusnya.</p>
+        </div>
+        <button class="btn-ik" id="btnLihatIlmuKetak"><i class="fa-solid fa-arrow-right"></i> Lihat Profil Pembuat</button>
+      </div>
+
+      <div class="about-footnote">© 2026 ILMU KETAK. Perpus Digital Smansanam — Dibangun dengan dedikasi untuk kemajuan literasi sekolah.</div>
+    </section>
+
+    <!-- ══════ TENTANG ILMU KETAK ══════ -->
+    <section class="section-view" id="section-ilmuketak">
+      <button class="ik-back-btn" id="btnBackFromIlmuKetak"><i class="fa-solid fa-arrow-left"></i> Kembali ke Tentang Aplikasi</button>
+
+      <div class="ik-hero">
+        <div class="ik-logo">
+          <!-- GANTI dengan file logo resmi ILMU KETAK, misal: <img src="assets/logo-ilmuketak.png" alt="Logo ILMU KETAK"> -->
+          <span>IK</span>
+        </div>
+        <h1>ILMU KETAK</h1>
+        <p class="tagline">Komunitas mahasiswa yang berkontribusi dan mengabdi kepada masyarakat melalui pemanfaatan teknologi digital.</p>
+        <div class="ik-hero-tags">
+          <span><i class="fa-solid fa-graduation-cap"></i> Komunitas Mahasiswa</span>
+          <span><i class="fa-solid fa-hand-holding-heart"></i> Pengabdian Masyarakat</span>
+          <span><i class="fa-solid fa-laptop-code"></i> Teknologi Digital</span>
+        </div>
+      </div>
+
+      <div class="ik-about-card">
+        <p><strong>ILMU KETAK</strong> adalah komunitas mahasiswa yang lahir dari semangat untuk berkontribusi dan mengabdi kepada masyarakat melalui pemanfaatan teknologi digital. Kami percaya bahwa keterampilan teknologi yang dimiliki mahasiswa dapat memberikan dampak nyata apabila diarahkan untuk membantu menyelesaikan kebutuhan nyata di lapangan.</p>
+        <p>Salah satu wujud nyata kontribusi kami adalah pengembangan <strong>Perpus Digital Smansanam</strong>, sebuah sistem perpustakaan digital yang dirancang, dibangun, dan kemudian dihibahkan secara cuma-cuma kepada instansi pendidikan untuk mendukung budaya literasi di lingkungan sekolah.</p>
+        <p>Selain proyek di bidang pendidikan, ILMU KETAK juga aktif mengembangkan solusi digital untuk <strong>UMKM lokal</strong> dan <strong>destinasi wisata</strong>, dengan tujuan membantu para pelaku usaha dan pengelola wisata daerah untuk semakin dikenal dan berkembang di era digital.</p>
+      </div>
+
+      <div class="ik-section-title">Fokus Kontribusi Kami</div>
+      <div class="ik-section-sub">Tiga bidang utama yang menjadi perhatian ILMU KETAK dalam setiap proyek pengabdian.</div>
+      <div class="ik-focus-grid">
+        <div class="ik-focus-card">
+          <div class="ik-focus-icon"><i class="fa-solid fa-school"></i></div>
+          <h4>Instansi Pendidikan</h4>
+          <p>Membangun sistem digital untuk sekolah, seperti perpustakaan digital, portal ujian, dan sistem pembelajaran, lalu dihibahkan secara cuma-cuma.</p>
+        </div>
+        <div class="ik-focus-card">
+          <div class="ik-focus-icon"><i class="fa-solid fa-store"></i></div>
+          <h4>UMKM Lokal</h4>
+          <p>Membantu pelaku UMKM memiliki katalog produk, sistem POS, dan kehadiran digital agar usaha semakin dikenal luas.</p>
+        </div>
+        <div class="ik-focus-card">
+          <div class="ik-focus-icon"><i class="fa-solid fa-mountain-sun"></i></div>
+          <h4>Destinasi Wisata</h4>
+          <p>Mengembangkan platform promosi &amp; informasi destinasi wisata lokal untuk mendukung pariwisata daerah.</p>
+        </div>
+      </div>
+
+      <div class="ik-section-title">Pencetus ILMU KETAK</div>
+      <div class="ik-section-sub">Mengenal lebih dekat sosok-sosok di balik lahirnya komunitas ILMU KETAK.</div>
+
+      <div class="ik-founders-wrap">
+      <div class="ik-founder-card">
+        <div class="ik-founder-info">
+          <span class="ik-founder-role">Pencetus &amp; Pengembang</span>
+          <h4>Nama Pencetus 1</h4>
+          <p>Deskripsi singkat peran dan kontribusi dalam komunitas ILMU KETAK dapat dilengkapi di sini, misalnya fokus keahlian pada pengembangan sistem backend &amp; arsitektur aplikasi.</p>
+          <div class="ik-founder-socials">
+            <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+        <div class="ik-founder-photo">
+          <!-- GANTI dengan foto asli, misal: <img src="assets/founder-1.jpg" alt="Nama Pencetus 1"> -->
+          <i class="fa-solid fa-user placeholder-icon"></i>
+        </div>
+      </div>
+
+      <div class="ik-founder-card">
+        <div class="ik-founder-info">
+          <span class="ik-founder-role">Pencetus &amp; Pengembang</span>
+          <h4>Nama Pencetus 2</h4>
+          <p>Deskripsi singkat peran dan kontribusi dalam komunitas ILMU KETAK dapat dilengkapi di sini, misalnya fokus keahlian pada desain UI/UX &amp; manajemen proyek.</p>
+          <div class="ik-founder-socials">
+            <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+        <div class="ik-founder-photo">
+          <!-- GANTI dengan foto asli, misal: <img src="assets/founder-2.jpg" alt="Nama Pencetus 2"> -->
+          <i class="fa-solid fa-user placeholder-icon"></i>
+        </div>
+      </div>
+
+      <div class="ik-founder-card">
+        <div class="ik-founder-info">
+          <span class="ik-founder-role">Pencetus &amp; Pengembang</span>
+          <h4>Nama Pencetus 3</h4>
+          <p>Deskripsi singkat peran dan kontribusi dalam komunitas ILMU KETAK dapat dilengkapi di sini, misalnya fokus keahlian pada relasi masyarakat &amp; kemitraan proyek.</p>
+          <div class="ik-founder-socials">
+            <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+        <div class="ik-founder-photo">
+          <!-- GANTI dengan foto asli, misal: <img src="assets/founder-3.jpg" alt="Nama Pencetus 3"> -->
+          <i class="fa-solid fa-user placeholder-icon"></i>
+        </div>
+      </div>
+      </div>
+
+      <div class="ik-cta">
+        <h3><i class="fa-solid fa-handshake"></i> Ingin Berkolaborasi dengan ILMU KETAK?</h3>
+        <p>Kami terbuka untuk kolaborasi proyek digital bersama instansi pendidikan, UMKM, maupun pengelola destinasi wisata.</p>
+        <a class="btn-ik" href="mailto:ilmuketak@gmail.com"><i class="fa-solid fa-envelope"></i> Hubungi Kami</a>
       </div>
     </section>
 
@@ -1995,25 +2467,37 @@
     baca: { title: 'Baca Buku Online', sub: 'Koleksi buku &amp; e-modul digital sekolah' },
     peminjaman: { title: 'Peminjaman Buku', sub: 'Ajukan &amp; konfirmasi peminjaman buku fisik' },
     kompetisi: { title: 'Kompetisi Duta Literasi', sub: 'Papan peringkat Duta Literasi, Duta Kunjungan &amp; Duta Buku' },
-    profil: { title: 'Profil Saya', sub: 'Informasi akun Anda' }
+    sosmed: { title: 'Sosmed Sekolah', sub: 'Kanal resmi media sosial sekolah' },
+    profil: { title: 'Profil Saya', sub: 'Informasi akun Anda' },
+    tentang: { title: 'Tentang Aplikasi', sub: 'Informasi versi, pengembang &amp; kontak dukungan' },
+    ilmuketak: { title: 'Tentang ILMU KETAK', sub: 'Komunitas di balik pengembangan aplikasi ini' }
   };
 
+  function goToSection(sec) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+    const navBtn = document.querySelector('.nav-item[data-section="' + sec + '"]');
+    if (navBtn) navBtn.classList.add('active');
+    document.getElementById('section-' + sec).classList.add('active');
+    document.getElementById('pageTitle').textContent = pageMeta[sec].title;
+    document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
+    if (sec === 'baca') loadBooks();
+    if (sec === 'peminjaman') loadPeminjamanSaya();
+    if (sec === 'kompetisi') loadKompetisi();
+    if (sec === 'profil') loadReadingStatsUser();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    closeMobileSidebar();
+  }
+
   document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
-      btn.classList.add('active');
-      const sec = btn.dataset.section;
-      document.getElementById('section-' + sec).classList.add('active');
-      document.getElementById('pageTitle').textContent = pageMeta[sec].title;
-      document.getElementById('pageSubtitle').innerHTML = pageMeta[sec].sub;
-      if (sec === 'baca') loadBooks();
-      if (sec === 'peminjaman') loadPeminjamanSaya();
-      if (sec === 'kompetisi') loadKompetisi();
-      if (sec === 'profil') loadReadingStatsUser();
-      closeMobileSidebar();
-    });
+    btn.addEventListener('click', () => goToSection(btn.dataset.section));
   });
+
+  const btnLihatIlmuKetak = document.getElementById('btnLihatIlmuKetak');
+  if (btnLihatIlmuKetak) btnLihatIlmuKetak.addEventListener('click', () => goToSection('ilmuketak'));
+
+  const btnBackFromIlmuKetak = document.getElementById('btnBackFromIlmuKetak');
+  if (btnBackFromIlmuKetak) btnBackFromIlmuKetak.addEventListener('click', () => goToSection('tentang'));
 
   // ══════ RINGKASAN TRACKING PEMBACA (PROFIL SAYA) ══════
   function formatDurasiUser(detik) {
