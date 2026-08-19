@@ -323,6 +323,84 @@
   @media (max-width: 1000px) { .info-card-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 640px) { .info-card-grid { grid-template-columns: 1fr; } .info-card-main { flex-direction: column; align-items: flex-start; } }
 
+  .info-card-main { position: relative; }
+  .info-card-chevron {
+    display: none;
+    position: absolute; top: 0; right: 0;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    color: var(--gray-500);
+    align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+  .info-card-chevron i { transition: var(--transition); }
+  .info-card.info-expanded .info-card-chevron i { transform: rotate(180deg); }
+
+  /* ══════════ MENU CEPAT (APP-STYLE QUICK ACCESS GRID) ══════════ */
+  .quick-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .quick-item {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 18px;
+    padding: 18px 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .quick-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--green-100); }
+  .quick-item:active { transform: scale(0.94); box-shadow: var(--shadow-sm); }
+
+  .quick-item-icon {
+    width: 50px; height: 50px;
+    border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px -6px rgba(6, 78, 59, 0.35);
+  }
+
+  .quick-item-label { font-size: 12px; font-weight: 700; color: var(--black); text-align: center; line-height: 1.25; }
+
+  .qi-absensi { background: linear-gradient(135deg, #10b981, #047857); }
+  .qi-baca { background: linear-gradient(135deg, #0ea5e9, #075985); }
+  .qi-peminjaman { background: linear-gradient(135deg, #f59e0b, #b45309); }
+  .qi-kompetisi { background: linear-gradient(135deg, #eab308, #a16207); }
+  .qi-sosmed { background: linear-gradient(135deg, #ec4899, #a21caf); }
+  .qi-profil { background: linear-gradient(135deg, #64748b, #334155); }
+  .qi-tentang { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+  @media (max-width: 640px) {
+    .quick-menu-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+    .quick-item { padding: 14px 6px 11px; border-radius: 16px; gap: 7px; }
+    .quick-item-icon { width: 42px; height: 42px; font-size: 16px; border-radius: 12px; }
+    .quick-item-label { font-size: 10.5px; }
+
+    /* Ringkas kartu info perpustakaan agar beranda tidak terlalu panjang di Android */
+    .info-card { padding: 18px 18px 6px; }
+    .info-card-chevron { display: flex; }
+    .info-card-grid { display: none; padding-top: 16px; }
+    .info-card.info-expanded .info-card-grid { display: grid; padding-bottom: 16px; }
+  }
+
   .stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1361,36 +1439,39 @@
         <p>Jelajahi koleksi buku digital, catat kehadiran Anda, dan pantau aktivitas literasi langsung dari dashboard ini.</p>
       </div>
 
-      <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Informasi Perpustakaan</div>
-      <div class="info-card" id="infoCard">
-        <div class="info-card-main">
-          <div class="info-card-icon" id="infoLogo">📚</div>
-          <div class="info-card-text">
-            <h3 id="infoNamaPerpus">Memuat informasi...</h3>
-            <p id="infoDeskripsi">&nbsp;</p>
-            <span class="info-card-school" id="infoNamaSekolah"></span>
-          </div>
-        </div>
-        <div class="info-card-grid">
-          <div class="info-mini-item">
-            <i class="fa-solid fa-clock"></i>
-            <div><strong>Jam Layanan</strong><span>Senin–Jumat, 07.00–15.00 WIB</span></div>
-          </div>
-          <div class="info-mini-item">
-            <i class="fa-solid fa-fingerprint"></i>
-            <div><strong>Absensi Wajib</strong><span>Absen setiap kali berkunjung ke perpustakaan</span></div>
-          </div>
-          <div class="info-mini-item">
-            <i class="fa-solid fa-book-open-reader"></i>
-            <div><strong>Baca Digital</strong><span>Seluruh koleksi tersedia untuk dibaca online</span></div>
-          </div>
-          <div class="info-mini-item">
-            <i class="fa-solid fa-hand-holding-heart"></i>
-            <div><strong>Tata Tertib</strong><span>Jaga ketenangan &amp; kebersihan ruang perpustakaan</span></div>
-          </div>
-        </div>
+      <div class="section-title"><i class="fa-solid fa-grip"></i> Menu Cepat</div>
+      <div class="quick-menu-grid" id="quickMenuGrid">
+        <button class="quick-item" data-section="absensi">
+          <span class="quick-item-icon qi-absensi"><i class="fa-solid fa-fingerprint"></i></span>
+          <span class="quick-item-label">Absensi</span>
+        </button>
+        <button class="quick-item" data-section="baca">
+          <span class="quick-item-icon qi-baca"><i class="fa-solid fa-book-open"></i></span>
+          <span class="quick-item-label">Baca Buku</span>
+        </button>
+        <button class="quick-item" data-section="peminjaman" id="quickPeminjaman">
+          <span class="quick-item-icon qi-peminjaman"><i class="fa-solid fa-hand-holding-hand"></i></span>
+          <span class="quick-item-label">Peminjaman</span>
+        </button>
+        <button class="quick-item" data-section="kompetisi" id="quickKompetisi">
+          <span class="quick-item-icon qi-kompetisi"><i class="fa-solid fa-trophy"></i></span>
+          <span class="quick-item-label">Kompetisi</span>
+        </button>
+        <button class="quick-item" data-section="sosmed">
+          <span class="quick-item-icon qi-sosmed"><i class="fa-solid fa-hashtag"></i></span>
+          <span class="quick-item-label">Sosmed</span>
+        </button>
+        <button class="quick-item" data-section="profil">
+          <span class="quick-item-icon qi-profil"><i class="fa-solid fa-user"></i></span>
+          <span class="quick-item-label">Profil Saya</span>
+        </button>
+        <button class="quick-item" data-section="tentang">
+          <span class="quick-item-icon qi-tentang"><i class="fa-solid fa-circle-info"></i></span>
+          <span class="quick-item-label">Tentang</span>
+        </button>
       </div>
 
+      <div class="section-title"><i class="fa-solid fa-chart-simple"></i> Ringkasan Aktivitas</div>
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-icon" style="background:linear-gradient(135deg,#059669,#065f46);"><i class="fa-solid fa-book"></i></div>
@@ -1411,6 +1492,37 @@
           <div class="stat-icon" style="background:linear-gradient(135deg,#065f46,#052e21);"><i class="fa-solid fa-list-check"></i></div>
           <div class="stat-value" id="statAlasanFavorit">-</div>
           <div class="stat-label">Aktivitas Favorit</div>
+        </div>
+      </div>
+
+      <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Informasi Perpustakaan</div>
+      <div class="info-card" id="infoCard">
+        <div class="info-card-main" onclick="document.getElementById('infoCard').classList.toggle('info-expanded')">
+          <div class="info-card-icon" id="infoLogo">📚</div>
+          <div class="info-card-text">
+            <h3 id="infoNamaPerpus">Memuat informasi...</h3>
+            <p id="infoDeskripsi">&nbsp;</p>
+            <span class="info-card-school" id="infoNamaSekolah"></span>
+          </div>
+          <button type="button" class="info-card-chevron" aria-label="Lihat detail layanan"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+        <div class="info-card-grid">
+          <div class="info-mini-item">
+            <i class="fa-solid fa-clock"></i>
+            <div><strong>Jam Layanan</strong><span>Senin–Jumat, 07.00–15.00 WIB</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-fingerprint"></i>
+            <div><strong>Absensi Wajib</strong><span>Absen setiap kali berkunjung ke perpustakaan</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <div><strong>Baca Digital</strong><span>Seluruh koleksi tersedia untuk dibaca online</span></div>
+          </div>
+          <div class="info-mini-item">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <div><strong>Tata Tertib</strong><span>Jaga ketenangan &amp; kebersihan ruang perpustakaan</span></div>
+          </div>
         </div>
       </div>
     </section>
@@ -2196,6 +2308,11 @@
     if (navKompetisi) navKompetisi.style.display = 'none';
     const navPeminjaman = document.querySelector('.nav-item[data-section="peminjaman"]');
     if (navPeminjaman) navPeminjaman.style.display = 'none';
+    // Sembunyikan juga tile menu cepat yang sama di beranda
+    const quickKompetisi = document.getElementById('quickKompetisi');
+    if (quickKompetisi) quickKompetisi.style.display = 'none';
+    const quickPeminjaman = document.getElementById('quickPeminjaman');
+    if (quickPeminjaman) quickPeminjaman.style.display = 'none';
   } else {
     // ── UBAH / HAPUS FOTO PROFIL ──
     const avatarFileInput = document.getElementById('avatarFileInput');
@@ -2456,6 +2573,11 @@
   }
 
   document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => goToSection(btn.dataset.section));
+  });
+
+  // ══════ MENU CEPAT (GRID BERANDA) ══════
+  document.querySelectorAll('.quick-item[data-section]').forEach(btn => {
     btn.addEventListener('click', () => goToSection(btn.dataset.section));
   });
 
