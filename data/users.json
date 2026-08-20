@@ -205,6 +205,19 @@
       "hash": "cd42aee2cef8f6babc2886fab6738d88b6e9e2165d65ff9de4e6d33518728d319b4fd779b534603c851f2452f7bcccad8f44d466f002966baa0b9a6ac3fa4cf1",
       "createdAt": "2026-08-20T02:48:49.344Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787194373608_4d9f6b",
+      "nama": "Suci Rahmaway",
+      "status": "siswa",
+      "kelas": "11.3",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407994401",
+      "salt": "6785eeb4960898413a6e5acc10a71ee7",
+      "hash": "ddc4629c6a8f7b1011f3e95fd4cea36a90cbb43c4e0861468ddc83a436015d0af63698ad70b42e1e0e1a5bd0527d17b5dd532ffea2181b6404107115b00cf1eb",
+      "createdAt": "2026-08-20T02:52:53.609Z",
+      "daftarMandiri": true
     }
   ]
 }
