@@ -77,13 +77,13 @@
       "dicatatPada": "2026-08-20T02:48:26.593Z"
     },
     {
-      "id": "pjm_1787194110041_d1cdfa",
-      "userId": "usr_1787193534355_6d6cd7",
-      "nama": "SULISTARI",
+      "id": "pjm_1787194109393_0147ac",
+      "userId": "usr_1787193507538_ea72e5",
+      "nama": "Ravzo Arlando",
       "status": "siswa",
-      "kelas": "12.2",
+      "kelas": "12.6",
       "jabatan": null,
-      "judulBuku": "Jalan pintas",
+      "judulBuku": "Banyu Biru",
       "kategoriBuku": "Novel",
       "jenisBuku": "Non-Fiksi",
       "tanggalPinjam": "2026-08-20",
@@ -92,8 +92,27 @@
       "statusPinjaman": "dipinjam",
       "tanggalDikembalikan": null,
       "dikembalikanPada": null,
-      "catatan": "Dipinjam untuk membaca",
-      "dicatatPada": "2026-08-20T02:48:30.041Z"
+      "catatan": "Dipinjam untuk membaca di rumah",
+      "dicatatPada": "2026-08-20T02:48:29.394Z"
+    },
+    {
+      "id": "pjm_1787194110627_292d06",
+      "userId": "usr_1787193484352_76e7b3",
+      "nama": "PASHA ROMADON",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "judulBuku": "Coco",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Tugas",
+      "dicatatPada": "2026-08-20T02:48:30.627Z"
     }
   ]
 }
