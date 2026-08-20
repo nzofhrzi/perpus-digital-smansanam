@@ -220,9 +220,10 @@
       "bookId": "book_1786930193047_ef40a9",
       "judulBuku": "Tentang Kamu",
       "mulai": "2026-08-20T02:43:47.892Z",
-      "selesai": null,
-      "durasiDetik": 0,
-      "tanggal": "2026-08-20"
+      "selesai": "2026-08-20T03:15:54.104Z",
+      "durasiDetik": 1926,
+      "tanggal": "2026-08-20",
+      "ditutupOtomatis": true
     },
     {
       "id": "read_1787193830581_3bfad9",
@@ -589,6 +590,20 @@
       "mulai": "2026-08-20T03:15:48.903Z",
       "selesai": "2026-08-20T03:15:51.014Z",
       "durasiDetik": 2,
+      "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787195754104_c658ac",
+      "userId": "usr_1787193455324_222392",
+      "nama": "NADIA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "bookId": "book_1786930193047_ef40a9",
+      "judulBuku": "Tentang Kamu",
+      "mulai": "2026-08-20T03:15:54.104Z",
+      "selesai": null,
+      "durasiDetik": 0,
       "tanggal": "2026-08-20"
     }
   ]
