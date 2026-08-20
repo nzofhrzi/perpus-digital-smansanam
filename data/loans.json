@@ -1,3 +1,23 @@
 {
-  "loans": []
+  "loans": [
+    {
+      "id": "pjm_1787192756162_36be4c",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "judulBuku": "Investasi Saham",
+      "kategoriBuku": "Referensi",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 2,
+      "tanggalRencanaKembali": "2026-08-22",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "tugas",
+      "dicatatPada": "2026-08-20T02:25:56.163Z"
+    }
+  ]
 }
