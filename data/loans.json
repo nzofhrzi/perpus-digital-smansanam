@@ -75,6 +75,25 @@
       "dikembalikanPada": null,
       "catatan": "tugas",
       "dicatatPada": "2026-08-20T02:48:26.593Z"
+    },
+    {
+      "id": "pjm_1787194109393_0147ac",
+      "userId": "usr_1787193507538_ea72e5",
+      "nama": "Ravzo Arlando",
+      "status": "siswa",
+      "kelas": "12.6",
+      "jabatan": null,
+      "judulBuku": "Banyu Biru",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Dipinjam untuk membaca di rumah",
+      "dicatatPada": "2026-08-20T02:48:29.394Z"
     }
   ]
 }
