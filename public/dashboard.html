@@ -2330,7 +2330,7 @@
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
-    drawBarcode(ctx, currentUser.id, 8, 4, W - 16, H - 8, '#0f172a');
+    drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, 8, 4, W - 16, H - 8, '#0f172a');
   }
 
   // Menampilkan foto profil (jika ada) atau inisial nama sebagai fallback,
@@ -2370,7 +2370,7 @@
     document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
   }
 
-  document.getElementById('profileBarcodeCode').textContent = currentUser.id;
+  document.getElementById('profileBarcodeCode').textContent = currentUser.kodeBarcode || currentUser.id;
   renderProfileBarcode();
 
   // ══════ KARTU INFORMASI PERPUSTAKAAN (BERANDA) + SOSMED SEKOLAH ══════
@@ -2624,12 +2624,12 @@
       ctx.fillText('KODE BARCODE ANGGOTA', bcX + bcW / 2, bcY - 10);
       ctx.textAlign = 'left';
 
-      drawBarcode(ctx, currentUser.id, bcX, bcY, bcW, bcH, '#052e21');
+      drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, bcX, bcY, bcW, bcH, '#052e21');
 
       ctx.fillStyle = '#0f172a';
       ctx.font = '700 11px "Courier New", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(currentUser.id, bcX + bcW / 2, bcY + bcH + 20);
+      ctx.fillText(currentUser.kodeBarcode || currentUser.id, bcX + bcW / 2, bcY + bcH + 20);
       ctx.textAlign = 'left';
 
       ctx.fillStyle = '#065f46';
