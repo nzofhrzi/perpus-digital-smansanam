@@ -130,6 +130,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:41:58.919Z"
+    },
+    {
+      "id": "abs_1787194056496_a27b3b",
+      "userId": "usr_1787194021056_a1e7e1",
+      "nama": "DIO PRATAMA",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Operator Dapodik",
+      "alasan": "Membaca Buku",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:47:36.496Z"
     }
   ]
 }
