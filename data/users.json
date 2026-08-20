@@ -192,6 +192,19 @@
       "hash": "75e7c8fd4082f4d3ff11b8b520a275743a7d20606350debaaaf7fe890388245ad9461f8728cbe8ebee419fedb469167e1da095c2ad0ae0fcdabbaf16bdd877ba",
       "createdAt": "2026-08-20T02:47:01.056Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787194129344_ba9ea5",
+      "nama": "Nunung hasanah",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Pustakawati",
+      "foto": null,
+      "kodeBarcode": "2407995141",
+      "salt": "88e5c42558764aa4c438cfd55d44b3d0",
+      "hash": "cd42aee2cef8f6babc2886fab6738d88b6e9e2165d65ff9de4e6d33518728d319b4fd779b534603c851f2452f7bcccad8f44d466f002966baa0b9a6ac3fa4cf1",
+      "createdAt": "2026-08-20T02:48:49.344Z",
+      "daftarMandiri": true
     }
   ]
 }
