@@ -777,6 +777,20 @@
       "selesai": "2026-08-20T03:18:43.044Z",
       "durasiDetik": 8,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787195972695_8430dd",
+      "userId": "usr_1787193513131_c8d22b",
+      "nama": "Syakira Nurul Aini",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-20T03:19:32.694Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
