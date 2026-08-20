@@ -791,6 +791,20 @@
       "selesai": "2026-08-20T03:20:12.400Z",
       "durasiDetik": 39,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787196030975_2e811c",
+      "userId": "usr_1787193513131_c8d22b",
+      "nama": "Syakira Nurul Aini",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786930140047_f362e1",
+      "judulBuku": "Secangkir Kopi dan pencakar langit",
+      "mulai": "2026-08-20T03:20:30.975Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
