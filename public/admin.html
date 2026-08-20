@@ -658,6 +658,18 @@
     .att-table tr:has(.att-empty) { padding: 24px 16px; text-align: center; }
     .att-table td.att-empty { display: block !important; text-align: center !important; border: none !important; padding: 0 !important; }
     .att-table td.att-empty::before { display: none !important; content: "" !important; }
+
+    /* Override label & posisi khusus tabel Kelola Pengguna (kolom berbeda dari tabel Absensi) */
+    .att-table.tbl-pengguna td:nth-child(3)::before { content: "Kelas / Jabatan"; }
+    .att-table.tbl-pengguna td:nth-child(4)::before { content: "ID Pengguna"; }
+    .att-table.tbl-pengguna td:nth-child(5)::before { content: "Kode Barcode"; }
+    .att-table.tbl-pengguna td:nth-child(6) { position: absolute; top: 14px; right: 14px; padding: 0; border: none; }
+
+    /* Override label & posisi khusus tabel Kelola Absensi (kolom Metode baru menggeser Alasan & Aksi) */
+    .att-table.tbl-absensi td:nth-child(6)::before { content: "Metode"; }
+    .att-table.tbl-absensi td:nth-child(7) { position: static; padding: 6px 0; border-bottom: 1px dashed var(--gray-100); }
+    .att-table.tbl-absensi td:nth-child(7)::before { content: "Alasan"; }
+    .att-table.tbl-absensi td:nth-child(8) { position: absolute; top: 14px; right: 14px; padding: 0; border: none; }
   }
 
   .placeholder-card {
@@ -924,18 +936,19 @@
       <button id="btnOpenUserModal" class="btn-primary" style="margin-bottom:20px;"><i class="fa-solid fa-plus"></i> Tambah Pengguna Baru</button>
       
       <div class="att-table-wrap">
-        <table class="att-table">
+        <table class="att-table tbl-pengguna">
           <thead>
             <tr>
               <th>Nama</th>
               <th>Status</th>
               <th>Kelas / Jabatan</th>
               <th>ID Pengguna</th>
+              <th>Kode Barcode</th>
               <th>Aksi</th>
             </tr>
           </thead>
           <tbody id="usersTableBody">
-            <tr><td colspan="5" class="att-empty">Memuat data pengguna...</td></tr>
+            <tr><td colspan="6" class="att-empty">Memuat data pengguna...</td></tr>
           </tbody>
         </table>
       </div>
@@ -988,7 +1001,7 @@
       </div>
 
       <div class="att-table-wrap">
-        <table class="att-table">
+        <table class="att-table tbl-absensi">
           <thead>
             <tr>
               <th>Nama</th>
@@ -996,12 +1009,13 @@
               <th>Kelas / Jabatan</th>
               <th>Tanggal</th>
               <th>Waktu Absen</th>
+              <th>Metode</th>
               <th>Alasan Kunjungan</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="attAdminBody">
-            <tr><td colspan="7" class="att-empty">Memuat data absensi...</td></tr>
+            <tr><td colspan="8" class="att-empty">Memuat data absensi...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1818,7 +1832,7 @@
   }
 
   async function loadAttendanceAdmin() {
-    attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...</td></tr>`;
+    attAdminBody.innerHTML = `<tr><td colspan="8" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...</td></tr>`;
     try {
       const params = new URLSearchParams();
       if (attFilterTanggal.value) params.set('tanggal', attFilterTanggal.value);
@@ -1836,7 +1850,7 @@
       document.getElementById('attMiniHasil').textContent = data.total ?? 0;
 
       if (!data.data || data.data.length === 0) {
-        attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty"><i class="fa-solid fa-inbox"></i> Tidak ada data absensi untuk filter ini.</td></tr>`;
+        attAdminBody.innerHTML = `<tr><td colspan="8" class="att-empty"><i class="fa-solid fa-inbox"></i> Tidak ada data absensi untuk filter ini.</td></tr>`;
         return;
       }
 
@@ -1847,6 +1861,9 @@
           <td>${escapeHtml(r.kelas || r.jabatan || '-')}</td>
           <td>${fmtTanggal(r.tanggal)}</td>
           <td>${fmtJam(r.waktuAbsen)}</td>
+          <td>${r.metode === 'barcode'
+              ? '<span style="background:#eef2ff;color:#4338ca;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;"><i class="fa-solid fa-barcode"></i> Barcode</span>'
+              : '<span style="background:var(--green-100);color:var(--green-800);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;"><i class="fa-solid fa-qrcode"></i> QR</span>'}</td>
           <td>${escapeHtml(r.alasan || '-')}</td>
           <td><button class="att-btn-del" title="Hapus catatan" data-id="${r.id}"><i class="fa-solid fa-trash"></i></button></td>
         </tr>
@@ -1856,7 +1873,7 @@
         btn.addEventListener('click', () => deleteAttendanceRecord(btn.dataset.id));
       });
     } catch (err) {
-      attAdminBody.innerHTML = `<tr><td colspan="7" class="att-empty">Gagal memuat data absensi.</td></tr>`;
+      attAdminBody.innerHTML = `<tr><td colspan="8" class="att-empty">Gagal memuat data absensi.</td></tr>`;
     }
   }
 
@@ -2479,7 +2496,7 @@
       renderUsersTable(cachedUsers);
     } catch (err) {
       const body = document.getElementById('usersTableBody');
-      if (body) body.innerHTML = `<tr><td colspan="5" class="att-empty">${err.message}</td></tr>`;
+      if (body) body.innerHTML = `<tr><td colspan="6" class="att-empty">${err.message}</td></tr>`;
     }
   }
 
@@ -2487,7 +2504,7 @@
     const body = document.getElementById('usersTableBody');
     if (!body) return;
     if (!users || users.length === 0) {
-      body.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada pengguna.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="6" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada pengguna.</td></tr>`;
       return;
     }
     body.innerHTML = users.map(u => `<tr>
@@ -2495,6 +2512,7 @@
       <td><span class="status-chip">${escapeHtml(u.status) || '-'}</span></td>
       <td>${escapeHtml(u.kelas || u.jabatan) || '-'}</td>
       <td><small>${escapeHtml(u.id) || '-'}</small></td>
+      <td><span style="font-family:'Courier New',monospace;font-weight:700;letter-spacing:0.5px;">${escapeHtml(u.kodeBarcode) || '-'}</span></td>
       <td style="white-space:nowrap;">
         <button class="btn-edit-row btn-edit-user" data-id="${u.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>
         <button class="btn-delete-user" data-id="${u.id}" title="Hapus" style="background:var(--danger);color:var(--white);border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;"><i class="fa-solid fa-trash"></i></button>
