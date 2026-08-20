@@ -154,6 +154,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:50:27.776Z"
+    },
+    {
+      "id": "abs_1787194402289_b5dcef",
+      "userId": "usr_1787194373608_4d9f6b",
+      "nama": "Suci Rahmaway",
+      "status": "siswa",
+      "kelas": "11.3",
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:53:22.289Z"
     }
   ]
 }
