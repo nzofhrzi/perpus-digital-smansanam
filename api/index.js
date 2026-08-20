@@ -893,12 +893,13 @@ export default async function handler(req, res) {
     // + Enter). Tidak memerlukan sesi login — identitas pengguna didapat
     // langsung dari kecocokan kodeBarcode di data pengguna.
     if (method === 'POST' && route === 'attendance/barcode') {
-      // Bersihkan hasil pindaian: kode barcode anggota selalu berupa digit
-      // saja (awalan 2407 + 6 digit acak). Sebagian scanner USB (keyboard
-      // wedge) kadang menyisipkan karakter/tab/whitespace ekstra di sekitar
-      // hasil pindaian -> jika tidak dibersihkan, kode jadi tidak cocok
-      // dengan data pengguna dan absensi selalu gagal walau kartunya valid.
-      const kodeBarcode = String(body.kodeBarcode || '').replace(/[^0-9A-Za-z]/g, '').trim();
+      // Disederhanakan: verifikasi absen sekarang langsung memakai ID akun
+      // pengguna (mis. "usr_1787239208095_958aa1") sebagai "kode" yang
+      // dipindai/diketik, bukan kode barcode 10 digit terpisah lagi.
+      // Bersihkan whitespace/karakter liar dari hasil pindaian atau input
+      // manual, tapi tetap pertahankan huruf, angka, dan underscore karena
+      // itulah bentuk ID akun.
+      const kodeBarcode = String(body.kodeBarcode || '').replace(/[^0-9A-Za-z_]/g, '').trim();
       const alasan = String(body.alasan || '').trim();
 
       if (!kodeBarcode) {
@@ -918,9 +919,13 @@ export default async function handler(req, res) {
         return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
       }
 
-      const user = (usersData.users || []).find((u) => u.kodeBarcode === kodeBarcode);
+      // Dicocokkan langsung ke ID akun pengguna. (Kode kodeBarcode lama tetap
+      // dicoba juga untuk kompatibilitas kartu yang sudah lanjur dicetak.)
+      const user = (usersData.users || []).find(
+        (u) => u.id === kodeBarcode || u.kodeBarcode === kodeBarcode
+      );
       if (!user) {
-        return sendJson(res, 404, { message: 'Kode barcode tidak terdaftar. Pastikan kartu anggota valid.' });
+        return sendJson(res, 404, { message: 'ID pengguna tidak terdaftar. Pastikan kode/ID valid.' });
       }
 
       const today = todayJakarta();
