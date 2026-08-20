@@ -153,6 +153,20 @@
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193775271_4a53ff",
+      "userId": "usr_1787193534355_6d6cd7",
+      "nama": "SULISTARI",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "bookId": "book_1786930140047_f362e1",
+      "judulBuku": "Secangkir Kopi dan pencakar langit",
+      "mulai": "2026-08-20T02:42:55.271Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
