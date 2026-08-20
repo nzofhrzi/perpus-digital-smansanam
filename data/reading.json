@@ -516,6 +516,21 @@
       "bookId": "book_1786930378798_0f45c2",
       "judulBuku": "Bank Soal FISIKA",
       "mulai": "2026-08-20T03:10:29.414Z",
+      "selesai": "2026-08-20T03:10:39.355Z",
+      "durasiDetik": 9,
+      "tanggal": "2026-08-20",
+      "ditutupOtomatis": true
+    },
+    {
+      "id": "read_1787195439355_8df9ac",
+      "userId": "usr_1787193513131_c8d22b",
+      "nama": "Syakira Nurul Aini",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786930378798_0f45c2",
+      "judulBuku": "Bank Soal FISIKA",
+      "mulai": "2026-08-20T03:10:39.355Z",
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
