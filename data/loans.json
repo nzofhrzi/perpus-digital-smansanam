@@ -151,6 +151,25 @@
       "dikembalikanPada": null,
       "catatan": "untuk membaca",
       "dicatatPada": "2026-08-20T02:48:50.499Z"
+    },
+    {
+      "id": "pjm_1787194134650_8295a7",
+      "userId": "usr_1787193513131_c8d22b",
+      "nama": "Syakira Nurul Aini",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "judulBuku": "edensor",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "membaca buku",
+      "dicatatPada": "2026-08-20T02:48:54.650Z"
     }
   ]
 }
