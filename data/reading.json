@@ -745,9 +745,10 @@
       "bookId": "book_1786930193047_ef40a9",
       "judulBuku": "Tentang Kamu",
       "mulai": "2026-08-20T03:18:03.423Z",
-      "selesai": null,
-      "durasiDetik": 0,
-      "tanggal": "2026-08-20"
+      "selesai": "2026-08-20T03:18:34.488Z",
+      "durasiDetik": 31,
+      "tanggal": "2026-08-20",
+      "ditutupOtomatis": true
     },
     {
       "id": "read_1787195905566_1a5769",
@@ -759,6 +760,20 @@
       "bookId": "book_1786779884229_00e102",
       "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
       "mulai": "2026-08-20T03:18:25.566Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787195914488_52be5d",
+      "userId": "usr_1787194373608_4d9f6b",
+      "nama": "Suci Rahmawati",
+      "status": "siswa",
+      "kelas": "12.3",
+      "jabatan": null,
+      "bookId": "book_1786930193047_ef40a9",
+      "judulBuku": "Tentang Kamu",
+      "mulai": "2026-08-20T03:18:34.488Z",
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
