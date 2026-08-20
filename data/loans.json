@@ -77,13 +77,13 @@
       "dicatatPada": "2026-08-20T02:48:26.593Z"
     },
     {
-      "id": "pjm_1787194109393_0147ac",
-      "userId": "usr_1787193507538_ea72e5",
-      "nama": "Ravzo Arlando",
+      "id": "pjm_1787194110041_d1cdfa",
+      "userId": "usr_1787193534355_6d6cd7",
+      "nama": "SULISTARI",
       "status": "siswa",
-      "kelas": "12.6",
+      "kelas": "12.2",
       "jabatan": null,
-      "judulBuku": "Banyu Biru",
+      "judulBuku": "Jalan pintas",
       "kategoriBuku": "Novel",
       "jenisBuku": "Non-Fiksi",
       "tanggalPinjam": "2026-08-20",
@@ -92,8 +92,8 @@
       "statusPinjaman": "dipinjam",
       "tanggalDikembalikan": null,
       "dikembalikanPada": null,
-      "catatan": "Dipinjam untuk membaca di rumah",
-      "dicatatPada": "2026-08-20T02:48:29.394Z"
+      "catatan": "Dipinjam untuk membaca",
+      "dicatatPada": "2026-08-20T02:48:30.041Z"
     }
   ]
 }
