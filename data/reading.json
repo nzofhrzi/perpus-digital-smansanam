@@ -13,6 +13,20 @@
       "selesai": "2026-08-19T13:59:07.514Z",
       "durasiDetik": 28,
       "tanggal": "2026-08-19"
+    },
+    {
+      "id": "read_1787193473988_36764c",
+      "userId": "usr_1787193436527_ca0a13",
+      "nama": "Siti Soleha",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "bookId": "book_1786930378798_0f45c2",
+      "judulBuku": "Bank Soal FISIKA",
+      "mulai": "2026-08-20T02:37:53.988Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
