@@ -114,10 +114,6 @@ function generateKodeAbsenQR() {
   return crypto.randomBytes(12).toString('hex');
 }
 
-function generateReadingId() {
-  return `read_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
-}
-
 // ─────────────────────────────────────────────────────────────────────────
 // GAMIFIKASI LITERASI: KOMPETISI DUTA LITERASI
 // ─────────────────────────────────────────────────────────────────────────
@@ -155,21 +151,6 @@ function tambahHari(tanggalStr, jumlahHari) {
   const dt = new Date(Date.UTC(y, m - 1, d));
   dt.setUTCDate(dt.getUTCDate() + jumlahHari);
   return dt.toISOString().slice(0, 10);
-}
-
-// ─────────────────────────────────────────────────────────────────────────
-// TRACKING PEMBACA: BATAS WAJAR DURASI SESI
-// ─────────────────────────────────────────────────────────────────────────
-// Jika overlay tidak tertutup normal (mis. tab/browser ditutup paksa, koneksi
-// putus), sesi bisa "menggantung" (selesai = null) selamanya. Batas ini
-// mencegah durasi membengkak tak wajar saat sesi seperti itu dihitung.
-const MAX_DURASI_SESI_DETIK = 2 * 60 * 60; // 2 jam
-
-function hitungDurasiEfektif(session, nowMs) {
-  if (session.selesai) return session.durasiDetik || 0;
-  const mulaiMs = new Date(session.mulai).getTime();
-  const berjalan = Math.floor((nowMs - mulaiMs) / 1000);
-  return Math.max(0, Math.min(berjalan, MAX_DURASI_SESI_DETIK));
 }
 
 function getBearerToken(headers) {
@@ -1177,224 +1158,13 @@ export default async function handler(req, res) {
       }
     }
 
-    // ─── TRACKING PEMBACA: MULAI SESI BACA (SAAT OVERLAY DIBUKA) ────────
-    if (method === 'POST' && route === 'reading/start') {
-      const token = getBearerToken(headers);
-      const payload = token ? verifyToken(token) : null;
-      if (!payload || !payload.role || payload.role === 'admin') {
-        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
-      }
-
-      const bookId = String(body.bookId || '').trim();
-      if (!bookId) {
-        return sendJson(res, 400, { message: 'bookId wajib diisi.' });
-      }
-
-      let booksData = { books: [] };
-      try {
-        booksData = JSON.parse(await readDataFile('books.json'));
-        if (!Array.isArray(booksData.books)) booksData.books = [];
-      } catch {}
-      const buku = booksData.books.find((b) => b.id === bookId);
-      if (!buku) {
-        return sendJson(res, 404, { message: 'Buku tidak ditemukan.' });
-      }
-
-      let readingData = { sessions: [] };
-      try {
-        readingData = JSON.parse(await readDataFile('reading.json'));
-        if (!Array.isArray(readingData.sessions)) readingData.sessions = [];
-      } catch {
-        readingData = { sessions: [] };
-      }
-
-      const now = new Date();
-
-      // Tutup otomatis sesi lama milik pengguna ini yang belum tertutup normal
-      // (mis. overlay sebelumnya ditinggal tanpa menutup lewat tombol/Esc).
-      readingData.sessions.forEach((s) => {
-        if (s.userId === payload.sub && !s.selesai) {
-          const durasi = hitungDurasiEfektif(s, now.getTime());
-          s.selesai = now.toISOString();
-          s.durasiDetik = durasi;
-          s.ditutupOtomatis = true;
-        }
-      });
-
-      const record = {
-        id: generateReadingId(),
-        userId: payload.sub,
-        nama: payload.nama,
-        status: payload.status || payload.role,
-        kelas: payload.kelas || null,
-        jabatan: payload.jabatan || null,
-        bookId: buku.id,
-        judulBuku: buku.judul,
-        mulai: now.toISOString(),
-        selesai: null,
-        durasiDetik: 0,
-        tanggal: todayJakarta()
-      };
-
-      readingData.sessions.push(record);
-      try {
-        await writeDataFile('reading.json', JSON.stringify(readingData, null, 2), `Mulai baca: ${payload.nama} - ${buku.judul}`);
-      } catch (err) {
-        return sendJson(res, 500, { message: 'Gagal mencatat sesi membaca.' });
-      }
-
-      return sendJson(res, 201, { message: 'Sesi membaca dimulai.', sessionId: record.id });
-    }
-
-    // ─── TRACKING PEMBACA: AKHIRI SESI BACA (SAAT OVERLAY DITUTUP) ──────
-    if (method === 'POST' && route === 'reading/end') {
-      const token = getBearerToken(headers);
-      const payload = token ? verifyToken(token) : null;
-      if (!payload || !payload.role || payload.role === 'admin') {
-        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
-      }
-
-      const sessionId = String(body.sessionId || '').trim();
-      if (!sessionId) {
-        return sendJson(res, 400, { message: 'sessionId wajib diisi.' });
-      }
-
-      let readingData = { sessions: [] };
-      try {
-        readingData = JSON.parse(await readDataFile('reading.json'));
-        if (!Array.isArray(readingData.sessions)) readingData.sessions = [];
-      } catch {
-        return sendJson(res, 500, { message: 'Data tracking tidak dapat dimuat.' });
-      }
-
-      const idx = readingData.sessions.findIndex((s) => s.id === sessionId && s.userId === payload.sub);
-      if (idx === -1) {
-        // Sesi mungkin sudah ditutup otomatis oleh /reading/start berikutnya.
-        // Tidak dianggap error keras agar tidak mengganggu pengalaman pengguna.
-        return sendJson(res, 200, { message: 'Sesi tidak ditemukan (mungkin sudah tercatat selesai).' });
-      }
-
-      const session = readingData.sessions[idx];
-      if (session.selesai) {
-        return sendJson(res, 200, { message: 'Sesi sudah tercatat selesai sebelumnya.', durasiDetik: session.durasiDetik });
-      }
-
-      const now = new Date();
-      const durasi = hitungDurasiEfektif(session, now.getTime());
-
-      readingData.sessions[idx] = {
-        ...session,
-        selesai: now.toISOString(),
-        durasiDetik: durasi
-      };
-
-      try {
-        await writeDataFile('reading.json', JSON.stringify(readingData, null, 2), `Selesai baca: ${session.nama} - ${session.judulBuku} (${durasi}d)`);
-      } catch (err) {
-        return sendJson(res, 500, { message: 'Gagal menyimpan durasi membaca.' });
-      }
-
-      return sendJson(res, 200, { message: 'Sesi membaca dicatat.', durasiDetik: durasi });
-    }
-
-    // ─── TRACKING PEMBACA: RIWAYAT & TOTAL WAKTU MILIK SENDIRI ──────────
-    if (method === 'GET' && route === 'reading/me') {
-      const token = getBearerToken(headers);
-      const payload = token ? verifyToken(token) : null;
-      if (!payload || !payload.role || payload.role === 'admin') {
-        return sendJson(res, 401, { message: 'Sesi tidak valid. Silakan login kembali.' });
-      }
-
-      let readingData = { sessions: [] };
-      try {
-        readingData = JSON.parse(await readDataFile('reading.json'));
-        if (!Array.isArray(readingData.sessions)) readingData.sessions = [];
-      } catch {}
-
-      const now = Date.now();
-      const milik = readingData.sessions
-        .filter((s) => s.userId === payload.sub)
-        .map((s) => ({ ...s, durasiDetik: hitungDurasiEfektif(s, now) }))
-        .sort((a, b) => new Date(b.mulai) - new Date(a.mulai));
-
-      const totalDetik = milik.reduce((acc, s) => acc + (s.durasiDetik || 0), 0);
-
-      const perBukuMap = {};
-      milik.forEach((s) => {
-        if (!perBukuMap[s.bookId]) perBukuMap[s.bookId] = { bookId: s.bookId, judulBuku: s.judulBuku, totalDetik: 0, totalSesi: 0 };
-        perBukuMap[s.bookId].totalDetik += s.durasiDetik || 0;
-        perBukuMap[s.bookId].totalSesi += 1;
-      });
-
-      return sendJson(res, 200, {
-        totalDetik,
-        totalSesi: milik.length,
-        perBuku: Object.values(perBukuMap).sort((a, b) => b.totalDetik - a.totalDetik),
-        riwayat: milik.slice(0, 20)
-      });
-    }
-
-    // ─── TRACKING PEMBACA: STATISTIK UNTUK ADMIN ────────────────────────
-    if (method === 'GET' && route === 'reading/stats') {
-      const token = getBearerToken(headers);
-      const payload = token ? verifyToken(token) : null;
-      if (!payload || payload.role !== 'admin') {
-        return sendJson(res, 401, { message: 'Akses ditolak. Khusus admin.' });
-      }
-
-      let readingData = { sessions: [] };
-      try {
-        readingData = JSON.parse(await readDataFile('reading.json'));
-        if (!Array.isArray(readingData.sessions)) readingData.sessions = [];
-      } catch {}
-
-      const now = Date.now();
-      const sesi = readingData.sessions.map((s) => ({ ...s, durasiDetik: hitungDurasiEfektif(s, now) }));
-
-      const totalSesi = sesi.length;
-      const totalDurasiDetik = sesi.reduce((acc, s) => acc + (s.durasiDetik || 0), 0);
-      const sedangMembaca = sesi.filter((s) => !s.selesai).length;
-      const today = todayJakarta();
-      const aktivitasHariIni = sesi.filter((s) => s.tanggal === today).length;
-
-      const bukuMap = {};
-      const pembacaMap = {};
-      sesi.forEach((s) => {
-        if (!bukuMap[s.bookId]) bukuMap[s.bookId] = { bookId: s.bookId, judul: s.judulBuku, totalSesi: 0, totalDurasiDetik: 0 };
-        bukuMap[s.bookId].totalSesi += 1;
-        bukuMap[s.bookId].totalDurasiDetik += s.durasiDetik || 0;
-
-        if (!pembacaMap[s.userId]) pembacaMap[s.userId] = { userId: s.userId, nama: s.nama, status: s.status, totalSesi: 0, totalDurasiDetik: 0 };
-        pembacaMap[s.userId].totalSesi += 1;
-        pembacaMap[s.userId].totalDurasiDetik += s.durasiDetik || 0;
-      });
-
-      const bukuTerpopuler = Object.values(bukuMap).sort((a, b) => b.totalDurasiDetik - a.totalDurasiDetik).slice(0, 10);
-      const pembacaAktif = Object.values(pembacaMap).sort((a, b) => b.totalDurasiDetik - a.totalDurasiDetik).slice(0, 10);
-
-      const aktivitasTerbaru = [...sesi]
-        .sort((a, b) => new Date(b.mulai) - new Date(a.mulai))
-        .slice(0, 20)
-        .map((s) => ({
-          nama: s.nama,
-          status: s.status,
-          judulBuku: s.judulBuku,
-          mulai: s.mulai,
-          selesai: s.selesai,
-          durasiDetik: s.durasiDetik,
-          sedangBerlangsung: !s.selesai
-        }));
-
-      return sendJson(res, 200, {
-        totalSesi,
-        totalDurasiDetik,
-        sedangMembaca,
-        aktivitasHariIni,
-        bukuTerpopuler,
-        pembacaAktif,
-        aktivitasTerbaru
-      });
-    }
+    // ─── (DIHAPUS) TRACKING PEMBACA / DURASI MEMBACA ────────────────────
+    // Endpoint reading/start, reading/end, reading/me, dan reading/stats
+    // sudah dihapus. Sebelumnya setiap overlay buku dibuka/ditutup memicu
+    // penulisan ke reading.json (commit & push ke GitHub), sehingga memicu
+    // terlalu banyak deploy otomatis di Vercel. Metrik "Duta Literasi" kini
+    // dihitung dari frekuensi absensi dengan alasan "Membaca Buku" & jumlah
+    // peminjaman buku fisik (lihat endpoint competitions/ranking di bawah).
 
     // ─── BUKU: LIST & CRUD ──────────────────────────────────────────
     if (method === 'GET' && route === 'books') {
@@ -2235,7 +2005,6 @@ export default async function handler(req, res) {
       users: { file: 'users.json', empty: { users: [] }, label: 'Pengguna (Siswa/Guru/Staf)' },
       attendance: { file: 'attendance.json', empty: { attendance: [] }, label: 'Absensi Kehadiran' },
       guests: { file: 'guests.json', empty: { guests: [] }, label: 'Data Tamu' },
-      reading: { file: 'reading.json', empty: { sessions: [] }, label: 'Tracking Pembaca' },
       loans: { file: 'loans.json', empty: { loans: [] }, label: 'Peminjaman Buku' },
       competitions: { file: 'competitions.json', empty: { periode: [] }, label: 'Kompetisi Duta Literasi' }
     };
@@ -2379,28 +2148,57 @@ export default async function handler(req, res) {
         arr.forEach((item, i) => { item.rank = i + 1; });
         return arr;
       }
-      function ambilMilikSaya(arr) {
+      function ambilMilikSaya(arr, valueKey) {
         const found = arr.find((item) => item.userId === payload.sub);
-        return found ? { rank: found.rank, nilai: found[Object.keys(found).find(k => k.startsWith('total'))] } : null;
+        return found ? { rank: found.rank, nilai: found[valueKey] } : null;
       }
 
-      // ── Duta Literasi (total durasi membaca) ──
+      // ── Duta Literasi ──────────────────────────────────────────────
+      // Sebelumnya dihitung dari total durasi membaca (fitur tracking
+      // pembaca/reading.json sudah dihapus). Kini dihitung dari kombinasi:
+      // 1) Frekuensi absen dengan alasan kunjungan "Membaca Buku", dan
+      // 2) Frekuensi peminjaman buku fisik (semua genre/kategori buku).
       let literasiMap = {};
+      function pastikanEntriLiterasi(base) {
+        if (!literasiMap[base.userId]) {
+          literasiMap[base.userId] = {
+            userId: base.userId,
+            nama: base.nama,
+            status: base.status,
+            kelas: base.kelas || null,
+            jabatan: base.jabatan || null,
+            totalAbsenMembaca: 0,
+            totalPinjamBuku: 0,
+            totalPoin: 0
+          };
+        }
+        return literasiMap[base.userId];
+      }
       try {
-        const readingData = JSON.parse(await readDataFile('reading.json'));
-        const sessions = Array.isArray(readingData.sessions) ? readingData.sessions : [];
-        const now = Date.now();
-        sessions.forEach((s) => {
-          if (!s.tanggal || s.tanggal < mulai || s.tanggal > selesai) return;
-          if (!s.status || s.status === 'tamu') return;
-          const durasi = hitungDurasiEfektif(s, now);
-          if (!literasiMap[s.userId]) {
-            literasiMap[s.userId] = { userId: s.userId, nama: s.nama, status: s.status, kelas: s.kelas || null, jabatan: s.jabatan || null, totalDetik: 0 };
-          }
-          literasiMap[s.userId].totalDetik += durasi;
+        const attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        const daftarAbsen = Array.isArray(attendanceData.attendance) ? attendanceData.attendance : [];
+        daftarAbsen.forEach((a) => {
+          if (!a.tanggal || a.tanggal < mulai || a.tanggal > selesai) return;
+          if (!a.status || a.status === 'tamu') return;
+          if (String(a.alasan || '').trim().toLowerCase() !== 'membaca buku') return;
+          const entri = pastikanEntriLiterasi(a);
+          entri.totalAbsenMembaca += 1;
+          entri.totalPoin += 1;
         });
       } catch {}
-      const literasiLeaderboard = bangunPeringkat(literasiMap, 'totalDetik');
+      try {
+        const loansData = JSON.parse(await readDataFile('loans.json'));
+        const daftarPinjam = Array.isArray(loansData.loans) ? loansData.loans : [];
+        daftarPinjam.forEach((l) => {
+          if (!l.tanggalPinjam || l.tanggalPinjam < mulai || l.tanggalPinjam > selesai) return;
+          if (!l.status || l.status === 'tamu') return;
+          // Semua genre/kategori buku dihitung, tidak dibedakan Fiksi/Non-Fiksi.
+          const entri = pastikanEntriLiterasi(l);
+          entri.totalPinjamBuku += 1;
+          entri.totalPoin += 1;
+        });
+      } catch {}
+      const literasiLeaderboard = bangunPeringkat(literasiMap, 'totalPoin');
 
       // ── Duta Kunjungan (jumlah kunjungan / absensi) ──
       let kunjunganMap = {};
@@ -2455,11 +2253,11 @@ export default async function handler(req, res) {
           nonFiksi: { leaderboard: bukuNonFiksiLeaderboard.slice(0, 20), totalPeserta: bukuNonFiksiLeaderboard.length }
         },
         saya: {
-          literasi: ambilMilikSaya(literasiLeaderboard),
-          kunjungan: ambilMilikSaya(kunjunganLeaderboard),
-          bukuSemua: ambilMilikSaya(bukuSemuaLeaderboard),
-          bukuFiksi: ambilMilikSaya(bukuFiksiLeaderboard),
-          bukuNonFiksi: ambilMilikSaya(bukuNonFiksiLeaderboard)
+          literasi: ambilMilikSaya(literasiLeaderboard, 'totalPoin'),
+          kunjungan: ambilMilikSaya(kunjunganLeaderboard, 'totalKunjungan'),
+          bukuSemua: ambilMilikSaya(bukuSemuaLeaderboard, 'totalPinjam'),
+          bukuFiksi: ambilMilikSaya(bukuFiksiLeaderboard, 'totalPinjam'),
+          bukuNonFiksi: ambilMilikSaya(bukuNonFiksiLeaderboard, 'totalPinjam')
         }
       });
     }
