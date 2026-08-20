@@ -308,6 +308,20 @@
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193881192_b440fd",
+      "userId": "usr_1787193465604_d75a82",
+      "nama": "Ridho",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786930378798_0f45c2",
+      "judulBuku": "Bank Soal FISIKA",
+      "mulai": "2026-08-20T02:44:41.192Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
