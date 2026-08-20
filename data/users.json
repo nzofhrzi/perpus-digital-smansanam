@@ -218,6 +218,19 @@
       "hash": "ddc4629c6a8f7b1011f3e95fd4cea36a90cbb43c4e0861468ddc83a436015d0af63698ad70b42e1e0e1a5bd0527d17b5dd532ffea2181b6404107115b00cf1eb",
       "createdAt": "2026-08-20T02:52:53.609Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787195774898_1a978e",
+      "nama": "patur rahman",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "",
+      "foto": null,
+      "kodeBarcode": "2407149219",
+      "salt": "80f85526aafaa719dcfde4c751981203",
+      "hash": "b344586d3edced0985af32a7bcd5bd7924dd5126e1f75a8d2055b987d2f638079783afc8bddffcfc5f1d2bfe1a58a4d95b803fa66ab2cb31b870d7f9d21a4b8b",
+      "createdAt": "2026-08-20T03:16:14.899Z",
+      "daftarMandiri": true
     }
   ]
 }
