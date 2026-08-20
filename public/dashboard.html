@@ -2671,7 +2671,7 @@
     if (!kartuSiapDiunduh) return;
     const slug = (currentUser.nama || 'anggota').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const link = document.createElement('a');
-    link.download = `kartu-anggota-${slug || currentUser.id}.png`;
+    link.download = `kartu-anggota-${slug || currentUser.kodeBarcode || currentUser.id}.png`;
     link.href = kartuCanvas.toDataURL('image/png');
     link.click();
     showToast('Kartu anggota berhasil diunduh!');
