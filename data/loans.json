@@ -132,6 +132,25 @@
       "dikembalikanPada": null,
       "catatan": "membaca",
       "dicatatPada": "2026-08-20T02:48:32.988Z"
+    },
+    {
+      "id": "pjm_1787194130499_a56c6d",
+      "userId": "usr_1787193536667_20a722",
+      "nama": "Lafifah erwita",
+      "status": "siswa",
+      "kelas": "11.4",
+      "jabatan": null,
+      "judulBuku": "Mencari  Tiga Kebahagiaan",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-21",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "untuk membaca",
+      "dicatatPada": "2026-08-20T02:48:50.499Z"
     }
   ]
 }
