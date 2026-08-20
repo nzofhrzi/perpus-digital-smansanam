@@ -179,6 +179,18 @@
       "metode": "barcode",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T13:00:58.219Z"
+    },
+    {
+      "id": "abs_1787240268971_912a8c",
+      "userId": "usr_1787239208095_958aa1",
+      "nama": "Meyuza",
+      "status": "siswa",
+      "kelas": "12.3",
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "metode": "barcode",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T15:37:48.971Z"
     }
   ]
 }
