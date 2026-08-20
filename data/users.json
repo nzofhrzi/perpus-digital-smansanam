@@ -166,6 +166,19 @@
       "hash": "671b1ff32c72b4248b9df0dbc42c58b02769f4dd7012c913d7eb7fbcf1683dbe752bd5dfdb0d44184a364ec2db9147601096a345ad517d81287c5297a1908459",
       "createdAt": "2026-08-20T02:38:56.667Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193539850_ef8a90",
+      "nama": "Marisa",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407851439",
+      "salt": "0eadb9bd879aaa3522b9952d7ec45a24",
+      "hash": "25c41c56328874b805017cf6032c8a6e2ce4aebf4c9b282a4dd449005b708edf1a2a1a78467536bfd9709d9e105a61c40d1b5f1dfea6020cc6e0753125a01330",
+      "createdAt": "2026-08-20T02:38:59.850Z",
+      "daftarMandiri": true
     }
   ]
 }
