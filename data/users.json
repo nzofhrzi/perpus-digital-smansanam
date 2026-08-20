@@ -127,6 +127,19 @@
       "hash": "3f30e12abefdd51cc402973f8088f330cf0512bbcddf183c230aa23343cb1dff041e852376cc243964dcff51a1167f401307e8a47debf5a725fb149f03b0a368",
       "createdAt": "2026-08-20T02:38:39.710Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193528925_4b329f",
+      "nama": "Meliza Khumairo",
+      "status": "siswa",
+      "kelas": "11.4",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407516934",
+      "salt": "0f20e6d606080d3cc9abc36c7055d288",
+      "hash": "e393c823f1fd1b6e3a9674976bcb9c90b503d6a3158a8572d9ae7d915090081aa217ee62fd9ee5a1d869ee544cc8dc4c3c86ab0016e66eb834c35c6cae5b6f0a",
+      "createdAt": "2026-08-20T02:38:48.926Z",
+      "daftarMandiri": true
     }
   ]
 }
