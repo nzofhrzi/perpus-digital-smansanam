@@ -118,6 +118,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:41:37.099Z"
+    },
+    {
+      "id": "abs_1787193718919_4938f3",
+      "userId": "usr_1787193436527_ca0a13",
+      "nama": "Siti Soleha",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "alasan": "Mengerjakan Tugas",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:41:58.919Z"
     }
   ]
 }
