@@ -244,6 +244,19 @@
       "hash": "84ca6142a122f7cbe29a9be916bab8e7247938f2af80782b8781d3c2f0ebbec922aa7ddecbe5bd6fe5ff86abbe3bef2449dc4b3ccd0a4c76888be09ed5e19840",
       "createdAt": "2026-08-20T03:23:49.353Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787239208095_958aa1",
+      "nama": "Meyuza",
+      "status": "siswa",
+      "kelas": "12.3",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407667594",
+      "salt": "fc1b6b551a7b29a95b2197d82dd027c8",
+      "hash": "9247259ded84e758992fdae4cd7e185a629b7e993fd11c97df7e4e93bcc831023d6a161d10fcaeabbcd5fe8e74cfdae309a4a81cc8afcd9beba2aa2e10fe7a2a",
+      "createdAt": "2026-08-20T15:20:08.096Z",
+      "daftarMandiri": true
     }
   ]
 }
