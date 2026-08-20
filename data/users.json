@@ -179,6 +179,19 @@
       "hash": "25c41c56328874b805017cf6032c8a6e2ce4aebf4c9b282a4dd449005b708edf1a2a1a78467536bfd9709d9e105a61c40d1b5f1dfea6020cc6e0753125a01330",
       "createdAt": "2026-08-20T02:38:59.850Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787194021056_a1e7e1",
+      "nama": "DIO PRATAMA",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Operator Dapodik",
+      "foto": null,
+      "kodeBarcode": "2407444329",
+      "salt": "2d0950f64d6e70367b06add4f7b28fdb",
+      "hash": "75e7c8fd4082f4d3ff11b8b520a275743a7d20606350debaaaf7fe890388245ad9461f8728cbe8ebee419fedb469167e1da095c2ad0ae0fcdabbaf16bdd877ba",
+      "createdAt": "2026-08-20T02:47:01.056Z",
+      "daftarMandiri": true
     }
   ]
 }
