@@ -503,7 +503,7 @@ export default async function handler(req, res) {
 
       return sendJson(res, 200, {
         token,
-        user: { id: user.id, nama: user.nama, status: user.status, kelas: user.kelas || null, jabatan: user.jabatan || null, role: user.status, foto: user.foto || null }
+        user: { id: user.id, nama: user.nama, status: user.status, kelas: user.kelas || null, jabatan: user.jabatan || null, role: user.status, foto: user.foto || null, kodeBarcode: user.kodeBarcode || null }
       });
     }
 
