@@ -327,6 +327,106 @@ async function writeDataFile(relPath, content, message) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// BACA FILE + SHA SEKALIGUS (DIPAKAI OLEH PENULISAN AMAN/ANTI-TABRAKAN)
+// ─────────────────────────────────────────────────────────────────────────
+async function getGitHubFileWithSha(relPath) {
+  const branch = process.env.GITHUB_BRANCH || 'main';
+  const response = await fetch(
+    `${GITHUB_API}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/contents/${relPath}?ref=${branch}&_=${Date.now()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Cache-Control': 'no-cache'
+      },
+      cache: 'no-store'
+    }
+  );
+  if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+  const data = await response.json();
+  const content = Buffer.from(data.content, 'base64').toString('utf-8');
+  return { content, sha: data.sha };
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// PENULISAN JSON YANG AMAN DARI TABRAKAN (RACE CONDITION)
+// ─────────────────────────────────────────────────────────────────────────
+// Masalah aslinya: writeDataFile() biasa membaca file SEKALI lalu menimpa
+// dengan versi barunya. Kalau ada 2 orang memindai kartu barcode nyaris
+// bersamaan (mis. antrean absen ramai), permintaan kedua bisa menimpa balik
+// data attendance.json dengan versi yang belum memuat absensi orang pertama
+// (SHA GitHub sudah berubah duluan) -> absensi "hilang" atau muncul error
+// "Gagal menyimpan absensi" padahal barcode-nya valid.
+//
+// Fungsi ini membaca data TERBARU, menjalankan `mutateFn` untuk menghasilkan
+// data baru, lalu mencoba menyimpannya. Jika GitHub menolak karena SHA sudah
+// berubah (409 Conflict), data dibaca ulang dari awal dan `mutateFn`
+// dijalankan lagi dengan data terbaru, sampai beberapa kali percobaan -
+// sehingga absensi tidak pernah tertimpa atau hilang begitu saja.
+//
+// `mutateFn(currentJson)` harus mengembalikan salah satu:
+//   - { data: objekBaru, ...lainnya }  -> lanjut disimpan
+//   - { abort: true, ...lainnya }      -> batalkan penyimpanan (mis. sudah absen hari ini)
+async function writeDataFileSafely(relPath, mutateFn, messageFn, maxAttempts = 5) {
+  if (!githubConfigured()) {
+    // Mode lokal/dev: tidak ada proses lain yang menulis bersamaan, jadi
+    // baca-ubah-tulis langsung sudah cukup aman.
+    const localPath = path.join(LOCAL_DATA_DIR, relPath);
+    let currentJson = {};
+    try { currentJson = JSON.parse(fs.readFileSync(localPath, 'utf-8')); } catch { currentJson = {}; }
+    const outcome = mutateFn(currentJson);
+    if (outcome.abort) return outcome;
+    try { fs.writeFileSync(localPath, JSON.stringify(outcome.data, null, 2), 'utf-8'); } catch {}
+    return outcome;
+  }
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let currentJson = {};
+    let sha = '';
+    try {
+      const file = await getGitHubFileWithSha(`data/${relPath}`);
+      currentJson = JSON.parse(file.content);
+      sha = file.sha;
+    } catch {
+      currentJson = {};
+    }
+
+    const outcome = mutateFn(currentJson);
+    if (outcome.abort) return outcome;
+
+    const updateResponse = await fetch(
+      `${GITHUB_API}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/contents/data/${relPath}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: messageFn ? messageFn(outcome) : `Update ${relPath}`,
+          content: Buffer.from(JSON.stringify(outcome.data, null, 2)).toString('base64'),
+          sha: sha || undefined,
+          branch: process.env.GITHUB_BRANCH || 'main'
+        })
+      }
+    );
+
+    if (updateResponse.ok) return outcome;
+
+    if (updateResponse.status === 409 && attempt < maxAttempts - 1) {
+      // Tabrakan SHA: tunggu sebentar (dengan jeda makin panjang), lalu ambil
+      // data terbaru & ulangi dari awal loop.
+      await new Promise((resolve) => setTimeout(resolve, 200 + attempt * 200));
+      continue;
+    }
+
+    throw new Error(`Gagal menyimpan data: ${updateResponse.status}`);
+  }
+  throw new Error('Gagal menyimpan data setelah beberapa percobaan.');
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // HELPER RESPON JSON
 // ─────────────────────────────────────────────────────────────────────────
 function sendJson(res, status, obj) {
@@ -830,7 +930,12 @@ export default async function handler(req, res) {
     // + Enter). Tidak memerlukan sesi login — identitas pengguna didapat
     // langsung dari kecocokan kodeBarcode di data pengguna.
     if (method === 'POST' && route === 'attendance/barcode') {
-      const kodeBarcode = String(body.kodeBarcode || '').trim();
+      // Bersihkan hasil pindaian: kode barcode anggota selalu berupa digit
+      // saja (awalan 2407 + 6 digit acak). Sebagian scanner USB (keyboard
+      // wedge) kadang menyisipkan karakter/tab/whitespace ekstra di sekitar
+      // hasil pindaian -> jika tidak dibersihkan, kode jadi tidak cocok
+      // dengan data pengguna dan absensi selalu gagal walau kartunya valid.
+      const kodeBarcode = String(body.kodeBarcode || '').replace(/[^0-9A-Za-z]/g, '').trim();
       const alasan = String(body.alasan || '').trim();
 
       if (!kodeBarcode) {
@@ -857,39 +962,50 @@ export default async function handler(req, res) {
 
       const today = todayJakarta();
 
-      let attendanceData = { attendance: [] };
+      // ─── SIMPAN ABSENSI DENGAN PERLINDUNGAN ANTI-TABRAKAN ───
+      // Memakai writeDataFileSafely (bukan readDataFile+writeDataFile biasa)
+      // supaya kalau ada beberapa siswa memindai kartu berurutan cepat,
+      // absensi tidak saling menimpa/hilang dan tidak gagal tanpa alasan
+      // hanya karena SHA file attendance.json berubah di tengah jalan.
+      let outcome;
       try {
-        attendanceData = JSON.parse(await readDataFile('attendance.json'));
-        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
-      } catch {
-        attendanceData = { attendance: [] };
-      }
+        outcome = await writeDataFileSafely(
+          'attendance.json',
+          (currentJson) => {
+            const attendanceData = (currentJson && Array.isArray(currentJson.attendance))
+              ? currentJson
+              : { attendance: [] };
 
-      const sudahAbsen = attendanceData.attendance.find(
-        (a) => a.userId === user.id && a.tanggal === today
-      );
-      if (sudahAbsen) {
-        return sendJson(res, 400, { message: `${user.nama} sudah melakukan absensi hari ini.`, nama: user.nama });
-      }
+            const sudahAbsen = attendanceData.attendance.find(
+              (a) => a.userId === user.id && a.tanggal === today
+            );
+            if (sudahAbsen) {
+              return { abort: true, alreadyMarked: true };
+            }
 
-      const record = {
-        id: generateAttendanceId(),
-        userId: user.id,
-        nama: user.nama,
-        status: user.status,
-        kelas: user.kelas || null,
-        jabatan: user.jabatan || null,
-        alasan,
-        metode: 'barcode',
-        tanggal: today,
-        waktuAbsen: new Date().toISOString()
-      };
-
-      attendanceData.attendance.push(record);
-      try {
-        await writeDataFile('attendance.json', JSON.stringify(attendanceData, null, 2), `Absen barcode: ${record.nama}`);
+            const record = {
+              id: generateAttendanceId(),
+              userId: user.id,
+              nama: user.nama,
+              status: user.status,
+              kelas: user.kelas || null,
+              jabatan: user.jabatan || null,
+              alasan,
+              metode: 'barcode',
+              tanggal: today,
+              waktuAbsen: new Date().toISOString()
+            };
+            attendanceData.attendance.push(record);
+            return { data: attendanceData, record };
+          },
+          (outcome) => `Absen barcode: ${outcome.record ? outcome.record.nama : user.nama}`
+        );
       } catch (err) {
         return sendJson(res, 500, { message: 'Gagal menyimpan absensi. Silakan coba lagi.' });
+      }
+
+      if (outcome.abort) {
+        return sendJson(res, 400, { message: `${user.nama} sudah melakukan absensi hari ini.`, nama: user.nama });
       }
 
       return sendJson(res, 200, {
@@ -899,7 +1015,7 @@ export default async function handler(req, res) {
         kelas: user.kelas || null,
         jabatan: user.jabatan || null,
         foto: user.foto || null,
-        record
+        record: outcome.record
       });
     }
 
