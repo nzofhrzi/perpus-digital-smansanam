@@ -350,6 +350,20 @@
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787194087857_5f3072",
+      "userId": "usr_1787194021056_a1e7e1",
+      "nama": "DIO PRATAMA",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Operator Dapodik",
+      "bookId": "book_1786930378798_0f45c2",
+      "judulBuku": "Bank Soal FISIKA",
+      "mulai": "2026-08-20T02:48:07.856Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
