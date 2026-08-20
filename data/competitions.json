@@ -1,3 +1,13 @@
 {
-  "periode": []
+  "periode": [
+    {
+      "id": "prd_1787194535040_71d490",
+      "nama": "Semester Ganjil 2026/2027",
+      "mulai": "2026-07-13",
+      "selesai": "2026-12-31",
+      "status": "aktif",
+      "dibuat": "2026-08-20T02:55:35.040Z",
+      "diperbarui": "2026-08-20T02:55:35.040Z"
+    }
+  ]
 }
