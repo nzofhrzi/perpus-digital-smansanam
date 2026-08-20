@@ -70,6 +70,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:41:12.052Z"
+    },
+    {
+      "id": "abs_1787193681793_099d68",
+      "userId": "usr_1787193484352_76e7b3",
+      "nama": "PASHA ROMADON",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:41:21.794Z"
     }
   ]
 }
