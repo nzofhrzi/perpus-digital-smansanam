@@ -58,6 +58,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:41:07.526Z"
+    },
+    {
+      "id": "abs_1787193672052_f26d8d",
+      "userId": "usr_1787193536667_20a722",
+      "nama": "Lafifah erwita",
+      "status": "siswa",
+      "kelas": "11.4",
+      "jabatan": null,
+      "alasan": "Membaca Buku",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:41:12.052Z"
     }
   ]
 }
