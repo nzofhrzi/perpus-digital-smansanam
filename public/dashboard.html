@@ -1768,7 +1768,7 @@
           <h2 id="profileName">-</h2>
           <span class="status-chip" id="profileStatus">-</span>
 
-          <button class="btn-profile-edit" id="btnEditProfile" style="width:100%; justify-content:center; margin-top:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit Informasi Profil</button>
+
           <button class="btn-kartu-anggota" id="btnKartuAnggota"><i class="fa-solid fa-id-card-clip"></i> Unduh Kartu Anggota</button>
           <div class="tamu-notice-card" id="tamuNotice" style="display:none;">
             <i class="fa-solid fa-circle-info"></i>
@@ -2083,42 +2083,9 @@
 </div>
 
 <!-- ══════════ MODAL EDIT PROFIL ══════════ -->
-<div class="modal-overlay-p" id="modalEditProfile">
-  <div class="modal-box-p">
-    <div class="modal-box-p-header">
-      <h3><i class="fa-solid fa-pen-to-square hdr-icon"></i> Edit Informasi Profil</h3>
-      <button class="modal-close-p" id="btnCloseEditProfile"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <form id="formEditProfile">
-      <div class="modal-box-p-body">
-        <div class="p-form-error" id="editProfileError"><i class="fa-solid fa-circle-exclamation"></i><span id="editProfileErrorText"></span></div>
-        <div class="p-field">
-          <label for="editNama">Nama Lengkap</label>
-          <input type="text" id="editNama" required>
-        </div>
-        <div class="p-field" id="editKelasWrap">
-          <label for="editKelas">Kelas</label>
-          <select id="editKelas">
-            <option value="10.1">10.1</option><option value="10.2">10.2</option><option value="10.3">10.3</option>
-            <option value="10.4">10.4</option><option value="10.5">10.5</option><option value="10.6">10.6</option>
-            <option value="11.1">11.1</option><option value="11.2">11.2</option><option value="11.3">11.3</option>
-            <option value="11.4">11.4</option><option value="11.5">11.5</option><option value="11.6">11.6</option>
-            <option value="12.1">12.1</option><option value="12.2">12.2</option><option value="12.3">12.3</option>
-            <option value="12.4">12.4</option><option value="12.5">12.5</option><option value="12.6">12.6</option>
-          </select>
-        </div>
-        <div class="p-field" id="editJabatanWrap">
-          <label for="editJabatan">Jabatan</label>
-          <input type="text" id="editJabatan" placeholder="Contoh: Wali Kelas / Staf TU">
-        </div>
-      </div>
-      <div class="modal-box-p-footer">
-        <button type="button" class="btn-p-cancel" id="btnCancelEditProfile">Batal</button>
-        <button type="submit" class="btn-p-submit" id="btnSubmitEditProfile"><i class="fa-solid fa-check"></i> Simpan Perubahan</button>
-      </div>
-    </form>
-  </div>
-</div>
+<!-- Modal Edit Informasi Profil (nama/kelas/jabatan) sengaja dihapus:
+     data ini sekarang hanya boleh diubah oleh admin lewat Panel Admin.
+     Pengguna hanya bisa mengubah foto profil & password sendiri. -->
 
 <!-- ══════════ MODAL GANTI PASSWORD ══════════ -->
 <div class="modal-overlay-p" id="modalChangePassword">
@@ -2707,13 +2674,15 @@
     showToast('Kartu anggota berhasil diunduh!');
   });
 
-  // ══════ EDIT PROFIL & GANTI PASSWORD ══════
+  // ══════ GANTI PASSWORD & FOTO PROFIL ══════
+  // Catatan: fitur "Edit Informasi Profil" (nama/kelas/jabatan) sudah
+  // dihapus dari sisi pengguna. Data tersebut sekarang hanya bisa diubah
+  // oleh admin lewat Panel Admin. Pengguna hanya bisa mengganti foto
+  // profil & password miliknya sendiri.
   const isTamu = currentUser.status === 'tamu';
-  const modalEditProfile = document.getElementById('modalEditProfile');
   const modalChangePassword = document.getElementById('modalChangePassword');
 
   if (isTamu) {
-    document.getElementById('btnEditProfile').style.display = 'none';
     document.getElementById('btnChangePassword').style.display = 'none';
     document.getElementById('btnEditAvatar').style.display = 'none';
     document.getElementById('btnRemoveAvatar').style.display = 'none';
@@ -2838,73 +2807,8 @@
       }
     });
 
-    // ── EDIT PROFIL ──
-    const editProfileError = document.getElementById('editProfileError');
-    const editProfileErrorText = document.getElementById('editProfileErrorText');
-    const btnSubmitEditProfile = document.getElementById('btnSubmitEditProfile');
-
-    function openEditProfileModal() {
-      editProfileError.classList.remove('show');
-      document.getElementById('editNama').value = currentUser.nama || '';
-      if (currentUser.status === 'siswa') {
-        document.getElementById('editKelasWrap').style.display = 'block';
-        document.getElementById('editJabatanWrap').style.display = 'none';
-        document.getElementById('editKelas').value = currentUser.kelas || '';
-      } else {
-        document.getElementById('editKelasWrap').style.display = 'none';
-        document.getElementById('editJabatanWrap').style.display = 'block';
-        document.getElementById('editJabatan').value = currentUser.jabatan || '';
-      }
-      modalEditProfile.classList.add('show');
-    }
-
-    document.getElementById('btnEditProfile').addEventListener('click', openEditProfileModal);
-    document.getElementById('btnCloseEditProfile').addEventListener('click', () => modalEditProfile.classList.remove('show'));
-    document.getElementById('btnCancelEditProfile').addEventListener('click', () => modalEditProfile.classList.remove('show'));
-    modalEditProfile.addEventListener('click', (e) => { if (e.target === modalEditProfile) modalEditProfile.classList.remove('show'); });
-
-    document.getElementById('formEditProfile').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      editProfileError.classList.remove('show');
-      const payload = { nama: document.getElementById('editNama').value.trim() };
-      if (currentUser.status === 'siswa') {
-        payload.kelas = document.getElementById('editKelas').value;
-      } else {
-        payload.jabatan = document.getElementById('editJabatan').value.trim();
-      }
-      btnSubmitEditProfile.disabled = true;
-      btnSubmitEditProfile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
-      try {
-        const res = await fetch(`${API_BASE}/auth/profile`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Gagal memperbarui profil.');
-
-        currentUser = { ...currentUser, ...data.user };
-        localStorage.setItem('perpus_user', JSON.stringify(currentUser));
-        localStorage.setItem('perpus_token', data.token);
-        token = data.token;
-
-        renderAvatar();
-        document.getElementById('userName').textContent = currentUser.nama;
-        document.getElementById('welcomeText').textContent = `Selamat datang, ${currentUser.nama.split(' ')[0]}! 👋`;
-        document.getElementById('profileName').textContent = currentUser.nama;
-        if (currentUser.status === 'siswa') document.getElementById('profileKelas').textContent = currentUser.kelas || '-';
-        else document.getElementById('profileJabatan').textContent = currentUser.jabatan || '-';
-
-        modalEditProfile.classList.remove('show');
-        showToast('Profil berhasil diperbarui.');
-      } catch (err) {
-        editProfileErrorText.textContent = err.message;
-        editProfileError.classList.add('show');
-      } finally {
-        btnSubmitEditProfile.disabled = false;
-        btnSubmitEditProfile.innerHTML = '<i class="fa-solid fa-check"></i> Simpan Perubahan';
-      }
-    });
+    // Fitur "Edit Informasi Profil" (nama/kelas/jabatan) sengaja dihapus
+    // dari sisi pengguna - data ini sekarang hanya bisa diubah oleh admin.
 
     // ── GANTI PASSWORD ──
     const changePassError = document.getElementById('changePassError');
