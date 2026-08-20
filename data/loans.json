@@ -170,6 +170,25 @@
       "dikembalikanPada": null,
       "catatan": "membaca buku",
       "dicatatPada": "2026-08-20T02:48:54.650Z"
+    },
+    {
+      "id": "pjm_1787194141239_cfac4e",
+      "userId": "usr_1787193539850_ef8a90",
+      "nama": "Marisa",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "judulBuku": "Jadilah legenda",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Membaca buku",
+      "dicatatPada": "2026-08-20T02:49:01.239Z"
     }
   ]
 }
