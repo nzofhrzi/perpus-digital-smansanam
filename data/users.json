@@ -62,6 +62,19 @@
       "hash": "cb1642f7946d2101aa130308ed7a832ae44e2a9e42f668390f91e4413918cc7678ffeaa6dcd5534b7dd444f0ed38fc93e34a5d9dc7eb76f6083a132919c5d8e8",
       "createdAt": "2026-08-20T02:37:45.604Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193471128_564fca",
+      "nama": "ELINATASYA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407661813",
+      "salt": "d56f825a573c740acf3facdf141cccea",
+      "hash": "e7f04b70e8b3a9649b4c38ee80a39d699f4c7ba1e7caf6dbf98fbb5321b3d4f0de2f6a1be9f98e13b360cdc30ceb9fb2e3501a7f2d5c0795b2e959af2cdf8ce8",
+      "createdAt": "2026-08-20T02:37:51.128Z",
+      "daftarMandiri": true
     }
   ]
 }
