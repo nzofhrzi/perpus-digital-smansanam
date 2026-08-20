@@ -37,6 +37,25 @@
       "dikembalikanPada": null,
       "catatan": "Membaca buku",
       "dicatatPada": "2026-08-20T02:47:45.881Z"
+    },
+    {
+      "id": "pjm_1787194071938_3d6108",
+      "userId": "usr_1787193455324_222392",
+      "nama": "NADIA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "judulBuku": "JODOH",
+      "kategoriBuku": "Fiksi",
+      "jenisBuku": "Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-21",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Membaca buku",
+      "dicatatPada": "2026-08-20T02:47:51.938Z"
     }
   ]
 }
