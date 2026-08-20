@@ -113,6 +113,25 @@
       "dikembalikanPada": null,
       "catatan": "Tugas",
       "dicatatPada": "2026-08-20T02:48:30.627Z"
+    },
+    {
+      "id": "pjm_1787194112988_751db6",
+      "userId": "usr_1787193471128_564fca",
+      "nama": "ELINATASYA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "judulBuku": "layur tetaplah berlayar",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-21",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "membaca",
+      "dicatatPada": "2026-08-20T02:48:32.988Z"
     }
   ]
 }
