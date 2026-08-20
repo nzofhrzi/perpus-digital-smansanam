@@ -75,6 +75,19 @@
       "hash": "e7f04b70e8b3a9649b4c38ee80a39d699f4c7ba1e7caf6dbf98fbb5321b3d4f0de2f6a1be9f98e13b360cdc30ceb9fb2e3501a7f2d5c0795b2e959af2cdf8ce8",
       "createdAt": "2026-08-20T02:37:51.128Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193484352_76e7b3",
+      "nama": "PASHA ROMADON",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407298690",
+      "salt": "072e16a8f329bc9e411e284a25848d2b",
+      "hash": "3b26d5612499bd3663cbeb76b49e57e9d9fbaae6f51ebb9de2b5d9b84da89fe05054ea80d1aa6add492ae5349a8395b04ca790c4b5995198ea2b10a478b76f34",
+      "createdAt": "2026-08-20T02:38:04.352Z",
+      "daftarMandiri": true
     }
   ]
 }
