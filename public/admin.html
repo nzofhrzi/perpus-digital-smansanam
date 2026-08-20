@@ -822,7 +822,6 @@
     <button class="nav-item" data-section="pengguna"><i class="fa-solid fa-users"></i> Kelola Pengguna</button>
     <button class="nav-item" data-section="absensi"><i class="fa-solid fa-fingerprint"></i> Kelola Absensi</button>
     <button class="nav-item" data-section="tamu"><i class="fa-solid fa-person-booth"></i> Kelola Tamu</button>
-    <button class="nav-item" data-section="tracking"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</button>
     <button class="nav-item" data-section="kompetisi"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</button>
     <button class="nav-item" data-section="peminjaman"><i class="fa-solid fa-hand-holding-hand"></i> Peminjaman Buku</button>
 
@@ -890,7 +889,7 @@
         <button class="quick-action" data-goto="buku"><i class="fa-solid fa-book-medical"></i><span class="qa-title">Tambah Buku</span><span class="qa-sub">Unggah koleksi baru</span></button>
         <button class="quick-action" data-goto="pengguna"><i class="fa-solid fa-user-plus"></i><span class="qa-title">Tambah Pengguna</span><span class="qa-sub">Daftarkan anggota baru</span></button>
         <button class="quick-action" data-goto="absensi"><i class="fa-solid fa-list-check"></i><span class="qa-title">Lihat Absensi</span><span class="qa-sub">Riwayat kehadiran</span></button>
-        <button class="quick-action" data-goto="tracking"><i class="fa-solid fa-chart-pie"></i><span class="qa-title">Lihat Statistik</span><span class="qa-sub">Aktivitas pembaca</span></button>
+        <button class="quick-action" data-goto="kompetisi"><i class="fa-solid fa-chart-pie"></i><span class="qa-title">Lihat Peringkat</span><span class="qa-sub">Kompetisi Duta Literasi</span></button>
       </div>
 
       <div class="section-title"><i class="fa-solid fa-layer-group"></i> Status Pengembangan</div>
@@ -1043,72 +1042,6 @@
       </div>
     </section>
 
-    <!-- ══════ TRACKING ══════ -->
-    <section class="section-view" id="section-tracking">
-      <div class="section-title"><i class="fa-solid fa-chart-line"></i> Tracking Pembaca</div>
-
-      <div class="att-mini-stats">
-        <div class="att-mini-card"><div class="v" id="trkTotalSesi">0</div><div class="l">Total Sesi Membaca</div></div>
-        <div class="att-mini-card"><div class="v" id="trkTotalWaktu">0</div><div class="l">Total Waktu Membaca</div></div>
-        <div class="att-mini-card"><div class="v" id="trkSedangBaca">0</div><div class="l">Sedang Membaca Sekarang</div></div>
-        <div class="att-mini-card"><div class="v" id="trkHariIni">0</div><div class="l">Sesi Hari Ini</div></div>
-      </div>
-
-      <button id="btnRefreshTracking" class="btn-primary" style="margin-bottom:8px;"><i class="fa-solid fa-rotate"></i> Muat Ulang Statistik</button>
-
-      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-ranking-star" style="color:var(--green-600);"></i> Buku Terpopuler (Berdasarkan Total Waktu Baca)</h4>
-      <div class="att-table-wrap">
-        <table class="att-table">
-          <thead>
-            <tr>
-              <th>Judul Buku</th>
-              <th>Jumlah Sesi</th>
-              <th>Total Waktu Baca</th>
-              <th>Rata-rata / Sesi</th>
-            </tr>
-          </thead>
-          <tbody id="trkBukuBody">
-            <tr><td colspan="4" class="att-empty">Memuat data...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-medal" style="color:var(--green-600);"></i> Pembaca Teraktif</h4>
-      <div class="att-table-wrap">
-        <table class="att-table">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Status</th>
-              <th>Jumlah Sesi</th>
-              <th>Total Waktu Baca</th>
-            </tr>
-          </thead>
-          <tbody id="trkPembacaBody">
-            <tr><td colspan="4" class="att-empty">Memuat data...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h4 style="font-family:'Poppins',sans-serif;font-size:14.5px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-clock-rotate-left" style="color:var(--green-600);"></i> Aktivitas Membaca Terbaru</h4>
-      <div class="att-table-wrap">
-        <table class="att-table">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Judul Buku</th>
-              <th>Mulai</th>
-              <th>Durasi</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="trkAktivitasBody">
-            <tr><td colspan="5" class="att-empty">Memuat data...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
     <!-- ══════ KOMPETISI DUTA LITERASI ══════ -->
     <section class="section-view" id="section-kompetisi">
       <div class="section-title"><i class="fa-solid fa-trophy"></i> Kompetisi Duta Literasi</div>
@@ -1142,9 +1075,10 @@
         </div>
 
         <div class="kmp-panel active" id="kmpPanel-literasi">
+          <div class="form-hint" style="margin-bottom:10px;"><i class="fa-solid fa-circle-info"></i> Poin Literasi = jumlah absen kunjungan dengan alasan "Membaca Buku" + jumlah peminjaman buku fisik (semua kategori/genre).</div>
           <div class="att-table-wrap">
             <table class="att-table">
-              <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th><th>Total Durasi Membaca</th></tr></thead>
+              <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th><th>Poin Literasi</th></tr></thead>
               <tbody id="kmpLiterasiBody"><tr><td colspan="4" class="att-empty">Memuat data...</td></tr></tbody>
             </table>
           </div>
@@ -1249,13 +1183,6 @@
           <div class="ekspor-card-title">Data Tamu</div>
           <div class="ekspor-card-desc">Catatan kunjungan tamu non-anggota beserta keperluan, usia, dan tanggal kunjungan.</div>
           <button class="btn-ekspor-kategori" data-kategori="tamu"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
-        </div>
-
-        <div class="ekspor-card">
-          <div class="ekspor-card-icon"><i class="fa-solid fa-chart-line"></i></div>
-          <div class="ekspor-card-title">Tracking Pembaca</div>
-          <div class="ekspor-card-desc">Statistik aktivitas membaca: ringkasan, buku terpopuler, pembaca teraktif, dan aktivitas terbaru.</div>
-          <button class="btn-ekspor-kategori" data-kategori="tracking"><i class="fa-solid fa-file-export"></i> Pilih &amp; Ekspor</button>
         </div>
 
         <div class="ekspor-card">
@@ -1737,7 +1664,6 @@
     pengguna: { title: 'Kelola Pengguna', sub: 'Manajemen data anggota &amp; tamu' },
     absensi: { title: 'Kelola Absensi', sub: 'Rekap kehadiran pengunjung' },
     tamu: { title: 'Kelola Tamu', sub: 'Data kunjungan tamu non-anggota' },
-    tracking: { title: 'Tracking Pembaca', sub: 'Statistik aktivitas literasi' },
     kompetisi: { title: 'Kompetisi Duta Literasi', sub: 'Gamifikasi literasi: Duta Literasi, Duta Kunjungan &amp; Duta Buku' },
     peminjaman: { title: 'Peminjaman Buku', sub: 'Pantau arus peminjaman &amp; pengembalian buku fisik' },
     ekspor: { title: 'Ekspor Data', sub: 'Unduh data sistem dalam format Excel, PDF, atau PNG' },
@@ -1763,7 +1689,6 @@
       if (sec === 'pengguna') loadUsers();
       if (sec === 'absensi') loadAttendanceAdmin();
       if (sec === 'tamu') loadGuests();
-      if (sec === 'tracking') loadTrackingStats();
       if (sec === 'kompetisi') loadKompetisi();
       if (sec === 'peminjaman') loadKompetisiLoans();
       if (sec === 'pengaturan') { loadQrAbsen(); loadResetDataChecklist(); }
@@ -2662,91 +2587,6 @@
     }
   });
 
-  // ══════ TRACKING PEMBACA ══════
-  function formatDurasi(detik) {
-    detik = Math.max(0, Math.floor(detik || 0));
-    const j = Math.floor(detik / 3600);
-    const m = Math.floor((detik % 3600) / 60);
-    const d = detik % 60;
-    if (j > 0) return `${j}j ${m}m`;
-    if (m > 0) return `${m}m ${d}d`;
-    return `${d} detik`;
-  }
-
-  async function loadTrackingStats() {
-    const bukuBody = document.getElementById('trkBukuBody');
-    const pembacaBody = document.getElementById('trkPembacaBody');
-    const aktivitasBody = document.getElementById('trkAktivitasBody');
-    bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
-    pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
-    aktivitasBody.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
-
-    try {
-      const res = await fetch(`${API_BASE}/reading/stats`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal memuat statistik tracking.');
-
-      document.getElementById('trkTotalSesi').textContent = data.totalSesi ?? 0;
-      document.getElementById('trkTotalWaktu').textContent = formatDurasi(data.totalDurasiDetik);
-      document.getElementById('trkSedangBaca').textContent = data.sedangMembaca ?? 0;
-      document.getElementById('trkHariIni').textContent = data.aktivitasHariIni ?? 0;
-
-      // Buku terpopuler
-      if (!data.bukuTerpopuler || data.bukuTerpopuler.length === 0) {
-        bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
-      } else {
-        bukuBody.innerHTML = data.bukuTerpopuler.map(b => `
-          <tr>
-            <td><strong>${escapeHtml(b.judul)}</strong></td>
-            <td>${b.totalSesi}</td>
-            <td>${formatDurasi(b.totalDurasiDetik)}</td>
-            <td>${formatDurasi(b.totalSesi > 0 ? b.totalDurasiDetik / b.totalSesi : 0)}</td>
-          </tr>
-        `).join('');
-      }
-
-      // Pembaca teraktif
-      if (!data.pembacaAktif || data.pembacaAktif.length === 0) {
-        pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
-      } else {
-        pembacaBody.innerHTML = data.pembacaAktif.map(p => `
-          <tr>
-            <td><strong>${escapeHtml(p.nama)}</strong></td>
-            <td><span class="att-role-chip">${escapeHtml(p.status)}</span></td>
-            <td>${p.totalSesi}</td>
-            <td>${formatDurasi(p.totalDurasiDetik)}</td>
-          </tr>
-        `).join('');
-      }
-
-      // Aktivitas terbaru
-      if (!data.aktivitasTerbaru || data.aktivitasTerbaru.length === 0) {
-        aktivitasBody.innerHTML = `<tr><td colspan="5" class="att-empty"><i class="fa-solid fa-inbox"></i> Belum ada aktivitas membaca.</td></tr>`;
-      } else {
-        aktivitasBody.innerHTML = data.aktivitasTerbaru.map(a => `
-          <tr>
-            <td><strong>${escapeHtml(a.nama)}</strong></td>
-            <td>${escapeHtml(a.judulBuku)}</td>
-            <td>${fmtJam(a.mulai)}, ${fmtTanggal(a.mulai.slice(0, 10))}</td>
-            <td>${formatDurasi(a.durasiDetik)}</td>
-            <td>${a.sedangBerlangsung
-              ? `<span class="att-role-chip" style="background:#fef3c7;color:#92400e;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:9px;"></i> Sedang Berlangsung</span>`
-              : `<span class="att-role-chip" style="background:#d1fae5;color:#065f46;">Selesai</span>`}</td>
-          </tr>
-        `).join('');
-      }
-    } catch (err) {
-      const msg = `<tr><td colspan="5" class="att-empty">Gagal memuat statistik tracking.</td></tr>`;
-      bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat data.</td></tr>`;
-      pembacaBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat data.</td></tr>`;
-      aktivitasBody.innerHTML = msg;
-    }
-  }
-
-  document.getElementById('btnRefreshTracking').addEventListener('click', loadTrackingStats);
-
   // ══════ KELOLA TAMU ══════
   async function loadGuests() {
     try {
@@ -3524,8 +3364,8 @@
 
       const lit = (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [];
       literasiBody.innerHTML = lit.length === 0
-        ? `<tr><td colspan="4" class="att-empty">Belum ada aktivitas membaca pada periode ini.</td></tr>`
-        : lit.map(item => renderKmpLeaderboardRow(item, formatDurasi(item.totalDetik))).join('');
+        ? `<tr><td colspan="4" class="att-empty">Belum ada aktivitas literasi pada periode ini.</td></tr>`
+        : lit.map(item => renderKmpLeaderboardRow(item, `${item.totalPoin} poin (${item.totalAbsenMembaca}x absen membaca • ${item.totalPinjamBuku} buku dipinjam)`)).join('');
 
       const kun = (data.dutaKunjungan && data.dutaKunjungan.leaderboard) || [];
       kunjunganBody.innerHTML = kun.length === 0
@@ -3735,71 +3575,6 @@
         };
       }
     },
-    tracking: {
-      label: 'Statistik Tracking Pembaca',
-      getDate(a) { return a.mulai ? new Date(a.mulai) : null; },
-      async fetchRaw() {
-        const res = await fetch(`${API_BASE}/reading/stats`, { headers: { Authorization: `Bearer ${token}` } });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Gagal mengambil data tracking pembaca.');
-        // "list" adalah data yang dapat difilter berdasarkan rentang waktu (aktivitas terbaru).
-        // "bukuTerpopuler" & "pembacaAktif" adalah rekap agregat dari server (selalu seluruh waktu).
-        return {
-          list: data.aktivitasTerbaru || [],
-          bukuTerpopuler: data.bukuTerpopuler || [],
-          pembacaAktif: data.pembacaAktif || [],
-          sedangMembaca: data.sedangMembaca ?? 0,
-          aktivitasHariIni: data.aktivitasHariIni ?? 0
-        };
-      },
-      build(ctx) {
-        const aktivitas = ctx.list;
-        const totalDurasiTerfilter = aktivitas.reduce((sum, a) => sum + (a.durasiDetik || 0), 0);
-        return {
-          total: aktivitas.length,
-          columns: ['No', 'Nama Pembaca', 'Judul Buku', 'Waktu Mulai', 'Durasi', 'Status'],
-          rows: aktivitas.map((a, i) => [
-            i + 1,
-            a.nama || '-',
-            a.judulBuku || '-',
-            `${fmtJam(a.mulai)}, ${fmtTanggal(a.mulai.slice(0, 10))}`,
-            formatDurasi(a.durasiDetik),
-            a.sedangBerlangsung ? 'Sedang Berlangsung' : 'Selesai'
-          ]),
-          judulUtama: 'Aktivitas Membaca (Sesuai Rentang Waktu Terpilih)',
-          ringkasan: [
-            ['Total Sesi (Rentang Terpilih)', String(aktivitas.length)],
-            ['Total Waktu Membaca (Rentang Terpilih)', formatDurasi(totalDurasiTerfilter)],
-            ['Sedang Membaca Saat Ini', String(ctx.sedangMembaca)],
-            ['Aktivitas Hari Ini', String(ctx.aktivitasHariIni)]
-          ],
-          extraTables: [
-            {
-              title: 'Buku Terpopuler (Rekap Seluruh Waktu)',
-              columns: ['No', 'Judul Buku', 'Total Sesi', 'Total Durasi', 'Rata-rata Durasi'],
-              rows: ctx.bukuTerpopuler.map((b, i) => [
-                i + 1,
-                b.judul || '-',
-                b.totalSesi,
-                formatDurasi(b.totalDurasiDetik),
-                formatDurasi(b.totalSesi > 0 ? b.totalDurasiDetik / b.totalSesi : 0)
-              ])
-            },
-            {
-              title: 'Pembaca Teraktif (Rekap Seluruh Waktu)',
-              columns: ['No', 'Nama', 'Status', 'Total Sesi', 'Total Durasi'],
-              rows: ctx.pembacaAktif.map((p, i) => [
-                i + 1,
-                p.nama || '-',
-                p.status || '-',
-                p.totalSesi,
-                formatDurasi(p.totalDurasiDetik)
-              ])
-            }
-          ]
-        };
-      }
-    },
     peminjaman: {
       label: 'Data Peminjaman Buku',
       getDate(l) { return l.tanggalPinjam ? new Date(`${l.tanggalPinjam}T00:00:00+07:00`) : null; },
@@ -3863,12 +3638,14 @@
         return {
           total: ctx.literasi.length,
           judulUtama: 'Papan Peringkat Duta Literasi',
-          columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Total Waktu Membaca'],
+          columns: ['Peringkat', 'Nama', 'Kelas / Jabatan', 'Poin Literasi', 'Absen Membaca', 'Buku Dipinjam'],
           rows: ctx.literasi.map((item, i) => [
             item.rank || i + 1,
             item.nama || '-',
             kmpKelasJabatan(item),
-            formatDurasi(item.totalDetik)
+            item.totalPoin,
+            item.totalAbsenMembaca,
+            item.totalPinjamBuku
           ]),
           extraTables: [
             {
