@@ -101,6 +101,19 @@
       "hash": "4829fe0bbc0aefa023a2f19475869921a830e5492c4db5119470daa4930f41c5ca0502a33216ff32f840c8de0389f70753e40821598401dac40fa1dbe45981ce",
       "createdAt": "2026-08-20T02:38:27.539Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193513131_c8d22b",
+      "nama": "Syakira Nurul Aini",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407972789",
+      "salt": "fb3cebe5ee126e0130df9b19a6cc48f4",
+      "hash": "dbb93c0bff1890f084a924b4b650cccab5421d73f4ba48711422825a31890f2ecf251a614c52fc56cffdb524b559f784dcc87b6af722f79d3bb9cb5a0cad21a1",
+      "createdAt": "2026-08-20T02:38:33.131Z",
+      "daftarMandiri": true
     }
   ]
 }
