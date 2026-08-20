@@ -88,6 +88,23 @@ function generateAttendanceId() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// BARCODE ANGGOTA: KODE UNIK PER PENGGUNA (AWALAN 2407) UNTUK ABSENSI SCAN
+// DIBUAT OTOMATIS SAAT AKUN DIBUAT (REGISTRASI MANDIRI / DITAMBAHKAN ADMIN)
+// ─────────────────────────────────────────────────────────────────────────
+const BARCODE_PREFIX = '2407';
+
+function generateKodeBarcode(existingBarcodes) {
+  let kode;
+  let percobaan = 0;
+  do {
+    const acak = crypto.randomInt(100000, 1000000).toString();
+    kode = `${BARCODE_PREFIX}${acak}`;
+    percobaan++;
+  } while (existingBarcodes.has(kode) && percobaan < 50);
+  return kode;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // QR ABSENSI: PREFIX PENANDA KHUSUS (BUKAN URL, TIDAK MENGARAH KE MANA PUN
 // JIKA DIPINDAI APLIKASI KAMERA BIASA — HANYA DIKENALI OLEH SCANNER DI WEBSITE INI)
 // ─────────────────────────────────────────────────────────────────────────
@@ -385,6 +402,15 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Password salah.' });
       }
 
+      // ─── AKUN LAMA YANG BELUM PUNYA KODE BARCODE: BUAT SEKARANG (BACKFILL) ───
+      if (!user.kodeBarcode) {
+        const existingBarcodes = new Set(usersData.users.map((u) => u.kodeBarcode).filter(Boolean));
+        user.kodeBarcode = generateKodeBarcode(existingBarcodes);
+        try {
+          await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Buat kode barcode: ${user.nama}`);
+        } catch { /* best-effort, tidak menghalangi proses login */ }
+      }
+
       const token = generateToken({
         sub: user.id,
         nama: user.nama,
@@ -523,6 +549,7 @@ export default async function handler(req, res) {
 
       const salt = crypto.randomBytes(16).toString('hex');
       const hash = hashPassword(password, salt);
+      const existingBarcodes = new Set(usersData.users.map((u) => u.kodeBarcode).filter(Boolean));
 
       const newUser = {
         id: `usr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
@@ -531,6 +558,7 @@ export default async function handler(req, res) {
         kelas: status === 'siswa' ? String(kelas).trim() : null,
         jabatan: status !== 'siswa' ? (jabatan ? String(jabatan).trim() : '') : null,
         foto: null,
+        kodeBarcode: generateKodeBarcode(existingBarcodes),
         salt,
         hash,
         createdAt: new Date().toISOString(),
@@ -781,6 +809,7 @@ export default async function handler(req, res) {
         kelas: payload.kelas || null,
         jabatan: payload.jabatan || null,
         alasan,
+        metode: 'qr',
         tanggal: today,
         waktuAbsen: new Date().toISOString()
       };
@@ -793,6 +822,85 @@ export default async function handler(req, res) {
       }
 
       return sendJson(res, 200, { message: 'Absensi berhasil dicatat.', record });
+    }
+
+    // ─── ABSEN KEHADIRAN VIA SCAN BARCODE KARTU ANGGOTA (1x PER HARI) ───
+    // Dipakai di halaman index/login: petugas memindai barcode kartu
+    // anggota memakai scanner fisik (USB HID, berperilaku seperti keyboard
+    // + Enter). Tidak memerlukan sesi login — identitas pengguna didapat
+    // langsung dari kecocokan kodeBarcode di data pengguna.
+    if (method === 'POST' && route === 'attendance/barcode') {
+      const kodeBarcode = String(body.kodeBarcode || '').trim();
+      const alasan = String(body.alasan || '').trim();
+
+      if (!kodeBarcode) {
+        return sendJson(res, 400, { message: 'Kode barcode tidak terbaca. Coba pindai ulang.' });
+      }
+      if (!alasan) {
+        return sendJson(res, 400, { message: 'Alasan kunjungan wajib dipilih.' });
+      }
+      if (!ALASAN_KUNJUNGAN.includes(alasan)) {
+        return sendJson(res, 400, { message: 'Alasan kunjungan tidak valid.' });
+      }
+
+      let usersData;
+      try {
+        usersData = JSON.parse(await readDataFile('users.json'));
+      } catch {
+        return sendJson(res, 500, { message: 'Data pengguna tidak dapat dimuat.' });
+      }
+
+      const user = (usersData.users || []).find((u) => u.kodeBarcode === kodeBarcode);
+      if (!user) {
+        return sendJson(res, 404, { message: 'Kode barcode tidak terdaftar. Pastikan kartu anggota valid.' });
+      }
+
+      const today = todayJakarta();
+
+      let attendanceData = { attendance: [] };
+      try {
+        attendanceData = JSON.parse(await readDataFile('attendance.json'));
+        if (!Array.isArray(attendanceData.attendance)) attendanceData.attendance = [];
+      } catch {
+        attendanceData = { attendance: [] };
+      }
+
+      const sudahAbsen = attendanceData.attendance.find(
+        (a) => a.userId === user.id && a.tanggal === today
+      );
+      if (sudahAbsen) {
+        return sendJson(res, 400, { message: `${user.nama} sudah melakukan absensi hari ini.`, nama: user.nama });
+      }
+
+      const record = {
+        id: generateAttendanceId(),
+        userId: user.id,
+        nama: user.nama,
+        status: user.status,
+        kelas: user.kelas || null,
+        jabatan: user.jabatan || null,
+        alasan,
+        metode: 'barcode',
+        tanggal: today,
+        waktuAbsen: new Date().toISOString()
+      };
+
+      attendanceData.attendance.push(record);
+      try {
+        await writeDataFile('attendance.json', JSON.stringify(attendanceData, null, 2), `Absen barcode: ${record.nama}`);
+      } catch (err) {
+        return sendJson(res, 500, { message: 'Gagal menyimpan absensi. Silakan coba lagi.' });
+      }
+
+      return sendJson(res, 200, {
+        message: 'Absensi berhasil dicatat.',
+        nama: user.nama,
+        status: user.status,
+        kelas: user.kelas || null,
+        jabatan: user.jabatan || null,
+        foto: user.foto || null,
+        record
+      });
     }
 
     // ─── RIWAYAT & STATUS ABSENSI PENGGUNA YANG SEDANG LOGIN ────────────
@@ -1346,7 +1454,8 @@ export default async function handler(req, res) {
         nama: u.nama,
         status: u.status,
         kelas: u.kelas,
-        jabatan: u.jabatan
+        jabatan: u.jabatan,
+        kodeBarcode: u.kodeBarcode || null
       }));
       return sendJson(res, 200, { users: safe });
     }
@@ -1373,6 +1482,7 @@ export default async function handler(req, res) {
 
       const salt = crypto.randomBytes(16).toString('hex');
       const hash = hashPassword(password, salt);
+      const existingBarcodes = new Set(usersData.users.map((u) => u.kodeBarcode).filter(Boolean));
 
       const newUser = {
         id: `user_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
@@ -1380,6 +1490,7 @@ export default async function handler(req, res) {
         status,
         kelas: status === 'siswa' ? (kelas || '') : null,
         jabatan: status !== 'siswa' ? (jabatan || '') : null,
+        kodeBarcode: generateKodeBarcode(existingBarcodes),
         salt,
         hash
       };
@@ -1387,7 +1498,7 @@ export default async function handler(req, res) {
       usersData.users.push(newUser);
       try {
         await writeDataFile('users.json', JSON.stringify(usersData, null, 2), `Tambah pengguna: ${nama}`);
-        return sendJson(res, 201, { message: 'Pengguna berhasil ditambahkan.', user: { id: newUser.id, nama, status, kelas: newUser.kelas, jabatan: newUser.jabatan } });
+        return sendJson(res, 201, { message: 'Pengguna berhasil ditambahkan.', user: { id: newUser.id, nama, status, kelas: newUser.kelas, jabatan: newUser.jabatan, kodeBarcode: newUser.kodeBarcode } });
       } catch (err) {
         return sendJson(res, 500, { message: 'Gagal menambah pengguna.' });
       }
