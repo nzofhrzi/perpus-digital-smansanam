@@ -23,6 +23,19 @@
       "hash": "c3aa2546f8280ba9f58e9f29dce8b88ba9ac7df2c35080cc55a29b7d5f77fd295d4a819e20f452c9a578178e98162d668e8770de0c02689120a06b59a0ff1ab1",
       "createdAt": "2026-08-20T02:09:22.952Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193436527_ca0a13",
+      "nama": "Siti Soleha",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407483840",
+      "salt": "636c400e4daf3d8d5e711520af44b46a",
+      "hash": "8c594bf3a761146218188cfe13e140e6029707a9b90a712d065edead133bb6a0079bc6e7ba3ea0382f23edd6381723feae7969cc64624496c96a6cdac509b50d",
+      "createdAt": "2026-08-20T02:37:16.527Z",
+      "daftarMandiri": true
     }
   ]
 }
