@@ -18,6 +18,25 @@
       "dikembalikanPada": "2026-08-20T02:26:11.363Z",
       "catatan": "tugas",
       "dicatatPada": "2026-08-20T02:25:56.163Z"
+    },
+    {
+      "id": "pjm_1787194065881_a79f60",
+      "userId": "usr_1787193436527_ca0a13",
+      "nama": "Siti Soleha",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "judulBuku": "The Arson Project",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "Membaca buku",
+      "dicatatPada": "2026-08-20T02:47:45.881Z"
     }
   ]
 }
