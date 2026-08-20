@@ -49,6 +49,19 @@
       "hash": "9edde3d51254af4a8782bb4cd4739246ff03ce850ee588a85336f7df456b5514a6015672cf0e8caf5e0694b0897680533765e2f31532f676c9e392ba3932bb48",
       "createdAt": "2026-08-20T02:37:35.324Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193465604_d75a82",
+      "nama": "Ridho",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407323779",
+      "salt": "435cc71c7abd93636f725923314c13ef",
+      "hash": "cb1642f7946d2101aa130308ed7a832ae44e2a9e42f668390f91e4413918cc7678ffeaa6dcd5534b7dd444f0ed38fc93e34a5d9dc7eb76f6083a132919c5d8e8",
+      "createdAt": "2026-08-20T02:37:45.604Z",
+      "daftarMandiri": true
     }
   ]
 }
