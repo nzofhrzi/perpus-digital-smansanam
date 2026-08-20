@@ -1714,8 +1714,8 @@
       <div class="kmp-panel" id="kmpPanel-kunjungan">
         <div class="att-table-wrap">
           <table class="att-table">
-            <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th><th>Total Kunjungan</th></tr></thead>
-            <tbody id="kmpKunjunganBody"><tr><td colspan="4" class="att-empty">Memuat data...</td></tr></tbody>
+            <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th></tr></thead>
+            <tbody id="kmpKunjunganBody"><tr><td colspan="3" class="att-empty">Memuat data...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -1728,8 +1728,8 @@
         </div>
         <div class="att-table-wrap">
           <table class="att-table">
-            <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th><th>Jumlah Buku</th></tr></thead>
-            <tbody id="kmpBukuBody"><tr><td colspan="4" class="att-empty">Memuat data...</td></tr></tbody>
+            <thead><tr><th>Peringkat</th><th>Nama</th><th>Kelas / Jabatan</th></tr></thead>
+            <tbody id="kmpBukuBody"><tr><td colspan="3" class="att-empty">Memuat data...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -3453,7 +3453,7 @@
         <td><div class="kmp-rank-cell">${kmpRankBadge(item.rank)}</div></td>
         <td>${escapeHtmlUser(item.nama)}${isMe ? ' <i class="fa-solid fa-user" style="color:var(--green-600);font-size:11px;" title="Anda"></i>' : ''}</td>
         <td>${escapeHtmlUser(kmpKelasJabatan(item))}</td>
-        <td>${valueLabel}</td>
+        ${valueLabel !== undefined ? `<td>${valueLabel}</td>` : ''}
       </tr>
     `;
   }
@@ -3464,8 +3464,8 @@
     const key = kmpBukuSubtabAktif === 'semua' ? 'semua' : (kmpBukuSubtabAktif === 'fiksi' ? 'fiksi' : 'nonFiksi');
     const lb = (kmpDataTerakhir.dutaBuku && kmpDataTerakhir.dutaBuku[key] && kmpDataTerakhir.dutaBuku[key].leaderboard) || [];
     body.innerHTML = lb.length === 0
-      ? `<tr><td colspan="4" class="att-empty">Belum ada data peminjaman pada kategori &amp; periode ini.</td></tr>`
-      : lb.map(item => kmpRenderRow(item, `${item.totalPinjam} buku`)).join('');
+      ? `<tr><td colspan="3" class="att-empty">Belum ada data peminjaman pada kategori &amp; periode ini.</td></tr>`
+      : lb.map(item => kmpRenderRow(item)).join('');
   }
 
   document.querySelectorAll('.kmp-tab-btn').forEach(btn => {
@@ -3505,8 +3505,8 @@
     if (!literasiBody) return;
 
     literasiBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
-    kunjunganBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
-    bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    kunjunganBody.innerHTML = `<tr><td colspan="3" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+    bukuBody.innerHTML = `<tr><td colspan="3" class="att-empty"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
 
     try {
       const qs = kmpPeriodeTerpilih ? `?periodeId=${encodeURIComponent(kmpPeriodeTerpilih)}` : '';
@@ -3521,8 +3521,8 @@
         heroPeriode.innerHTML = `<i class="fa-solid fa-calendar-xmark"></i> Belum ada periode kompetisi aktif`;
         kmpPeriodeSelectEl.innerHTML = `<option value="">Belum ada periode</option>`;
         literasiBody.innerHTML = `<tr><td colspan="4" class="att-empty">Kompetisi belum dimulai. Nantikan pengumuman dari admin perpustakaan.</td></tr>`;
-        kunjunganBody.innerHTML = `<tr><td colspan="4" class="att-empty">Kompetisi belum dimulai.</td></tr>`;
-        bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty">Kompetisi belum dimulai.</td></tr>`;
+        kunjunganBody.innerHTML = `<tr><td colspan="3" class="att-empty">Kompetisi belum dimulai.</td></tr>`;
+        bukuBody.innerHTML = `<tr><td colspan="3" class="att-empty">Kompetisi belum dimulai.</td></tr>`;
         ['kmpMyLiterasiRank', 'kmpMyKunjunganRank', 'kmpMyBukuRank'].forEach(id => document.getElementById(id).textContent = '-');
         return;
       }
@@ -3571,18 +3571,18 @@
       const lit = (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [];
       literasiBody.innerHTML = lit.length === 0
         ? `<tr><td colspan="4" class="att-empty">Belum ada aktivitas literasi pada periode ini.</td></tr>`
-        : lit.map(item => kmpRenderRow(item, `${item.totalPoin} poin <span style="color:var(--gray-500);font-weight:500;font-size:11px;">(${item.totalAbsenMembaca}x absen membaca • ${item.totalPinjamBuku} buku dipinjam)</span>`)).join('');
+        : lit.map(item => kmpRenderRow(item, `${item.totalPoin} poin`)).join('');
 
       const kun = (data.dutaKunjungan && data.dutaKunjungan.leaderboard) || [];
       kunjunganBody.innerHTML = kun.length === 0
-        ? `<tr><td colspan="4" class="att-empty">Belum ada kunjungan pada periode ini.</td></tr>`
-        : kun.map(item => kmpRenderRow(item, `${item.totalKunjungan}x kunjungan`)).join('');
+        ? `<tr><td colspan="3" class="att-empty">Belum ada kunjungan pada periode ini.</td></tr>`
+        : kun.map(item => kmpRenderRow(item)).join('');
 
       kmpRenderBukuTable();
     } catch (err) {
       literasiBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
-      kunjunganBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
-      bukuBody.innerHTML = `<tr><td colspan="4" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
+      kunjunganBody.innerHTML = `<tr><td colspan="3" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
+      bukuBody.innerHTML = `<tr><td colspan="3" class="att-empty">Gagal memuat papan peringkat.</td></tr>`;
     }
   }
 
