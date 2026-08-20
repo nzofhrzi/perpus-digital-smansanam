@@ -140,6 +140,19 @@
       "hash": "e393c823f1fd1b6e3a9674976bcb9c90b503d6a3158a8572d9ae7d915090081aa217ee62fd9ee5a1d869ee544cc8dc4c3c86ab0016e66eb834c35c6cae5b6f0a",
       "createdAt": "2026-08-20T02:38:48.926Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193534355_6d6cd7",
+      "nama": "SULISTARI",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407575147",
+      "salt": "e7f41c33ffc4db44d1340780633881ca",
+      "hash": "648fc42ea1bcd0ee7bb1229e7641fc07807d01e0daa0163bec95a81f1983c799f7e315b4f82f865f80ff18cc047419a8553c9f5b61a3e8dc567dd84af8e15714",
+      "createdAt": "2026-08-20T02:38:54.355Z",
+      "daftarMandiri": true
     }
   ]
 }
