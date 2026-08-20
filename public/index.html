@@ -928,7 +928,7 @@
 
     <div class="barcode-scan-zone" style="margin-top:14px;">
       <i class="fa-solid fa-wave-square big"></i>
-      <p>Pindai barcode, atau ketik ID pengguna secara manual (mis. usr_1787239208095_958aa1) lalu tekan Enter.</p>
+      <p>Tempelkan/pindai kartu dengan mesin scanner USB — absensi akan tercatat otomatis begitu ID selesai terbaca. Bisa juga mengetik ID pengguna secara manual (mis. usr_1787239208095_958aa1) lalu tekan Enter.</p>
       <input type="text" id="barcodeScanInput" placeholder="usr_xxxxxxxxxxxxx_xxxxxx" autocomplete="off" inputmode="text">
     </div>
   </div>
@@ -1181,17 +1181,21 @@
   const barcodeResultCard = document.getElementById('barcodeResultCard');
   const barcodeAlasanSelect = document.getElementById('barcodeAlasanSelect');
   let barcodeSubmitting = false;
+  let barcodeAutoTimer = null;
+  const BARCODE_AUTO_DELAY = 400; // ms jeda tanpa ketikan baru sebelum dianggap scan selesai
 
   function openBarcodeModal() {
     hideAlert('barcodeAlert');
     barcodeResultCard.classList.remove('show');
     barcodeModal.classList.add('show');
     barcodeScanInput.value = '';
+    clearTimeout(barcodeAutoTimer);
     setTimeout(() => barcodeScanInput.focus(), 150);
   }
 
   function closeBarcodeModal() {
     barcodeModal.classList.remove('show');
+    clearTimeout(barcodeAutoTimer);
     barcodeScanInput.blur();
   }
 
@@ -1207,27 +1211,40 @@
     }
   });
 
+  // Enter tetap didukung — untuk scanner yang mengirim Enter di akhir,
+  // atau saat ID diketik manual dan ingin langsung disubmit.
   barcodeScanInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+      clearTimeout(barcodeAutoTimer);
       submitBarcodeScan();
     }
   });
 
-  // Disederhanakan: yang dipindai/diketik sekarang adalah ID akun pengguna
-  // langsung (mis. "usr_1787239208095_958aa1"), bukan kode barcode 10 digit
-  // terpisah lagi. Karena panjang ID bisa bervariasi, tidak ada auto-submit
-  // berdasar jumlah karakter — submit terjadi saat menekan Enter (baik dari
-  // scanner keyboard-wedge yang mengirim Enter di akhir, maupun saat mengisi
-  // manual untuk uji coba).
+  // Yang dipindai/diketik adalah ID akun pengguna langsung
+  // (mis. "usr_1787239208095_958aa1").
+  //
+  // AUTO-SUBMIT tanpa Enter: mesin scanner USB "mengetik" seluruh ID dalam
+  // hitungan milidetik, jauh lebih cepat dari kecepatan mengetik manusia.
+  // Setiap ada karakter baru masuk, timer direset. Begitu tidak ada karakter
+  // baru selama BARCODE_AUTO_DELAY (artinya scan/ketikan sudah selesai),
+  // absensi otomatis dikirim — tidak perlu menekan Enter sama sekali.
   barcodeScanInput.addEventListener('input', () => {
     // Bersihkan whitespace/karakter liar yang mungkin ikut terketik, tapi
     // tetap pertahankan huruf/angka/underscore karena itu bentuk ID akun.
     const bersih = barcodeScanInput.value.replace(/[^0-9A-Za-z_]/g, '');
     if (bersih !== barcodeScanInput.value) barcodeScanInput.value = bersih;
+
+    clearTimeout(barcodeAutoTimer);
+    if (bersih.length > 0) {
+      barcodeAutoTimer = setTimeout(() => {
+        submitBarcodeScan();
+      }, BARCODE_AUTO_DELAY);
+    }
   });
 
   async function submitBarcodeScan() {
+    clearTimeout(barcodeAutoTimer);
     const kodeBarcode = barcodeScanInput.value.replace(/[^0-9A-Za-z_]/g, '').trim();
     barcodeScanInput.value = '';
     if (barcodeSubmitting) return;
