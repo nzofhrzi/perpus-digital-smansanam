@@ -952,7 +952,7 @@
     margin-bottom: 10px;
   }
   .profile-barcode-label i { color: var(--green-600); }
-  .profile-barcode-box canvas { width: 100%; max-width: 260px; height: auto; }
+  .profile-barcode-box canvas { width: 100%; max-width: 340px; height: auto; }
   .profile-barcode-code {
     margin-top: 8px; font-family: 'Courier New', monospace; font-size: 11px;
     letter-spacing: 1.4px; color: var(--gray-700); font-weight: 700; word-break: break-all;
@@ -1777,7 +1777,7 @@
 
           <div class="profile-barcode-box">
             <div class="profile-barcode-label"><i class="fa-solid fa-barcode"></i> Kode Barcode Anggota</div>
-            <canvas id="profileBarcodeCanvas" width="260" height="70"></canvas>
+            <canvas id="profileBarcodeCanvas" width="340" height="92"></canvas>
             <div class="profile-barcode-code" id="profileBarcodeCode">-</div>
           </div>
         </div>
@@ -2335,7 +2335,9 @@
   function renderProfileBarcode() {
     const canvas = document.getElementById('profileBarcodeCanvas');
     if (!canvas || !currentUser) return;
-    const cssW = 260, cssH = 70;
+    // Diperbesar dari 260x70 supaya batang barcode lebih tebal/lebar per
+    // modul-nya, membuatnya jauh lebih mudah terbaca oleh scanner fisik.
+    const cssW = 340, cssH = 92;
     const scale = Math.max(window.devicePixelRatio || 1, 3);
     canvas.width = cssW * scale;
     canvas.height = cssH * scale;
@@ -2621,31 +2623,43 @@
       });
 
       // Garis putus-putus pemisah + area barcode garis & catatan kaki
-      const footerY = H - 150;
+      //
+      // footerY dibuat DINAMIS mengikuti akhir baris info identitas (infoY),
+      // bukan angka tetap - supaya untuk akun dengan baris info lebih banyak
+      // (mis. kartu tamu: ID, Keperluan, Umur, Status = 4 baris) area footer
+      // tidak pernah bertabrakan/menimpa baris identitas di atasnya.
+      const footerY = Math.max(H - 190, infoY + 40);
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([6, 6]);
       ctx.beginPath(); ctx.moveTo(40, footerY); ctx.lineTo(W - 40, footerY); ctx.stroke();
       ctx.setLineDash([]);
 
-      const bcW = 340, bcH = 78, bcX = W - bcW - 40, bcY = footerY + 30;
-      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 58, 12);
+      // Barcode diperbesar signifikan (dulu 340x78) agar tiap batangnya jauh
+      // lebih tebal/lebar - ini yang paling menentukan supaya kartu mudah
+      // terbaca oleh mesin pemindai fisik (laser/CCD), bukan sekadar
+      // memperbesar tampilannya saja. Tinggi barcode dibatasi otomatis
+      // (bcH) agar tidak pernah melewati batas bawah kartu.
+      const bcW = 440;
+      const bcH = Math.max(70, Math.min(110, H - footerY - 72));
+      const bcX = W - bcW - 40, bcY = footerY + 30;
+      roundRectPath(ctx, bcX - 24, bcY - 28, bcW + 48, bcH + 62, 12);
       ctx.fillStyle = '#f8fafc'; ctx.fill();
-      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 58, 12);
+      roundRectPath(ctx, bcX - 24, bcY - 28, bcW + 48, bcH + 62, 12);
       ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '700 9.5px "Plus Jakarta Sans", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('KODE BARCODE ANGGOTA', bcX + bcW / 2, bcY - 10);
+      ctx.fillText('KODE BARCODE ANGGOTA', bcX + bcW / 2, bcY - 12);
       ctx.textAlign = 'left';
 
       drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, bcX, bcY, bcW, bcH, '#052e21');
 
       ctx.fillStyle = '#0f172a';
-      ctx.font = '700 13px "Courier New", monospace';
+      ctx.font = '700 14px "Courier New", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(currentUser.kodeBarcode || currentUser.id, bcX + bcW / 2, bcY + bcH + 22);
+      ctx.fillText(currentUser.kodeBarcode || currentUser.id, bcX + bcW / 2, bcY + bcH + 24);
       ctx.textAlign = 'left';
 
       ctx.fillStyle = '#065f46';
