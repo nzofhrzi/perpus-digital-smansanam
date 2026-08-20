@@ -648,6 +648,20 @@
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787195770852_e6b15b",
+      "userId": "usr_1787193539850_ef8a90",
+      "nama": "Marisa",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786780095314_4e8128",
+      "judulBuku": "TKA BIOLOGI TINGKAT SMA",
+      "mulai": "2026-08-20T03:16:10.852Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
