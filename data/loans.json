@@ -189,6 +189,25 @@
       "dikembalikanPada": null,
       "catatan": "Membaca buku",
       "dicatatPada": "2026-08-20T02:49:01.239Z"
+    },
+    {
+      "id": "pjm_1787194167199_c2630c",
+      "userId": "usr_1787193519709_b50628",
+      "nama": "ZASKIA FITRIANI",
+      "status": "siswa",
+      "kelas": "11.1",
+      "jabatan": null,
+      "judulBuku": "teluk alaska",
+      "kategoriBuku": "Fiksi",
+      "jenisBuku": "Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-21",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "untuk membaca",
+      "dicatatPada": "2026-08-20T02:49:27.199Z"
     }
   ]
 }
