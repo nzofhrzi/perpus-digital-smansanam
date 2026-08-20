@@ -153,6 +153,19 @@
       "hash": "648fc42ea1bcd0ee7bb1229e7641fc07807d01e0daa0163bec95a81f1983c799f7e315b4f82f865f80ff18cc047419a8553c9f5b61a3e8dc567dd84af8e15714",
       "createdAt": "2026-08-20T02:38:54.355Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193536667_20a722",
+      "nama": "Lafifah erwita",
+      "status": "siswa",
+      "kelas": "11.4",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407891679",
+      "salt": "ea245faa63a3d3ba6a176b06887e8a86",
+      "hash": "671b1ff32c72b4248b9df0dbc42c58b02769f4dd7012c913d7eb7fbcf1683dbe752bd5dfdb0d44184a364ec2db9147601096a345ad517d81287c5297a1908459",
+      "createdAt": "2026-08-20T02:38:56.667Z",
+      "daftarMandiri": true
     }
   ]
 }
