@@ -697,7 +697,7 @@ export default async function handler(req, res) {
         return sendJson(res, 401, { message: 'Sesi tidak valid atau fitur ini khusus anggota sekolah.' });
       }
 
-      const { nama, kelas, jabatan, currentPassword, newPassword, confirmNewPassword, foto, hapusFoto } = body;
+      const { currentPassword, newPassword, confirmNewPassword, foto, hapusFoto } = body;
 
       let usersData = { users: [] };
       try {
@@ -715,30 +715,12 @@ export default async function handler(req, res) {
 
       const updated = { ...user };
 
-      if (nama !== undefined) {
-        const cleanNama = String(nama).trim();
-        if (!cleanNama) {
-          return sendJson(res, 400, { message: 'Nama tidak boleh kosong.' });
-        }
-        const cleanNamaLower = cleanNama.toLowerCase();
-        const bentrok = usersData.users.find(
-          (u) => u.id !== user.id && u.nama.trim().toLowerCase() === cleanNamaLower && u.status === user.status
-        );
-        if (bentrok) {
-          return sendJson(res, 409, { message: 'Nama tersebut sudah digunakan oleh akun lain dengan status yang sama.' });
-        }
-        updated.nama = cleanNama;
-      }
-
-      if (user.status === 'siswa' && kelas !== undefined) {
-        if (!String(kelas).trim()) {
-          return sendJson(res, 400, { message: 'Kelas tidak boleh kosong.' });
-        }
-        updated.kelas = String(kelas).trim();
-      }
-      if (user.status !== 'siswa' && jabatan !== undefined) {
-        updated.jabatan = String(jabatan).trim();
-      }
+      // ─── DATA IDENTITAS (NAMA, KELAS, JABATAN): HANYA ADMIN ───
+      // Sengaja TIDAK menerima `nama`/`kelas`/`jabatan` dari endpoint ini lagi.
+      // Perubahan data identitas sekarang cuma boleh lewat Panel Admin
+      // (route users/... yang butuh token admin), supaya pengguna tidak bisa
+      // mengubah nama/kelas/jabatan sendiri - baik lewat UI maupun dengan
+      // memanggil API ini langsung.
 
       // ── FOTO PROFIL (BASE64 DATA URL, SISI KLIEN SUDAH DIKOMPRES/DIRESIZE) ──
       if (hapusFoto === true) {
