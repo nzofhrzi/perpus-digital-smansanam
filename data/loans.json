@@ -246,6 +246,25 @@
       "dikembalikanPada": "2026-08-20T02:55:33.291Z",
       "catatan": "membaca",
       "dicatatPada": "2026-08-20T02:55:17.420Z"
+    },
+    {
+      "id": "pjm_1787196925624_5d1d4c",
+      "userId": "usr_1787193471128_564fca",
+      "nama": "ELINATASYA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "judulBuku": "me and my patient",
+      "kategoriBuku": "Novel",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 1,
+      "tanggalRencanaKembali": "2026-08-21",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "menambah wawasan, memotivasi",
+      "dicatatPada": "2026-08-20T03:35:25.624Z"
     }
   ]
 }
