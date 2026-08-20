@@ -234,9 +234,10 @@
       "bookId": "book_1786930140047_f362e1",
       "judulBuku": "Secangkir Kopi dan pencakar langit",
       "mulai": "2026-08-20T02:43:50.581Z",
-      "selesai": null,
-      "durasiDetik": 0,
-      "tanggal": "2026-08-20"
+      "selesai": "2026-08-20T02:44:15.853Z",
+      "durasiDetik": 25,
+      "tanggal": "2026-08-20",
+      "ditutupOtomatis": true
     },
     {
       "id": "read_1787193844711_6cdd1d",
@@ -264,6 +265,20 @@
       "mulai": "2026-08-20T02:44:11.502Z",
       "selesai": "2026-08-20T02:44:13.777Z",
       "durasiDetik": 2,
+      "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193855853_d77056",
+      "userId": "usr_1787193519709_b50628",
+      "nama": "ZASKIA FITRIANI",
+      "status": "siswa",
+      "kelas": "11.1",
+      "jabatan": null,
+      "bookId": "book_1786930140047_f362e1",
+      "judulBuku": "Secangkir Kopi dan pencakar langit",
+      "mulai": "2026-08-20T02:44:15.853Z",
+      "selesai": null,
+      "durasiDetik": 0,
       "tanggal": "2026-08-20"
     }
   ]
