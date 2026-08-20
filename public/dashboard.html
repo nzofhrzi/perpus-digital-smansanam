@@ -940,6 +940,24 @@
   .kartu-preview-wrap { background: var(--gray-100); border-radius: 16px; padding: 16px; }
   .kartu-preview-wrap canvas { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 14px 34px -14px rgba(6,78,59,0.35); }
 
+  .profile-barcode-box {
+    margin-top: 18px; padding-top: 18px; width: 100%;
+    border-top: 1.5px dashed var(--gray-200);
+    text-align: center;
+  }
+  .profile-barcode-label {
+    font-size: 10.5px; font-weight: 700; color: var(--gray-500);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: 10px;
+  }
+  .profile-barcode-label i { color: var(--green-600); }
+  .profile-barcode-box canvas { width: 100%; max-width: 260px; height: auto; image-rendering: pixelated; }
+  .profile-barcode-code {
+    margin-top: 8px; font-family: 'Courier New', monospace; font-size: 11px;
+    letter-spacing: 1.4px; color: var(--gray-700); font-weight: 700; word-break: break-all;
+  }
+
   .profile-detail-row {
     display: flex;
     align-items: center;
@@ -1756,6 +1774,12 @@
             <i class="fa-solid fa-circle-info"></i>
             <span>Akun tamu bersifat sementara dan tidak memiliki data login, sehingga tidak dapat diedit.</span>
           </div>
+
+          <div class="profile-barcode-box">
+            <div class="profile-barcode-label"><i class="fa-solid fa-barcode"></i> Kode Barcode Anggota</div>
+            <canvas id="profileBarcodeCanvas" width="280" height="70"></canvas>
+            <div class="profile-barcode-code" id="profileBarcodeCode">-</div>
+          </div>
         </div>
 
         <!-- Profile Details List -->
@@ -2190,8 +2214,7 @@
         <div id="kartuLoading" style="padding:50px 0; text-align:center; color:var(--gray-500); font-size:13px;"><i class="fa-solid fa-spinner fa-spin"></i> Membuat kartu anggota...</div>
         <canvas id="kartuAnggotaCanvas" style="display:none;"></canvas>
       </div>
-      <div id="kartuQrHidden" style="position:absolute; left:-9999px; top:-9999px;"></div>
-      <p style="font-size:11.5px; color:var(--gray-500); margin-top:14px; line-height:1.6;">Kartu ini memuat foto identitas dan kode QR pribadi untuk keperluan verifikasi keanggotaan. Simpan atau cetak sesuai kebutuhan.</p>
+      <p style="font-size:11.5px; color:var(--gray-500); margin-top:14px; line-height:1.6;">Kartu ini memuat foto identitas dan barcode garis pribadi untuk keperluan verifikasi keanggotaan. Simpan atau cetak sesuai kebutuhan.</p>
     </div>
     <div class="modal-box-p-footer">
       <button type="button" class="btn-p-cancel" id="btnCloseKartuFooter">Tutup</button>
@@ -2205,7 +2228,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="vendor/jsQR.min.js"></script>
-<script src="vendor/qrcode.min.js"></script>
 <script>
   const API_BASE = '/api';
 
@@ -2289,6 +2311,9 @@
     document.getElementById('profileJabatan').textContent = currentUser.status === 'guru' ? 'Guru' : 'Staf Tata Usaha';
   }
 
+  document.getElementById('profileBarcodeCode').textContent = currentUser.id;
+  renderProfileBarcode();
+
   // ══════ KARTU INFORMASI PERPUSTAKAAN (BERANDA) + SOSMED SEKOLAH ══════
   function renderSosmedGrid(sosmedList) {
     const grid = document.getElementById('sosmedGrid');
@@ -2346,7 +2371,6 @@
   const modalKartu = document.getElementById('modalKartuAnggota');
   const kartuCanvas = document.getElementById('kartuAnggotaCanvas');
   const kartuLoadingEl = document.getElementById('kartuLoading');
-  const kartuQrHidden = document.getElementById('kartuQrHidden');
   const btnDownloadKartu = document.getElementById('btnDownloadKartu');
   let kartuSiapDiunduh = false;
 
@@ -2389,6 +2413,65 @@
     return y + lines.length * lineHeight;
   }
 
+  // ══════ BARCODE GARIS (CODE 128B) — untuk kartu & profil ══════
+  // Tabel pola lebar batang standar Code 128 (indeks 0–105), setiap simbol = 11 modul.
+  const C128_PATTERNS = [
+    '212222','222122','222221','121223','121322','131222','122213','122312','132212','221213',
+    '221312','231212','112232','122132','122231','113222','123122','123221','223211','221132',
+    '221231','213212','223112','312131','311222','321122','321221','312212','322112','322211',
+    '212123','212321','232121','111323','131123','131321','112313','132113','132311','211313',
+    '231113','231311','112133','112331','132131','113123','113321','133121','313121','211331',
+    '231131','213113','213311','213131','311123','311321','331121','312113','312311','332111',
+    '314111','221411','431111','111224','111422','121124','121421','141122','141221','112214',
+    '112412','122114','122411','142112','142211','241211','221114','413111','241112','134111',
+    '111242','121142','121241','114212','124112','124211','411212','421112','421211','212141',
+    '214121','412121','111143','111341','131141','114113','114311','411113','411311','113141',
+    '114131','311141','411131','211412','211214','211232'
+  ];
+  const C128_STOP = '2331112'; // 13 modul, penutup
+
+  // Encode teks (ASCII 32–126) menjadi string digit lebar batang Code 128 subset B
+  function code128Pattern(text) {
+    const START_B = 104;
+    const values = String(text).split('').map((ch) => {
+      const code = ch.charCodeAt(0);
+      return (code >= 32 && code <= 126) ? code - 32 : 63; // fallback ke karakter '_' bila di luar cakupan
+    });
+    let checksum = START_B;
+    values.forEach((v, i) => { checksum += v * (i + 1); });
+    checksum = checksum % 103;
+    const symbolValues = [START_B, ...values, checksum];
+    let pattern = symbolValues.map((v) => C128_PATTERNS[v]).join('') + C128_STOP;
+    return pattern;
+  }
+
+  // Menggambar barcode garis (batang hitam-putih) ke context canvas manapun
+  function drawBarcode(ctx, text, x, y, width, height, color) {
+    const pattern = code128Pattern(text);
+    const totalUnits = pattern.split('').reduce((a, d) => a + Number(d), 0);
+    const unit = width / totalUnits;
+    let cursor = x, black = true;
+    ctx.fillStyle = color || '#0f172a';
+    for (const d of pattern) {
+      const w = Number(d) * unit;
+      if (black) ctx.fillRect(cursor, y, Math.max(w, 0.6), height);
+      cursor += w;
+      black = !black;
+    }
+  }
+
+  // Render barcode kecil di halaman Profil Saya (bukan hanya di kartu unduhan)
+  function renderProfileBarcode() {
+    const canvas = document.getElementById('profileBarcodeCanvas');
+    if (!canvas || !currentUser) return;
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+    drawBarcode(ctx, currentUser.id, 8, 4, W - 16, H - 8, '#0f172a');
+  }
+
   async function generateKartuAnggota() {
     kartuSiapDiunduh = false;
     btnDownloadKartu.disabled = true;
@@ -2410,13 +2493,6 @@
           document.fonts.load('500 11px "Plus Jakarta Sans"')
         ]);
       } catch {}
-
-      // Render QR pribadi anggota ke canvas tersembunyi
-      kartuQrHidden.innerHTML = '';
-      const qrContent = `PERPUS-ANGGOTA::${currentUser.id}`;
-      new QRCode(kartuQrHidden, { text: qrContent, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.H, colorDark: '#052e21', colorLight: '#ffffff' });
-      await new Promise((r) => setTimeout(r, 80));
-      const qrCanvasEl = kartuQrHidden.querySelector('canvas') || kartuQrHidden.querySelector('img');
 
       const fotoImg = await loadImageAsync(currentUser.foto || null);
 
@@ -2528,7 +2604,7 @@
         infoY += 44;
       });
 
-      // Garis putus-putus pemisah + area QR & catatan kaki
+      // Garis putus-putus pemisah + area barcode garis & catatan kaki
       const footerY = H - 150;
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 1.5;
@@ -2536,17 +2612,24 @@
       ctx.beginPath(); ctx.moveTo(40, footerY); ctx.lineTo(W - 40, footerY); ctx.stroke();
       ctx.setLineDash([]);
 
-      const qrSize = 104, qrX = W - qrSize - 40, qrY = footerY + 22;
-      roundRectPath(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 12);
+      const bcW = 300, bcH = 60, bcX = W - bcW - 40, bcY = footerY + 30;
+      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 56, 12);
       ctx.fillStyle = '#f8fafc'; ctx.fill();
-      roundRectPath(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 12);
+      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 56, 12);
       ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
-      if (qrCanvasEl) ctx.drawImage(qrCanvasEl, qrX, qrY, qrSize, qrSize);
 
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '700 10px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '700 9.5px "Plus Jakarta Sans", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('PINDAI UNTUK VERIFIKASI', qrX + qrSize / 2, qrY + qrSize + 22);
+      ctx.fillText('KODE BARCODE ANGGOTA', bcX + bcW / 2, bcY - 10);
+      ctx.textAlign = 'left';
+
+      drawBarcode(ctx, currentUser.id, bcX, bcY, bcW, bcH, '#052e21');
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 11px "Courier New", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(currentUser.id, bcX + bcW / 2, bcY + bcH + 20);
       ctx.textAlign = 'left';
 
       ctx.fillStyle = '#065f46';
@@ -2554,7 +2637,7 @@
       ctx.fillText('Kartu identitas resmi anggota perpustakaan digital.', 40, footerY + 34);
       ctx.fillStyle = '#94a3b8';
       ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText('Tunjukkan kartu ini beserta QR untuk verifikasi keanggotaan di perpustakaan.', 40, footerY + 54);
+      ctx.fillText('Tunjukkan kartu ini untuk verifikasi keanggotaan di perpustakaan.', 40, footerY + 54);
       ctx.fillText(`Diterbitkan: ${fmtTanggal(new Date().toISOString().slice(0, 10))}`, 40, footerY + 76);
 
       ctx.restore(); // lepas clip badan kartu
