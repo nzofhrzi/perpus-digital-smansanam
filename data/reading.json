@@ -748,6 +748,20 @@
       "selesai": null,
       "durasiDetik": 0,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787195905566_1a5769",
+      "userId": "usr_1787195774898_1a978e",
+      "nama": "patur rahman",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": null,
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-20T03:18:25.566Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
