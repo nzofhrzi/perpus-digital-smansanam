@@ -34,6 +34,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:40:06.404Z"
+    },
+    {
+      "id": "abs_1787193664625_daba09",
+      "userId": "usr_1787193507538_ea72e5",
+      "nama": "Ravzo Arlando",
+      "status": "siswa",
+      "kelas": "12.6",
+      "jabatan": null,
+      "alasan": "Diskusi Kelompok",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T02:41:04.625Z"
     }
   ]
 }
