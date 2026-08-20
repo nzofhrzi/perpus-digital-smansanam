@@ -231,6 +231,19 @@
       "hash": "b344586d3edced0985af32a7bcd5bd7924dd5126e1f75a8d2055b987d2f638079783afc8bddffcfc5f1d2bfe1a58a4d95b803fa66ab2cb31b870d7f9d21a4b8b",
       "createdAt": "2026-08-20T03:16:14.899Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787196229353_b20972",
+      "nama": "ROSYANTINI",
+      "status": "guru",
+      "kelas": null,
+      "jabatan": "Guru Sejarah",
+      "foto": null,
+      "kodeBarcode": "2407470515",
+      "salt": "bc4bc0e4933625d968dae5260aebaebb",
+      "hash": "84ca6142a122f7cbe29a9be916bab8e7247938f2af80782b8781d3c2f0ebbec922aa7ddecbe5bd6fe5ff86abbe3bef2449dc4b3ccd0a4c76888be09ed5e19840",
+      "createdAt": "2026-08-20T03:23:49.353Z",
+      "daftarMandiri": true
     }
   ]
 }
