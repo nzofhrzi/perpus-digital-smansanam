@@ -114,6 +114,19 @@
       "hash": "dbb93c0bff1890f084a924b4b650cccab5421d73f4ba48711422825a31890f2ecf251a614c52fc56cffdb524b559f784dcc87b6af722f79d3bb9cb5a0cad21a1",
       "createdAt": "2026-08-20T02:38:33.131Z",
       "daftarMandiri": true
+    },
+    {
+      "id": "usr_1787193519709_b50628",
+      "nama": "ZASKIA FITRIANI",
+      "status": "siswa",
+      "kelas": "11.1",
+      "jabatan": null,
+      "foto": null,
+      "kodeBarcode": "2407951746",
+      "salt": "a5f8c69042d6e5b62f6624d130b47271",
+      "hash": "3f30e12abefdd51cc402973f8088f330cf0512bbcddf183c230aa23343cb1dff041e852376cc243964dcff51a1167f401307e8a47debf5a725fb149f03b0a368",
+      "createdAt": "2026-08-20T02:38:39.710Z",
+      "daftarMandiri": true
     }
   ]
 }
