@@ -127,9 +127,9 @@
       "tanggalPinjam": "2026-08-20",
       "jangkaHari": 1,
       "tanggalRencanaKembali": "2026-08-21",
-      "statusPinjaman": "dipinjam",
-      "tanggalDikembalikan": null,
-      "dikembalikanPada": null,
+      "statusPinjaman": "dikembalikan",
+      "tanggalDikembalikan": "2026-08-20",
+      "dikembalikanPada": "2026-08-20T02:49:03.884Z",
       "catatan": "membaca",
       "dicatatPada": "2026-08-20T02:48:32.988Z"
     },
