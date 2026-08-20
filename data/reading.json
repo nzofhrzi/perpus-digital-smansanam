@@ -41,6 +41,20 @@
       "selesai": "2026-08-20T02:40:02.478Z",
       "durasiDetik": 1,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193693523_adaa60",
+      "userId": "usr_1787193465604_d75a82",
+      "nama": "Ridho",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "bookId": "book_1786779884229_00e102",
+      "judulBuku": "Bahasa Indonesia Tingkat Lanjut (SMA)",
+      "mulai": "2026-08-20T02:41:33.523Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
