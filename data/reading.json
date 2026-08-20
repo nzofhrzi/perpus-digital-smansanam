@@ -322,6 +322,20 @@
       "selesai": "2026-08-20T02:44:51.515Z",
       "durasiDetik": 10,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193894727_8d6843",
+      "userId": "usr_1787193534355_6d6cd7",
+      "nama": "SULISTARI",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "bookId": "book_1786780095314_4e8128",
+      "judulBuku": "TKA BIOLOGI TINGKAT SMA",
+      "mulai": "2026-08-20T02:44:54.727Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
