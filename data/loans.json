@@ -56,6 +56,25 @@
       "dikembalikanPada": null,
       "catatan": "Membaca buku",
       "dicatatPada": "2026-08-20T02:47:51.938Z"
+    },
+    {
+      "id": "pjm_1787194106593_90bdfe",
+      "userId": "usr_1787193465604_d75a82",
+      "nama": "Ridho",
+      "status": "siswa",
+      "kelas": "12.1",
+      "jabatan": null,
+      "judulBuku": "Ilmu Ketak",
+      "kategoriBuku": "Referensi",
+      "jenisBuku": "Non-Fiksi",
+      "tanggalPinjam": "2026-08-20",
+      "jangkaHari": 3,
+      "tanggalRencanaKembali": "2026-08-23",
+      "statusPinjaman": "dipinjam",
+      "tanggalDikembalikan": null,
+      "dikembalikanPada": null,
+      "catatan": "tugas",
+      "dicatatPada": "2026-08-20T02:48:26.593Z"
     }
   ]
 }
