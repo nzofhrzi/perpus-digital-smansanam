@@ -928,8 +928,8 @@
 
     <div class="barcode-scan-zone" style="margin-top:14px;">
       <i class="fa-solid fa-wave-square big"></i>
-      <p>Arahkan &amp; tembakkan scanner ke barcode kartu anggota.<br>Kolom di bawah akan terisi otomatis.</p>
-      <input type="text" id="barcodeScanInput" placeholder="Menunggu pindaian..." autocomplete="off" inputmode="numeric" pattern="[0-9]*">
+      <p>Pindai barcode, atau ketik ID pengguna secara manual (mis. usr_1787239208095_958aa1) lalu tekan Enter.</p>
+      <input type="text" id="barcodeScanInput" placeholder="usr_xxxxxxxxxxxxx_xxxxxx" autocomplete="off" inputmode="text">
     </div>
   </div>
 </div>
@@ -1214,35 +1214,21 @@
     }
   });
 
-  // Kode barcode kartu anggota selalu berupa digit saja (awalan 2407 + 6
-  // digit acak = 10 digit). Dua penjagaan berikut membuat absen scan lebih
-  // andal terlepas dari cara scanner USB (keyboard wedge) dikonfigurasi:
-  //
-  // 1) Bersihkan otomatis karakter selain angka yang mungkin ikut terketik
-  //    (spasi/tab/karakter tersembunyi) supaya kode tidak pernah "hampir
-  //    cocok tapi gagal" karena karakter liar.
-  // 2) Auto-submit begitu 10 digit sudah lengkap, untuk scanner yang TIDAK
-  //    dikonfigurasi mengirim tombol Enter setelah memindai (banyak scanner
-  //    murah defaultnya begini, sehingga sebelumnya kolom terisi tapi
-  //    absensi tidak pernah terkirim).
-  let barcodeAutoSubmitTimer = null;
-  const KODE_BARCODE_PANJANG = 10;
-
+  // Disederhanakan: yang dipindai/diketik sekarang adalah ID akun pengguna
+  // langsung (mis. "usr_1787239208095_958aa1"), bukan kode barcode 10 digit
+  // terpisah lagi. Karena panjang ID bisa bervariasi, tidak ada auto-submit
+  // berdasar jumlah karakter — submit terjadi saat menekan Enter (baik dari
+  // scanner keyboard-wedge yang mengirim Enter di akhir, maupun saat mengisi
+  // manual untuk uji coba).
   barcodeScanInput.addEventListener('input', () => {
-    const bersih = barcodeScanInput.value.replace(/[^0-9]/g, '');
+    // Bersihkan whitespace/karakter liar yang mungkin ikut terketik, tapi
+    // tetap pertahankan huruf/angka/underscore karena itu bentuk ID akun.
+    const bersih = barcodeScanInput.value.replace(/[^0-9A-Za-z_]/g, '');
     if (bersih !== barcodeScanInput.value) barcodeScanInput.value = bersih;
-
-    clearTimeout(barcodeAutoSubmitTimer);
-    if (bersih.length >= KODE_BARCODE_PANJANG) {
-      // Jeda singkat: cukup untuk memastikan scanner selesai "mengetik"
-      // seluruh kode, tapi tidak terasa lambat bagi pengguna.
-      barcodeAutoSubmitTimer = setTimeout(submitBarcodeScan, 80);
-    }
   });
 
   async function submitBarcodeScan() {
-    clearTimeout(barcodeAutoSubmitTimer);
-    const kodeBarcode = barcodeScanInput.value.replace(/[^0-9]/g, '').trim();
+    const kodeBarcode = barcodeScanInput.value.replace(/[^0-9A-Za-z_]/g, '').trim();
     barcodeScanInput.value = '';
     if (barcodeSubmitting) return;
     if (!kodeBarcode) return;
