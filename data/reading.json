@@ -55,6 +55,20 @@
       "selesai": "2026-08-20T02:41:43.234Z",
       "durasiDetik": 9,
       "tanggal": "2026-08-20"
+    },
+    {
+      "id": "read_1787193737832_dda44b",
+      "userId": "usr_1787193455324_222392",
+      "nama": "NADIA",
+      "status": "siswa",
+      "kelas": "12.2",
+      "jabatan": null,
+      "bookId": "book_1786930193047_ef40a9",
+      "judulBuku": "Tentang Kamu",
+      "mulai": "2026-08-20T02:42:17.832Z",
+      "selesai": null,
+      "durasiDetik": 0,
+      "tanggal": "2026-08-20"
     }
   ]
 }
