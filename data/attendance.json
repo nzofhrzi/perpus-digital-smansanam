@@ -166,6 +166,18 @@
       "metode": "qr",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T02:53:22.289Z"
+    },
+    {
+      "id": "abs_1787196261233_7639a4",
+      "userId": "usr_1787196229353_b20972",
+      "nama": "ROSYANTINI",
+      "status": "guru",
+      "kelas": null,
+      "jabatan": "Guru Sejarah",
+      "alasan": "Membaca Buku",
+      "metode": "qr",
+      "tanggal": "2026-08-20",
+      "waktuAbsen": "2026-08-20T03:24:21.233Z"
     }
   ]
 }
