@@ -952,7 +952,7 @@
     margin-bottom: 10px;
   }
   .profile-barcode-label i { color: var(--green-600); }
-  .profile-barcode-box canvas { width: 100%; max-width: 260px; height: auto; image-rendering: pixelated; }
+  .profile-barcode-box canvas { width: 100%; max-width: 260px; height: auto; }
   .profile-barcode-code {
     margin-top: 8px; font-family: 'Courier New', monospace; font-size: 11px;
     letter-spacing: 1.4px; color: var(--gray-700); font-weight: 700; word-break: break-all;
@@ -1777,7 +1777,7 @@
 
           <div class="profile-barcode-box">
             <div class="profile-barcode-label"><i class="fa-solid fa-barcode"></i> Kode Barcode Anggota</div>
-            <canvas id="profileBarcodeCanvas" width="280" height="70"></canvas>
+            <canvas id="profileBarcodeCanvas" width="260" height="70"></canvas>
             <div class="profile-barcode-code" id="profileBarcodeCode">-</div>
           </div>
         </div>
@@ -2306,31 +2306,47 @@
     return pattern;
   }
 
-  // Menggambar barcode garis (batang hitam-putih) ke context canvas manapun
+  // Menggambar barcode garis (batang hitam-putih) ke context canvas manapun.
+  // Setiap tepi batang di-snap ke pixel utuh (Math.round) supaya garis tetap
+  // tajam (tidak buram akibat anti-aliasing sub-pixel) baik di layar maupun
+  // saat dicetak/diunduh dalam resolusi tinggi.
   function drawBarcode(ctx, text, x, y, width, height, color) {
     const pattern = code128Pattern(text);
     const totalUnits = pattern.split('').reduce((a, d) => a + Number(d), 0);
     const unit = width / totalUnits;
-    let cursor = x, black = true;
     ctx.fillStyle = color || '#0f172a';
+    let cursorUnits = 0, black = true;
     for (const d of pattern) {
-      const w = Number(d) * unit;
-      if (black) ctx.fillRect(cursor, y, Math.max(w, 0.6), height);
-      cursor += w;
+      const w = Number(d);
+      if (black) {
+        const barStart = Math.round(x + cursorUnits * unit);
+        const barEnd = Math.round(x + (cursorUnits + w) * unit);
+        ctx.fillRect(barStart, y, Math.max(barEnd - barStart, 1), height);
+      }
+      cursorUnits += w;
       black = !black;
     }
   }
 
-  // Render barcode kecil di halaman Profil Saya (bukan hanya di kartu unduhan)
+  // Render barcode kecil di halaman Profil Saya (bukan hanya di kartu unduhan).
+  // Resolusi canvas disesuaikan dengan devicePixelRatio layar (minimal 3x)
+  // supaya batang barcode tetap tajam, tidak buram/pecah saat diperbesar
+  // atau dicetak.
   function renderProfileBarcode() {
     const canvas = document.getElementById('profileBarcodeCanvas');
     if (!canvas || !currentUser) return;
-    const W = canvas.width, H = canvas.height;
+    const cssW = 260, cssH = 70;
+    const scale = Math.max(window.devicePixelRatio || 1, 3);
+    canvas.width = cssW * scale;
+    canvas.height = cssH * scale;
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, W, H);
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, W, H);
-    drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, 8, 4, W - 16, H - 8, '#0f172a');
+    ctx.fillRect(0, 0, cssW, cssH);
+    drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, 8, 6, cssW - 16, cssH - 12, '#0f172a');
   }
 
   // Menampilkan foto profil (jika ada) atau inisial nama sebagai fallback,
@@ -2497,7 +2513,7 @@
       const fotoImg = await loadImageAsync(currentUser.foto || null);
 
       // Ukuran kartu ID resolusi tinggi (rasio kartu standar, layak cetak)
-      const W = 1013, H = 638, DPR = 2;
+      const W = 1013, H = 638, DPR = 3;
       kartuCanvas.width = W * DPR;
       kartuCanvas.height = H * DPR;
       kartuCanvas.style.width = '100%';
@@ -2612,10 +2628,10 @@
       ctx.beginPath(); ctx.moveTo(40, footerY); ctx.lineTo(W - 40, footerY); ctx.stroke();
       ctx.setLineDash([]);
 
-      const bcW = 300, bcH = 60, bcX = W - bcW - 40, bcY = footerY + 30;
-      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 56, 12);
+      const bcW = 340, bcH = 78, bcX = W - bcW - 40, bcY = footerY + 30;
+      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 58, 12);
       ctx.fillStyle = '#f8fafc'; ctx.fill();
-      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 56, 12);
+      roundRectPath(ctx, bcX - 16, bcY - 26, bcW + 32, bcH + 58, 12);
       ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
 
       ctx.fillStyle = '#94a3b8';
@@ -2627,9 +2643,9 @@
       drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, bcX, bcY, bcW, bcH, '#052e21');
 
       ctx.fillStyle = '#0f172a';
-      ctx.font = '700 11px "Courier New", monospace';
+      ctx.font = '700 13px "Courier New", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(currentUser.kodeBarcode || currentUser.id, bcX + bcW / 2, bcY + bcH + 20);
+      ctx.fillText(currentUser.kodeBarcode || currentUser.id, bcX + bcW / 2, bcY + bcH + 22);
       ctx.textAlign = 'left';
 
       ctx.fillStyle = '#065f46';
