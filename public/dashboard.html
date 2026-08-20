@@ -916,6 +916,30 @@
   }
   .btn-profile-edit:hover { background: var(--green-100); color: var(--green-900); }
 
+  .btn-kartu-anggota {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    border-radius: 11px;
+    border: none;
+    background: linear-gradient(135deg, var(--green-600), var(--green-800));
+    color: var(--white);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+  }
+  .btn-kartu-anggota:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -8px rgba(5,150,105,0.45); }
+  .btn-kartu-anggota:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+  .kartu-preview-wrap { background: var(--gray-100); border-radius: 16px; padding: 16px; }
+  .kartu-preview-wrap canvas { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 14px 34px -14px rgba(6,78,59,0.35); }
+
   .profile-detail-row {
     display: flex;
     align-items: center;
@@ -1727,6 +1751,7 @@
           <span class="status-chip" id="profileStatus">-</span>
 
           <button class="btn-profile-edit" id="btnEditProfile" style="width:100%; justify-content:center; margin-top:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit Informasi Profil</button>
+          <button class="btn-kartu-anggota" id="btnKartuAnggota"><i class="fa-solid fa-id-card-clip"></i> Unduh Kartu Anggota</button>
           <div class="tamu-notice-card" id="tamuNotice" style="display:none;">
             <i class="fa-solid fa-circle-info"></i>
             <span>Akun tamu bersifat sementara dan tidak memiliki data login, sehingga tidak dapat diedit.</span>
@@ -2153,11 +2178,34 @@
   </div>
 </div>
 
+<!-- ══════════ MODAL KARTU ANGGOTA DIGITAL ══════════ -->
+<div class="modal-overlay-p" id="modalKartuAnggota">
+  <div class="modal-box-p" style="max-width:520px;">
+    <div class="modal-box-p-header">
+      <h3><i class="fa-solid fa-id-card-clip hdr-icon"></i> Kartu Anggota Digital</h3>
+      <button class="modal-close-p" id="btnCloseKartuAnggota"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-box-p-body">
+      <div class="kartu-preview-wrap">
+        <div id="kartuLoading" style="padding:50px 0; text-align:center; color:var(--gray-500); font-size:13px;"><i class="fa-solid fa-spinner fa-spin"></i> Membuat kartu anggota...</div>
+        <canvas id="kartuAnggotaCanvas" style="display:none;"></canvas>
+      </div>
+      <div id="kartuQrHidden" style="position:absolute; left:-9999px; top:-9999px;"></div>
+      <p style="font-size:11.5px; color:var(--gray-500); margin-top:14px; line-height:1.6;">Kartu ini memuat foto identitas dan kode QR pribadi untuk keperluan verifikasi keanggotaan. Simpan atau cetak sesuai kebutuhan.</p>
+    </div>
+    <div class="modal-box-p-footer">
+      <button type="button" class="btn-p-cancel" id="btnCloseKartuFooter">Tutup</button>
+      <button type="button" class="btn-p-submit" id="btnDownloadKartu"><i class="fa-solid fa-download"></i> Unduh PNG</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST NOTIFICATION PLACEHOLDER -->
 <div class="toast-notice" id="toastNotice"><i class="fa-solid fa-circle-info"></i><span id="toastMsg">Fitur segera hadir!</span></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="vendor/jsQR.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
 <script>
   const API_BASE = '/api';
 
@@ -2263,11 +2311,13 @@
     `).join('');
   }
 
+  let cachedSettings = null;
   async function loadInfoCard() {
     try {
       const res = await fetch(`${API_BASE}/settings`);
       const data = await res.json();
       if (!res.ok) throw new Error();
+      cachedSettings = data;
       document.getElementById('infoLogo').textContent = data.logo || '📚';
       document.getElementById('infoNamaPerpus').textContent = data.namaPerpus || 'Perpustakaan Digital';
       document.getElementById('infoDeskripsi').textContent = data.deskripsi || 'Sistem perpustakaan digital sekolah.';
@@ -2291,6 +2341,258 @@
     } catch {}
   }
   loadBookCountForHome();
+
+  // ══════ KARTU ANGGOTA DIGITAL (UNDUH) ══════
+  const modalKartu = document.getElementById('modalKartuAnggota');
+  const kartuCanvas = document.getElementById('kartuAnggotaCanvas');
+  const kartuLoadingEl = document.getElementById('kartuLoading');
+  const kartuQrHidden = document.getElementById('kartuQrHidden');
+  const btnDownloadKartu = document.getElementById('btnDownloadKartu');
+  let kartuSiapDiunduh = false;
+
+  function loadImageAsync(src) {
+    return new Promise((resolve) => {
+      if (!src) { resolve(null); return; }
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  // Membungkus teks nama agar tidak keluar dari area kartu, mengembalikan posisi Y akhir
+  function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+    const words = String(text || '-').split(' ');
+    let line = '', lines = [];
+    for (let i = 0; i < words.length; i++) {
+      const test = line ? `${line} ${words[i]}` : words[i];
+      if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = words[i]; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    if (lines.length > maxLines) lines = lines.slice(0, maxLines);
+    lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+    return y + lines.length * lineHeight;
+  }
+
+  async function generateKartuAnggota() {
+    kartuSiapDiunduh = false;
+    btnDownloadKartu.disabled = true;
+    kartuLoadingEl.style.display = 'block';
+    kartuLoadingEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membuat kartu anggota...';
+    kartuCanvas.style.display = 'none';
+
+    try {
+      const settings = cachedSettings || await fetch(`${API_BASE}/settings`).then(r => r.json()).catch(() => ({}));
+      const namaSekolah = (settings.namaSekolah || 'Sekolah').toUpperCase();
+      const namaPerpus = settings.namaPerpus || 'Perpustakaan Digital';
+      const logoEmoji = settings.logo || '📚';
+
+      try {
+        await Promise.all([
+          document.fonts.load('800 27px Poppins'),
+          document.fonts.load('700 12px "Plus Jakarta Sans"'),
+          document.fonts.load('600 13px "Plus Jakarta Sans"'),
+          document.fonts.load('500 11px "Plus Jakarta Sans"')
+        ]);
+      } catch {}
+
+      // Render QR pribadi anggota ke canvas tersembunyi
+      kartuQrHidden.innerHTML = '';
+      const qrContent = `PERPUS-ANGGOTA::${currentUser.id}`;
+      new QRCode(kartuQrHidden, { text: qrContent, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.H, colorDark: '#052e21', colorLight: '#ffffff' });
+      await new Promise((r) => setTimeout(r, 80));
+      const qrCanvasEl = kartuQrHidden.querySelector('canvas') || kartuQrHidden.querySelector('img');
+
+      const fotoImg = await loadImageAsync(currentUser.foto || null);
+
+      // Ukuran kartu ID resolusi tinggi (rasio kartu standar, layak cetak)
+      const W = 1013, H = 638, DPR = 2;
+      kartuCanvas.width = W * DPR;
+      kartuCanvas.height = H * DPR;
+      kartuCanvas.style.width = '100%';
+      kartuCanvas.style.aspectRatio = `${W} / ${H}`;
+      const ctx = kartuCanvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+      ctx.clearRect(0, 0, W, H);
+
+      roundRectPath(ctx, 0, 0, W, H, 28);
+      ctx.save();
+      ctx.clip();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, W, H);
+
+      // Header hijau gradient + dekorasi lingkaran transparan
+      const headerH = 158;
+      const grad = ctx.createLinearGradient(0, 0, W, headerH);
+      grad.addColorStop(0, '#065f46');
+      grad.addColorStop(1, '#059669');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, headerH);
+
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(W - 60, -20, 130, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(W - 230, headerH + 40, 70, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
+      ctx.globalAlpha = 0.85;
+      ctx.fillText(namaSekolah, 40, 38);
+      ctx.globalAlpha = 1;
+      ctx.font = '800 26px Poppins, sans-serif';
+      ctx.fillText(`${logoEmoji}  ${namaPerpus}`, 40, 74);
+      ctx.font = '700 12.5px "Plus Jakarta Sans", sans-serif';
+      ctx.globalAlpha = 0.9;
+      ctx.fillText('KARTU ANGGOTA DIGITAL', 40, 97);
+      ctx.globalAlpha = 1;
+
+      // Badge status keanggotaan pojok kanan atas
+      const statusLabel = currentUser.status === 'tamu' ? 'TAMU' : currentUser.status.toUpperCase();
+      ctx.font = '700 11.5px "Plus Jakarta Sans", sans-serif';
+      const badgeW = ctx.measureText(statusLabel).width + 30;
+      roundRectPath(ctx, W - badgeW - 40, 32, badgeW, 28, 14);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(statusLabel, W - badgeW - 40 + 15, 50);
+
+      // Foto identitas
+      const photoX = 40, photoY = headerH + 34, photoW = 168, photoH = 200;
+      roundRectPath(ctx, photoX - 5, photoY - 5, photoW + 10, photoH + 10, 18);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.save();
+      roundRectPath(ctx, photoX, photoY, photoW, photoH, 14);
+      ctx.clip();
+      if (fotoImg) {
+        const ir = fotoImg.width / fotoImg.height, tr = photoW / photoH;
+        let sx, sy, sw, sh;
+        if (ir > tr) { sh = fotoImg.height; sw = sh * tr; sx = (fotoImg.width - sw) / 2; sy = 0; }
+        else { sw = fotoImg.width; sh = sw / tr; sx = 0; sy = (fotoImg.height - sh) / 2; }
+        ctx.drawImage(fotoImg, sx, sy, sw, sh, photoX, photoY, photoW, photoH);
+      } else {
+        const g2 = ctx.createLinearGradient(photoX, photoY, photoX + photoW, photoY + photoH);
+        g2.addColorStop(0, '#10b981'); g2.addColorStop(1, '#065f46');
+        ctx.fillStyle = g2;
+        ctx.fillRect(photoX, photoY, photoW, photoH);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 50px Poppins, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(initials(currentUser.nama), photoX + photoW / 2, photoY + photoH / 2 + 4);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      }
+      ctx.restore();
+
+      // Detail identitas di samping foto
+      const infoX = photoX + photoW + 34, infoMaxW = W - infoX - 40;
+      let infoY = photoY + 12;
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '800 26px Poppins, sans-serif';
+      infoY = drawWrappedText(ctx, currentUser.nama, infoX, infoY, infoMaxW, 30, 2) + 16;
+
+      const rows = [['ID Anggota', currentUser.id]];
+      if (currentUser.status === 'siswa') {
+        rows.push(['Kelas', currentUser.kelas || '-']);
+      } else if (currentUser.status === 'tamu') {
+        rows.push(['Keperluan', currentUser.jabatan || '-']);
+        rows.push(['Umur', currentUser.umur ? `${currentUser.umur} tahun` : '-']);
+      } else {
+        rows.push(['Jabatan', currentUser.status === 'guru' ? 'Guru' : (currentUser.jabatan || 'Staf Tata Usaha')]);
+      }
+      rows.push(['Status Keanggotaan', 'AKTIF']);
+
+      rows.forEach(([label, val]) => {
+        ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(label.toUpperCase(), infoX, infoY);
+        ctx.font = '700 15.5px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(String(val), infoX, infoY + 20);
+        infoY += 44;
+      });
+
+      // Garis putus-putus pemisah + area QR & catatan kaki
+      const footerY = H - 150;
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath(); ctx.moveTo(40, footerY); ctx.lineTo(W - 40, footerY); ctx.stroke();
+      ctx.setLineDash([]);
+
+      const qrSize = 104, qrX = W - qrSize - 40, qrY = footerY + 22;
+      roundRectPath(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 12);
+      ctx.fillStyle = '#f8fafc'; ctx.fill();
+      roundRectPath(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 12);
+      ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+      if (qrCanvasEl) ctx.drawImage(qrCanvasEl, qrX, qrY, qrSize, qrSize);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '700 10px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('PINDAI UNTUK VERIFIKASI', qrX + qrSize / 2, qrY + qrSize + 22);
+      ctx.textAlign = 'left';
+
+      ctx.fillStyle = '#065f46';
+      ctx.font = '700 12.5px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('Kartu identitas resmi anggota perpustakaan digital.', 40, footerY + 34);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('Tunjukkan kartu ini beserta QR untuk verifikasi keanggotaan di perpustakaan.', 40, footerY + 54);
+      ctx.fillText(`Diterbitkan: ${fmtTanggal(new Date().toISOString().slice(0, 10))}`, 40, footerY + 76);
+
+      ctx.restore(); // lepas clip badan kartu
+
+      roundRectPath(ctx, 1, 1, W - 2, H - 2, 27);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      kartuLoadingEl.style.display = 'none';
+      kartuCanvas.style.display = 'block';
+      kartuSiapDiunduh = true;
+      btnDownloadKartu.disabled = false;
+    } catch (err) {
+      console.error(err);
+      kartuLoadingEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Gagal membuat kartu. Silakan coba lagi.';
+    }
+  }
+
+  function closeModalKartu() { modalKartu.classList.remove('show'); }
+
+  document.getElementById('btnKartuAnggota').addEventListener('click', () => {
+    modalKartu.classList.add('show');
+    generateKartuAnggota();
+  });
+  document.getElementById('btnCloseKartuAnggota').addEventListener('click', closeModalKartu);
+  document.getElementById('btnCloseKartuFooter').addEventListener('click', closeModalKartu);
+  modalKartu.addEventListener('click', (e) => { if (e.target === modalKartu) closeModalKartu(); });
+
+  btnDownloadKartu.addEventListener('click', () => {
+    if (!kartuSiapDiunduh) return;
+    const slug = (currentUser.nama || 'anggota').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const link = document.createElement('a');
+    link.download = `kartu-anggota-${slug || currentUser.id}.png`;
+    link.href = kartuCanvas.toDataURL('image/png');
+    link.click();
+    showToast('Kartu anggota berhasil diunduh!');
+  });
 
   // ══════ EDIT PROFIL & GANTI PASSWORD ══════
   const isTamu = currentUser.status === 'tamu';
