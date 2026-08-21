@@ -179,6 +179,18 @@
       "metode": "barcode",
       "tanggal": "2026-08-20",
       "waktuAbsen": "2026-08-20T15:37:48.971Z"
+    },
+    {
+      "id": "abs_1787275541454_89c73f",
+      "userId": "user_1786777885462_807af1",
+      "nama": "Enzo Fahrezi",
+      "status": "staf",
+      "kelas": null,
+      "jabatan": "Wakil Admin",
+      "alasan": "Membaca Buku",
+      "metode": "barcode",
+      "tanggal": "2026-08-21",
+      "waktuAbsen": "2026-08-21T01:25:41.455Z"
     }
   ]
 }
