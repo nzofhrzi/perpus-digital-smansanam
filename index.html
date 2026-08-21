@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Redirect otomatis setelah 0 detik -->
+    <meta http-equiv="refresh" content="0; url=https://pelawan-elibrary.vercel.app" />
+    
+    <title>Mengalihkan...</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1a202c;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1.5rem;
+            border: 5px solid #e2e8f0;
+            border-top-color: #2b6cb0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            color: #4a5568;
+            font-size: 1rem;
+        }
+        a {
+            color: #2b6cb0;
+            text-decoration: underline;
+        }
+        a:hover {
+            color: #1a365d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h1>Mengalihkan ke Pelawan E-Library</h1>
+        <p>
+            Jika tidak otomatis dialihkan, 
+            <a href="https://pelawan-elibrary.vercel.app">klik di sini</a>.
+        </p>
+    </div>
+
+    <!-- Fallback JavaScript jika meta refresh gagal -->
+    <script>
+        window.location.replace("https://pelawan-elibrary.vercel.app");
+    </script>
+</body>
+</html>
