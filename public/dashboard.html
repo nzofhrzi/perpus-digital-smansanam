@@ -394,7 +394,6 @@
     .quick-item-icon { width: 42px; height: 42px; font-size: 16px; border-radius: 12px; }
     .quick-item-label { font-size: 10.5px; }
 
-    /* Ringkas kartu info perpustakaan agar beranda tidak terlalu panjang di Android */
     .info-card { padding: 18px 18px 6px; }
     .info-card-chevron { display: flex; }
     .info-card-grid { display: none; padding-top: 16px; }
@@ -952,9 +951,12 @@
     margin-bottom: 10px;
   }
   .profile-barcode-label i { color: var(--green-600); }
-  .profile-barcode-box canvas { width: 100%; max-width: 340px; height: auto; }
+  .profile-barcode-box canvas {
+    width: 100%; max-width: 400px; height: auto; /* diperbesar lebarnya */
+    display: block; margin: 0 auto;
+  }
   .profile-barcode-code {
-    margin-top: 8px; font-family: 'Courier New', monospace; font-size: 11px;
+    margin-top: 8px; font-family: 'Courier New', monospace; font-size: 12px;
     letter-spacing: 1.4px; color: var(--gray-700); font-weight: 700; word-break: break-all;
   }
 
@@ -1087,12 +1089,10 @@
     .stat-value { font-size: 20px; }
     .stat-icon { width: 36px; height: 36px; font-size: 15px; border-radius: 10px; }
 
-    /* Absensi Card Layout Transformation for Android (No Horizontal Scroll) */
     .att-status-card { flex-direction: column; align-items: stretch; padding: 20px 18px; text-align: left; }
     .att-status-right { width: 100%; margin-top: 6px; }
     .att-btn { width: 100%; justify-content: center; }
 
-    /* Android Native Friendly Attendance History Cards */
     .att-table-wrap { background: transparent; border: none; box-shadow: none; overflow: visible; }
     .att-table, .att-table tbody, .att-table tr, .att-table td { display: block; width: 100%; }
     .att-table thead { display: none; }
@@ -1124,7 +1124,6 @@
     .att-table td:first-child { font-weight: 700; color: var(--black); border-bottom: 1px dashed var(--gray-200); padding-bottom: 8px; margin-bottom: 6px; }
     .att-table td:first-child::before { color: var(--green-700); }
     .att-table td:last-child { padding-top: 6px; }
-    /* Baris "belum ada riwayat" / "memuat" (colspan) tidak boleh diperlakukan sebagai kartu data */
     .att-table tbody tr.att-row-empty {
       background: transparent; border: none; box-shadow: none; padding: 20px 0; margin-bottom: 0;
     }
@@ -1151,6 +1150,8 @@
     .profile-details-card { padding: 18px 16px; }
     .profile-detail-row { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 0; }
     .profile-detail-row .label { width: 100%; }
+
+    .profile-barcode-box canvas { max-width: 320px; }
   }
 
   .overlay-mobile {
@@ -1768,7 +1769,6 @@
           <h2 id="profileName">-</h2>
           <span class="status-chip" id="profileStatus">-</span>
 
-
           <button class="btn-kartu-anggota" id="btnKartuAnggota"><i class="fa-solid fa-id-card-clip"></i> Unduh Kartu Anggota</button>
           <div class="tamu-notice-card" id="tamuNotice" style="display:none;">
             <i class="fa-solid fa-circle-info"></i>
@@ -1956,11 +1956,6 @@
     </div>
   </div>
 </div>
-
-<!-- ══════════ MODAL EDIT PROFIL ══════════ -->
-<!-- Modal Edit Informasi Profil (nama/kelas/jabatan) sengaja dihapus:
-     data ini sekarang hanya boleh diubah oleh admin lewat Panel Admin.
-     Pengguna hanya bisa mengubah foto profil & password sendiri. -->
 
 <!-- ══════════ MODAL GANTI PASSWORD ══════════ -->
 <div class="modal-overlay-p" id="modalChangePassword">
@@ -2170,16 +2165,14 @@
     }
   }
 
-  // Render barcode kecil di halaman Profil Saya (bukan hanya di kartu unduhan).
-  // Resolusi canvas disesuaikan dengan devicePixelRatio layar (minimal 3x)
-  // supaya batang barcode tetap tajam, tidak buram/pecah saat diperbesar
-  // atau dicetak.
+  // Render barcode di halaman Profil Saya dengan ukuran lebih besar & tajam
+  // untuk memudahkan pemindaian dari layar.
   function renderProfileBarcode() {
     const canvas = document.getElementById('profileBarcodeCanvas');
     if (!canvas || !currentUser) return;
-    // Diperbesar dari 260x70 supaya batang barcode lebih tebal/lebar per
-    // modul-nya, membuatnya jauh lebih mudah terbaca oleh scanner fisik.
-    const cssW = 340, cssH = 92;
+    // Ukuran tampilan CSS diperbesar (400x100) agar barcode lebih lebar & mudah dibaca
+    const cssW = 400, cssH = 100;
+    // Factor scale tinggi (min 3) untuk ketajaman saat diperbesar/cetak
     const scale = Math.max(window.devicePixelRatio || 1, 3);
     canvas.width = cssW * scale;
     canvas.height = cssH * scale;
@@ -2190,7 +2183,14 @@
     ctx.clearRect(0, 0, cssW, cssH);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, cssW, cssH);
-    drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, 8, 6, cssW - 16, cssH - 12, '#0f172a');
+    // Gambar barcode dengan height 70px (dari 100px tinggi, ada padding)
+    drawBarcode(ctx, currentUser.kodeBarcode || currentUser.id, 16, 12, cssW - 32, 60, '#0f172a');
+    // Tambahkan teks di bawah barcode (opsional)
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '500 11px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(currentUser.kodeBarcode || currentUser.id, cssW / 2, cssH - 8);
+    ctx.textAlign = 'left';
   }
 
   // Menampilkan foto profil (jika ada) atau inisial nama sebagai fallback,
@@ -2356,8 +2356,8 @@
 
       const fotoImg = await loadImageAsync(currentUser.foto || null);
 
-      // Ukuran kartu ID resolusi tinggi (rasio kartu standar, layak cetak)
-      const W = 1013, H = 638, DPR = 3;
+      // Ukuran kartu ID resolusi tinggi, diperbesar sedikit (1200x720) agar barcode lebih lega
+      const W = 1200, H = 720, DPR = 4; // DPR lebih tinggi untuk ketajaman cetak
       kartuCanvas.width = W * DPR;
       kartuCanvas.height = H * DPR;
       kartuCanvas.style.width = '100%';
@@ -2464,27 +2464,19 @@
         infoY += 44;
       });
 
-      // Garis putus-putus pemisah + area barcode garis & catatan kaki
-      //
-      // footerY dibuat DINAMIS mengikuti akhir baris info identitas (infoY),
-      // bukan angka tetap - supaya untuk akun dengan baris info lebih banyak
-      // (mis. kartu tamu: ID, Keperluan, Umur, Status = 4 baris) area footer
-      // tidak pernah bertabrakan/menimpa baris identitas di atasnya.
-      const footerY = Math.max(H - 190, infoY + 40);
+      // Garis putus-putus pemisah + area barcode garis
+      const footerY = Math.max(H - 200, infoY + 40);
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([6, 6]);
       ctx.beginPath(); ctx.moveTo(40, footerY); ctx.lineTo(W - 40, footerY); ctx.stroke();
       ctx.setLineDash([]);
 
-      // Barcode diperbesar signifikan (dulu 340x78) agar tiap batangnya jauh
-      // lebih tebal/lebar - ini yang paling menentukan supaya kartu mudah
-      // terbaca oleh mesin pemindai fisik (laser/CCD), bukan sekadar
-      // memperbesar tampilannya saja. Tinggi barcode dibatasi otomatis
-      // (bcH) agar tidak pernah melewati batas bawah kartu.
-      const bcW = 440;
-      const bcH = Math.max(70, Math.min(110, H - footerY - 72));
-      const bcX = W - bcW - 40, bcY = footerY + 30;
+      // BARCODE DIPERBESAR SIGNIFIKAN: width 580, height 120 (dulu 440x70-110)
+      // agar batang-batang barcode jauh lebih lebar dan mudah dibaca oleh scanner
+      const bcW = 580;
+      const bcH = 120;
+      const bcX = W - bcW - 40, bcY = footerY + 24;
       roundRectPath(ctx, bcX - 24, bcY - 28, bcW + 48, bcH + 62, 12);
       ctx.fillStyle = '#f8fafc'; ctx.fill();
       roundRectPath(ctx, bcX - 24, bcY - 28, bcW + 48, bcH + 62, 12);
@@ -2550,10 +2542,6 @@
   });
 
   // ══════ GANTI PASSWORD & FOTO PROFIL ══════
-  // Catatan: fitur "Edit Informasi Profil" (nama/kelas/jabatan) sudah
-  // dihapus dari sisi pengguna. Data tersebut sekarang hanya bisa diubah
-  // oleh admin lewat Panel Admin. Pengguna hanya bisa mengganti foto
-  // profil & password miliknya sendiri.
   const isTamu = currentUser.status === 'tamu';
   const modalChangePassword = document.getElementById('modalChangePassword');
 
@@ -2562,12 +2550,10 @@
     document.getElementById('btnEditAvatar').style.display = 'none';
     document.getElementById('btnRemoveAvatar').style.display = 'none';
     document.getElementById('tamuNotice').style.display = 'flex';
-    // Kompetisi Duta Literasi khusus anggota sekolah terdaftar (bukan tamu)
     const navKompetisi = document.querySelector('.nav-item[data-section="kompetisi"]');
     if (navKompetisi) navKompetisi.style.display = 'none';
     const navPeminjaman = document.querySelector('.nav-item[data-section="peminjaman"]');
     if (navPeminjaman) navPeminjaman.style.display = 'none';
-    // Sembunyikan juga tile menu cepat yang sama di beranda
     const quickKompetisi = document.getElementById('quickKompetisi');
     if (quickKompetisi) quickKompetisi.style.display = 'none';
     const quickPeminjaman = document.getElementById('quickPeminjaman');
@@ -2581,8 +2567,6 @@
 
     btnEditAvatar.addEventListener('click', () => avatarFileInput.click());
 
-    // Mengubah ukuran & mengompres gambar di sisi klien (maks 320x320, JPEG)
-    // agar ukurannya kecil sebelum disimpan sebagai data URL di server.
     function resizeImageToDataUrl(file) {
       return new Promise((resolve, reject) => {
         if (!file.type.startsWith('image/')) {
@@ -2681,9 +2665,6 @@
         profileAvatarEl.classList.remove('uploading');
       }
     });
-
-    // Fitur "Edit Informasi Profil" (nama/kelas/jabatan) sengaja dihapus
-    // dari sisi pengguna - data ini sekarang hanya bisa diubah oleh admin.
 
     // ── GANTI PASSWORD ──
     const changePassError = document.getElementById('changePassError');
@@ -3010,7 +2991,7 @@
       const kode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
       if (kode && kode.data) {
         handleScanAbsenResult(kode.data);
-        return; // hentikan loop, hasil sudah ditangani
+        return;
       }
     }
     scanAbsenLoopId = requestAnimationFrame(scanAbsenTick);
@@ -3018,7 +2999,6 @@
 
   function handleScanAbsenResult(teks) {
     if (!teks.startsWith(QR_ABSEN_PREFIX)) {
-      // Bukan QR Absen yang valid (mis. QR 1 / QR lain) — beri tahu & lanjut memindai.
       scanAbsenError.classList.add('show');
       scanAbsenErrorText.textContent = 'QR yang dipindai bukan QR Code Absensi. Coba pindai QR 2 yang tersedia di perpustakaan.';
       scanAbsenLoopId = requestAnimationFrame(scanAbsenTick);
@@ -3044,7 +3024,6 @@
     return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  // ── WARNA & IKON PER KATEGORI (MEMPERMUDAH VISUAL LOOK KOLEKSI BUKU) ──
   const KATEGORI_STYLE = {
     'Fiksi':      { grad: ['#7c3aed', '#4c1d95'], tag: '#6d28d9', tagBg: '#f5f3ff', tagBorder: '#ddd6fe', icon: 'fa-feather-pointed' },
     'Non-Fiksi':  { grad: ['#0284c7', '#0c4a6e'], tag: '#0369a1', tagBg: '#f0f9ff', tagBorder: '#bae6fd', icon: 'fa-book' },
@@ -3055,8 +3034,6 @@
     'Biografi':   { grad: ['#db2777', '#831843'], tag: '#be185d', tagBg: '#fdf2f8', tagBorder: '#fbcfe8', icon: 'fa-user-pen' },
     'Umum':       { grad: ['#475569', '#0f172a'], tag: '#475569', tagBg: '#f1f5f9', tagBorder: '#cbd5e1', icon: 'fa-book-journal-whills' }
   };
-  // Palet cadangan untuk kategori kustom di luar daftar di atas, dipilih
-  // secara konsisten (hash nama kategori) agar warnanya tidak berubah-ubah.
   const KATEGORI_FALLBACK_PALETTE = [
     { grad: ['#dc2626', '#7f1d1d'], tag: '#b91c1c', tagBg: '#fef2f2', tagBorder: '#fecaca', icon: 'fa-bookmark' },
     { grad: ['#ca8a04', '#713f12'], tag: '#a16207', tagBg: '#fefce8', tagBorder: '#fde68a', icon: 'fa-bookmark' },
@@ -3413,7 +3390,6 @@
         `<option value="${p.id}" ${p.id === data.periode.id ? 'selected' : ''}>${escapeHtmlUser(p.nama)} ${p.status === 'aktif' ? '(Aktif)' : ''}</option>`
       ).join('');
 
-      // ── Peringkat Saya ──
       const saya = data.saya || {};
       const rankLiterasi = document.getElementById('kmpMyLiterasiRank');
       const valLiterasi = document.getElementById('kmpMyLiterasiVal');
@@ -3445,7 +3421,6 @@
         valBuku.textContent = 'Belum ada peminjaman';
       }
 
-      // ── Papan Peringkat ──
       const lit = (data.dutaLiterasi && data.dutaLiterasi.leaderboard) || [];
       literasiBody.innerHTML = lit.length === 0
         ? `<tr><td colspan="4" class="att-empty">Belum ada aktivitas literasi pada periode ini.</td></tr>`
